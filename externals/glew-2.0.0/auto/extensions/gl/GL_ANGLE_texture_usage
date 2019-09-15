@@ -1,0 +1,7 @@
+GL_ANGLE_texture_usage
+http://www.opengl.org/registry/specs/ANGLE/texture_usage.txt
+GL_ANGLE_texture_usage
+
+	GL_NONE 0x0000
+	GL_TEXTURE_USAGE_ANGLE 0x93A2
+	GL_FRAMEBUFFER_ATTACHMENT_ANGLE 0x93A3

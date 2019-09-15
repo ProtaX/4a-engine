@@ -1,0 +1,12 @@
+GL_EXT_secondary_color
+http://www.opengl.org/registry/specs/EXT/secondary_color.txt
+GL_EXT_secondary_color
+
+	GL_COLOR_SUM_EXT 0x8458
+	GL_CURRENT_SECONDARY_COLOR_EXT 0x8459
+	GL_SECONDARY_COLOR_ARRAY_SIZE_EXT 0x845A
+	GL_SECONDARY_COLOR_ARRAY_TYPE_EXT 0x845B
+	GL_SECONDARY_COLOR_ARRAY_STRIDE_EXT 0x845C
+	GL_SECONDARY_COLOR_ARRAY_POINTER_EXT 0x845D
+	GL_SECONDARY_COLOR_ARRAY_EXT 0x845E
+	void glSecondaryColorPointerEXT (GLint size, GLenum type, GLsizei stride, void *pointer)

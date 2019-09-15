@@ -1,0 +1,5 @@
+GL_NV_vertex_program3
+http://www.opengl.org/registry/specs/NV/vertex_program3.txt
+GL_NV_vertex_program3
+
+	GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS_ARB 0x8B4C

@@ -64,9 +64,10 @@ int main() {
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);  // Создаем шейдер с типом VERTEX
     //Надо подгрузить его в С-строку из файла (но сейчас он просто здесь)
     char **vShaderStr = (char**)malloc(2 * sizeof(char*));
-    vShaderStr[0] = strdup("#version 330 core \
-layout (location = 0) in vec3 position; \
-void main() { gl_Position = vec4(position.x, position.y, position.x, 1.0); }");
+     std::string vertexShaderSrc = "#version 330 core \n\
+layout (location = 0) in vec3 position; \n\
+void main() { gl_Position = vec4(position.x, position.y, position.x, 1.0); }";
+    vShaderStr[0] = (char*)vertexShaderSrc.c_str();
     //Привязываем исходный код шейдера к объекту шейдера
     glShaderSource(vertex_shader, 1, vShaderStr, NULL); // Здесь 1 - количсество строк
     glCompileShader(vertex_shader);  // Компилируем его
@@ -86,9 +87,10 @@ void main() { gl_Position = vec4(position.x, position.y, position.x, 1.0); }");
     GLuint fragment_shader;
     fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
     char **vShaderStrFragment = (char**)malloc(2 * sizeof(char*));
-    vShaderStrFragment[1] = strdup("#version 330 core \
-out vec4 color; \
-void main() { color = vec4(1.0f, 0.5f, 0.2f, 1.0f); }");
+    std::string fragmentShaderSrc = "#version 330 core \n\
+out vec4 color; \n\
+void main() { color = vec4(1.0f, 0.5f, 0.2f, 1.0f); }";
+    vShaderStrFragment[1] = (char*)fragmentShaderSrc.c_str();
     glShaderSource(fragment_shader, 1, vShaderStrFragment, NULL);
     glCompileShader(fragment_shader);
     memset(infoLog, 0, sizeof(infoLog));

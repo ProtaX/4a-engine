@@ -10,6 +10,7 @@ include_directories(${INCLUDE_DIR})
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -O2 -Wall")
 add_compile_options(-lopengl32)
+add_compile_options(-lm)
 
 #modules
 add_subdirectory(${LIB_DIR})
@@ -23,4 +24,7 @@ endif()
 
 target_link_libraries(4a-engine ${GLEW_STATIC_LIB})
 target_link_libraries(4a-engine ${GLFW_STATIC_LIB})
+target_link_libraries(4a-engine ${SOIL_STATIC_LIB})
+target_link_libraries(4a-engine ${GLM_STATIC_LIB})
 target_link_libraries(4a-engine opengl32)
+target_link_libraries(4a-engine m)

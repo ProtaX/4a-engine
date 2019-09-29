@@ -65,6 +65,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 int main() {
+    //Некоторые данные о размере окна и спрайта
+    int windowH = 720, windowW = 1024;  // px
+    int heroH = 75, heroW = 39;  // px
+    int heroCenterH = 0, heroCenterW = 0;
+
     //Инициализация GLFW (для создания окна)
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);  // Задание версии OpenGL
@@ -73,7 +78,7 @@ int main() {
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);  // Запрет на изменение размера окна
 
     //Создание окна
-    GLFWwindow* window = glfwCreateWindow(800, 800, "Hello World!", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(windowW, windowH, "Hello World!", nullptr, nullptr);
     if (window == nullptr)  // Ошибка
     {
 	    std::cout << "Failed to create GLFW window" << std::endl;
@@ -93,9 +98,9 @@ int main() {
     //Теперь можно использовать функции OpenGL
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);  // Функция из glfw для получения width и height окна window
-    glViewport(0, 0, width, height);  // 0,0 - позиция нижнего левого угла окна. Эта величина от 0 до 1 (здесь это будет (0, 600) или (0, 800))
+    glViewport(0, 0, width, height);  // 0,0 - позиция нижнего левого угла окна. Эта величина от 0 до 1 (здесь это будет (0, 720) или (0, 1024))
 
-    //Загрузим текстуру
+    //Загрузим все спрайты анимации
     int tex_h, tex_w, 
         tex_h1, tex_w1, 
         tex_h2, tex_w2,
@@ -118,8 +123,9 @@ int main() {
     }
     GLuint texture, tex1, tex2, tex3, tex4, tex5;
     float borderColor[] = {0.0f, 0.0f, 0.0f, 1.0f};
+    //Теперь для каждого спрайта нужно задать настройки
     glGenTextures(1, &texture);
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0);  // Активируем текстурный блок и задаем настройки для него
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex_h, tex_w, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
@@ -182,11 +188,9 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glGenerateMipmap(GL_TEXTURE_2D);
-    
-    //Зададим границу
-    
+    glGenerateMipmap(GL_TEXTURE_2D);    
 
+    // Можно убрать спрайты из памяти
     SOIL_free_image_data(image);
     SOIL_free_image_data(left1);
     SOIL_free_image_data(left2);
@@ -195,14 +199,16 @@ int main() {
     SOIL_free_image_data(left5);
     glBindTexture(GL_TEXTURE_2D, 0);  // Отвяжем объект текстуры
 
+    //поместим четырехугольник в центр экрана, сохраняя пропорции
 
     //Набор вершин и цветов для двух тругольников
+    //UPD: в текущей версии поля r, g, b не используются
     GLfloat vertices[] = {
         // x,   y,      z,     r,     g,      b,     texture coords
-        0.5f,   0.5f,   0.0f,  1.0f,  0.0f,   0.0f,  2.0f, 1.0f,
-        0.5f,   -0.5f,  0.0f,  0.0f,  1.0f,   0.0f,  2.0f, 0.0f,
-        -0.5f,  -0.5f,  0.0f,  0.0f,  0.0f,   1.0f,  0.0f, 0.0f,
-        -0.5f,  0.5f,   0.0f,  1.0f,  0.0f,   0.0f,  0.0f, 1.0f
+        ((float)(heroCenterW + (heroW))/windowW),  ((float)(heroCenterH + (heroH ))/windowH),  0.0f,  1.0f,  0.0f,   0.0f,  1.0f, 1.0f,
+        ((float)(heroCenterW + (heroW ))/windowW),  ((float)(heroCenterH - (heroH ))/windowH),  0.0f,  0.0f,  1.0f,   0.0f,  1.0f, 0.0f,
+        ((float)(heroCenterW - (heroW ))/windowW),  ((float)(heroCenterH - (heroH ))/windowH),  0.0f,  0.0f,  0.0f,   1.0f,  0.0f, 0.0f,
+        ((float)(heroCenterW - (heroW ))/windowW),  ((float)(heroCenterH + (heroH ))/windowH),  0.0f,  1.0f,  0.0f,   0.0f,  0.0f, 1.0f
     };
     //Порядок, в котором надо нарисовать из них треугольники
     GLuint indices[] = {
@@ -333,10 +339,20 @@ int main() {
     glDeleteShader(fragment_shader);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+    //Задаем колбэк - функция при нажатии клавишы
     glfwSetKeyCallback(window, key_callback);
+    //Начальный спрайт анимации
+    int currentGlTexture = GL_TEXTURE0;
+    //Зададим количество кадров анимации в секунду
+    int animationFps = 10;
+    //Состояние анимации - происходит и, если да, какая
+    int animationState = 0;
+    //Сколько кадров уже было отрисовано
+    int framesDrawn = 1;
+    //Для кажой отдельной анимации считается: сколько экранных кадров будут рисовать один кадр анимации
+    int sceneFramesPerAnim = floor(20 / (float)animationFps);
     //Теперь это можно отрисовывать в игровом цикле
     //Цикл, который держит окно, пока его не закроют
-    int currentGlTexture = GL_TEXTURE0;
     while(!glfwWindowShouldClose(window))
     {
         //Теперь можно исользовать созданную программу
@@ -347,32 +363,89 @@ int main() {
         //TODO: разобраться с возможной потерей 6-го кадра
         int currentKeyPressed = wasdHandler.getData();
         std::cout << "Current key pressed: " << currentKeyPressed << "\n";
-        if (currentKeyPressed == GLFW_KEY_A) { // go left
-            glUniform1i(orientationLocation, -1);
-            if (currentGlTexture - GL_TEXTURE0 >= 4)
-                currentGlTexture = GL_TEXTURE0;
-            else
-                currentGlTexture ++;
-            std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n"; 
+        std::cout << "(framesDrawn % sceneFramesPerAnim) " << (framesDrawn % sceneFramesPerAnim) << "\n";
+        
+        //Этот большой блок if-else можно запихнуть в функцию и передавать туда адрес currentGlTexture
+        if (!(framesDrawn % sceneFramesPerAnim) && currentKeyPressed) {  // Если нажата кнопка и текущий кадр подходит по времени для отрисовки спрайта
+            switch (animationState) {
+                case GLFW_KEY_A:
+                    //Изменяем поворот спрайта и отрисовываем следующий кадр
+                    if (currentKeyPressed == GLFW_KEY_D) {
+                        //Изменяем поворот спрайта и отрисовываем следующий кадр
+                        glUniform1i(orientationLocation, 1);
+                        currentGlTexture = GL_TEXTURE0;
+                        animationState = 0;
+                        break;
+                    } 
+                    glUniform1i(orientationLocation, -1);
+                    if (currentGlTexture - GL_TEXTURE0 >= 4)
+                        currentGlTexture = GL_TEXTURE0;
+                    else
+                        currentGlTexture ++;
+                    std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n"; 
+                break;
+                case GLFW_KEY_D:
+                    if (currentKeyPressed == GLFW_KEY_A) {
+                        //Изменяем поворот спрайта и отрисовываем следующий кадр
+                        glUniform1i(orientationLocation, -1);
+                        currentGlTexture = GL_TEXTURE0;
+                        animationState = 0;
+                        break;
+                    } 
+                    //Аналогично
+                    glUniform1i(orientationLocation, 1);
+                    if (currentGlTexture - GL_TEXTURE0 >= 4)
+                        currentGlTexture = GL_TEXTURE0;
+                    else
+                        currentGlTexture ++;
+                    std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n";
+                break;
+                default:  // Анимация не происходит
+                    animationState = currentKeyPressed;  // Запустим анимацию
+                    currentGlTexture = GL_TEXTURE0;  // С начала
+                break;
+            }
         }
-        else if (currentKeyPressed == GLFW_KEY_D) {
-            glUniform1i(orientationLocation, 1);
-            if (currentGlTexture - GL_TEXTURE0 >= 4)
-                currentGlTexture = GL_TEXTURE0;
-            else
-                currentGlTexture ++;
-            std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n"; 
+        else if (!(framesDrawn % sceneFramesPerAnim)) {
+            switch (animationState) {
+                case GLFW_KEY_A:
+                    //Изменяем поворот спрайта и отрисовываем следующий кадр
+                    glUniform1i(orientationLocation, -1);
+                    if (currentGlTexture - GL_TEXTURE0 >= 4) {
+                        currentGlTexture = GL_TEXTURE0;
+                        animationState = 0;
+                    }
+                    else
+                        currentGlTexture ++;
+                    std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n"; 
+                break;
+                case GLFW_KEY_D:
+                    glUniform1i(orientationLocation, 1);
+                    if (currentGlTexture - GL_TEXTURE0 >= 4) {
+                        currentGlTexture = GL_TEXTURE0;
+                        animationState = 0;
+                    }
+                    else
+                        currentGlTexture ++;
+                    std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n"; 
+                break;
+                default:  // Анимация не происходит
+                    currentGlTexture = GL_TEXTURE0;
+                break;
+            }
         }
 
         glBindVertexArray(VAO);
-        glActiveTexture(currentGlTexture);
-        glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture"), currentGlTexture - GL_TEXTURE0);
+        glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture"), currentGlTexture - GL_TEXTURE0);  // Спрайт рисуется
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);  // Используем IBO для отрисовки квадрата, внутри которого будет текстура
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         glfwSwapBuffers(window);  // Заменяет цветовой буфер на подготовленный и показывает его в окне (см. двойная буферизация)
-        Sleep(50);  // Чтобы не нагружать карту` 
+        Sleep(50);  // Чтобы не нагружать карту - ограничение 20 фпс
+        framesDrawn = framesDrawn % 20;
+        framesDrawn++;
+        std::cout << "framesDrawn: " << framesDrawn << "\n";
     }
 
     //Очитска выделенных ресурсов

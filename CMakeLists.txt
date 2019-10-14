@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.0)
 
 project(4a-engine)
 
-option (BUILD_EXTERNALS "Build externals libraries" OFF)
+option (BUILD_EXTERNALS "Build externals libraries" ON)
+#set (CMAKE_BUILD_TYPE "Debug")
+set (CMAKE_BUILD_TYPE "Release")
 
 include(variables.cmake)
 
@@ -12,10 +14,15 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -O2 -Wall")
 add_compile_options(-lopengl32)
 add_compile_options(-lm)
 
+add_executable(4a-engine ${MAIN_SRC})
+
 #modules
 add_subdirectory(${LIB_DIR})
-
-add_executable(4a-engine ${MAIN_SRC})
+target_link_libraries(4a-engine index-buffer)
+target_link_libraries(4a-engine vertex-buffer)
+target_link_libraries(4a-engine vertex-array)
+target_link_libraries(4a-engine vertex-layout)
+target_link_libraries(4a-engine renderer)
 
 #external libs and modules
 if (BUILD_EXTERNALS)

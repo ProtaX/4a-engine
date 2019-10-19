@@ -1,4 +1,6 @@
+#define TEST_BUILD
 #define GLEW_STATIC
+
 #include "glew.h"
 #include "glfw3.h"
 #include "SOIL.h"
@@ -73,6 +75,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
+static const char* strcatcpy(char* string, const char* catstr) {
+    unsigned int stringLen = strlen(string);
+    char* newStr = new char[stringLen + strlen(catstr)];
+    strcpy(newStr, string);
+    strcpy(&newStr[stringLen], catstr);
+    return newStr;
+}
+
 int main() {
     //Некоторые данные о размере окна и спрайта
     int windowH = 720, windowW = 1024;  // px
@@ -122,14 +132,25 @@ int main() {
         tex_h5, tex_w5, 
         tex_h6, tex_w6;
     int room1_h, room1_w;
-    unsigned char* room1 = SOIL_load_image("c:\\Users\\karpe\\4a-engine\\res\\room1.png", &room1_h, &room1_w, 0, SOIL_LOAD_RGBA);
-    unsigned char* image = SOIL_load_image("c:\\Users\\karpe\\4a-engine\\res\\left1.png" , &tex_h, &tex_w, 0, SOIL_LOAD_RGBA);
-    unsigned char* left1 = SOIL_load_image("c:\\Users\\karpe\\4a-engine\\res\\left2.png", &tex_h1, &tex_w1, 0, SOIL_LOAD_RGBA);
-    unsigned char* left2 = SOIL_load_image("c:\\Users\\karpe\\4a-engine\\res\\left3.png", &tex_h2, &tex_w2, 0, SOIL_LOAD_RGBA);
-    unsigned char* left3 = SOIL_load_image("c:\\Users\\karpe\\4a-engine\\res\\left4.png", &tex_h3, &tex_w3, 0, SOIL_LOAD_RGBA);
-    unsigned char* left4 = SOIL_load_image("c:\\Users\\karpe\\4a-engine\\res\\left5.png", &tex_h4, &tex_w4, 0, SOIL_LOAD_RGBA);
-    unsigned char* left5 = SOIL_load_image("c:\\Users\\karpe\\4a-engine\\res\\left6.png", &tex_h5, &tex_w5, 0, SOIL_LOAD_RGBA);
-    unsigned char* left6 = SOIL_load_image("c:\\Users\\karpe\\4a-engine\\res\\left7.png", &tex_h6, &tex_w6, 0, SOIL_LOAD_RGBA);
+
+    char absoluteExePath[256];
+    GetCurrentDirectoryA(256, absoluteExePath);
+    int absoluteexePathLen = strlen(absoluteExePath);
+    
+#ifdef TEST_BUILD
+    strcpy(&absoluteExePath[absoluteexePathLen - 5], "res\\");
+#else
+    strcpy(&absoluteExePath[absoluteexePathLen], "res\\");
+#endif
+    //TODO: здесь течет память (динамически аллоцируется строка в strcatcpy)
+    unsigned char* room1 = SOIL_load_image(strcatcpy(absoluteExePath, "room1.png"), &room1_h, &room1_w, 0, SOIL_LOAD_RGBA);
+    unsigned char* image = SOIL_load_image(strcatcpy(absoluteExePath, "left1.png"), &tex_h, &tex_w, 0, SOIL_LOAD_RGBA);
+    unsigned char* left1 = SOIL_load_image(strcatcpy(absoluteExePath, "left2.png"), &tex_h1, &tex_w1, 0, SOIL_LOAD_RGBA);
+    unsigned char* left2 = SOIL_load_image(strcatcpy(absoluteExePath, "left3.png"), &tex_h2, &tex_w2, 0, SOIL_LOAD_RGBA);
+    unsigned char* left3 = SOIL_load_image(strcatcpy(absoluteExePath, "left4.png"), &tex_h3, &tex_w3, 0, SOIL_LOAD_RGBA);
+    unsigned char* left4 = SOIL_load_image(strcatcpy(absoluteExePath, "left5.png"), &tex_h4, &tex_w4, 0, SOIL_LOAD_RGBA);
+    unsigned char* left5 = SOIL_load_image(strcatcpy(absoluteExePath, "left6.png"), &tex_h5, &tex_w5, 0, SOIL_LOAD_RGBA);
+    unsigned char* left6 = SOIL_load_image(strcatcpy(absoluteExePath, "left7.png"), &tex_h6, &tex_w6, 0, SOIL_LOAD_RGBA);
     if (!image || !left1 || !left2 || !left3 || !left4 || !left5 || !left6 || !room1) {
         std::cout << "ERROR::SOIL::IMAGE::LOAD_FAILED\n";
         glfwTerminate();
@@ -137,7 +158,7 @@ int main() {
     }
 
     GLuint heroAnimation[7];
-    float borderColor[] = {0.0f, 0.0f, 0.0f, 1.0f};
+    float borderColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
     //Текстура для пола комнаты
     GLuint room_tex;
     glGenTextures(1, &room_tex);
@@ -296,14 +317,16 @@ int main() {
     out vec3 ourColor; \n\
     out vec2 TexCoord; \n\
     uniform int orientation; \n\
-    uniform mat4 trans; \n\
+    uniform mat4 model; \n\
     uniform int is_transformable; \n\
+    uniform mat4 proj; \n\
+    uniform mat4 view; \n\
     void main() { \n\
         if (is_transformable == 1) { \n\
-            gl_Position = trans * vec4(position, 1.0f); \n\
+            gl_Position = proj * view * model * vec4(position, 1.0f); \n\
         } \n\
         else { \n\
-            gl_Position = vec4(position, 1.0f); \n\
+            gl_Position = proj * view * vec4(position, 1.0f); \n\
         } \n\
         TexCoord.y = 1.0f - texCoord.y; \n\
         if (orientation == 1 && is_transformable == 1) { \n\
@@ -396,7 +419,9 @@ int main() {
     int animationFrames = 7 - 1;
 
     //Добавим возможность трансформации:
-    glm::mat4 trans = glm::mat4(1.0f);  // Единичная матрица 4х4
+    glm::mat4 model = glm::mat4(1.0f);  // Единичная матрица 4х4
+    float cameraPosX = 1, cameraPosY = 0;
+    glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 100.0f);
 
     //Теперь это можно отрисовывать в игровом цикле
     //Цикл, который держит окно, пока его не закроют
@@ -406,10 +431,29 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
         //Теперь можно исользовать созданную программу
         GLint orientationLocation = glGetUniformLocation(shaderProgram, "orientation");
+        GLint projLocation = glGetUniformLocation(shaderProgram, "proj");
+        GLint transLocation = glGetUniformLocation(shaderProgram, "model");
+        GLint veiwLocation = glGetUniformLocation(shaderProgram, "view");
+
+        glm::vec3 heroGoLeft = glm::vec3((- (float)heroW / (float)windowW / animationFrames), 0.0f, 0.0f);
+        glm::vec3 heroGoRight = glm::vec3(((float)heroW / (float)windowW / animationFrames), 0.0f, 0.0f);
+
+        cameraPosX = model[3][0];
+
+
+        //TODO: Сделать камеру плавной, сейчас она привязана к изменениб коорлинат ГГ
+        //Также, сейчас камера привязана только к X-координате
+        glm::mat4 view = glm::lookAt(
+            glm::vec3(cameraPosX,cameraPosY,3), // Камера находится в мировых координатах (4,3,3)
+            glm::vec3(cameraPosX,cameraPosY,0), // И направлена в начало координат
+            glm::vec3(0,1,0)  // "Голова" находится сверху
+        );
+
+
         //Трансформация
-        
-        GLint transLocation = glGetUniformLocation(shaderProgram, "trans");
-        GLCall(glUniformMatrix4fv(transLocation, 1, GL_FALSE, glm::value_ptr(trans)));  // 1- сколько матриц отправляем, GL_FALSE - надо ли траспонировать
+        GLCall(glUniformMatrix4fv(projLocation, 1, GL_FALSE, glm::value_ptr(proj)));
+        GLCall(glUniformMatrix4fv(veiwLocation, 1, GL_FALSE, glm::value_ptr(view)));
+        GLCall(glUniformMatrix4fv(transLocation, 1, GL_FALSE, glm::value_ptr(model)));  // 1- сколько матриц отправляем, GL_FALSE - надо ли траспонировать
         glfwPollEvents();  // Проверяет события (как ввод с клавиатуры) и дергает соответсвующие callback`и
 
         //TODO: разобраться с возможной потерей 6-го кадра
@@ -435,7 +479,7 @@ int main() {
                     else
                         currentGlTexture ++;
                     std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n"; 
-                    
+                    model = glm::translate(model, heroGoLeft);
                 break;
                 case GLFW_KEY_D:
                     if (currentKeyPressed == GLFW_KEY_A) {
@@ -452,6 +496,7 @@ int main() {
                     else
                         currentGlTexture ++;
                     std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n";
+                    model = glm::translate(model, heroGoRight);
                 break;
                 default:  // Анимация не происходит
                     animationState = currentKeyPressed;  // Запустим анимацию
@@ -471,7 +516,7 @@ int main() {
                     else
                         currentGlTexture ++;
                     std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n"; 
-                    trans = glm::translate(trans, glm::vec3((- (float)heroW / (float)windowW / animationFrames), 0.0f, 0.0f));
+                    model = glm::translate(model, heroGoLeft);
                 break;
                 case GLFW_KEY_D:
                     glUniform1i(orientationLocation, 1);
@@ -482,15 +527,16 @@ int main() {
                     else
                         currentGlTexture ++;
                     std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n"; 
-                    trans = glm::translate(trans, glm::vec3(((float)heroW / (float)windowW / animationFrames), 0.0f, 0.0f));
+                    model = glm::translate(model, heroGoRight);
                 break;
                 default:  // Анимация не происходит
                     currentGlTexture = GL_TEXTURE1;
                 break;
             }
         }
-        //back
         
+
+        //back
         va_room.Bind();
         vb_room.Bind();
         glUniform1i(glGetUniformLocation(shaderProgram, "is_transformable"), 0);

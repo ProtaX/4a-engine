@@ -368,7 +368,7 @@ int main() {
     void main() { \n\
         color = texture(ourTexture, TexCoord); \n\
     }";
-    vShaderStrFragment[1] = (char*)fragmentShaderSrc.c_str();
+    vShaderStrFragment[0] = (char*)fragmentShaderSrc.c_str();
     glShaderSource(fragment_shader, 1, vShaderStrFragment, NULL);
     glCompileShader(fragment_shader);
     memset(infoLog, 0, sizeof(infoLog));

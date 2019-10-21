@@ -24,7 +24,7 @@ public:
     ~VertexLayout();
 
     template<typename T>
-    void Push(GLuint count);
+    void Push(GLint count);
 
     inline unsigned int GetStride() { return stride; };
 

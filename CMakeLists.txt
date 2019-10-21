@@ -2,10 +2,11 @@ cmake_minimum_required(VERSION 3.0)
 
 project(4a-engine)
 
-option (BUILD_EXTERNALS "Build externals libraries" ON)
+set (BUILD_GLEW OFF)
 #set (CMAKE_BUILD_TYPE "Debug")
 set (CMAKE_BUILD_TYPE "Release")
-
+#set (CMAKE_AUTOGEN_VERBOSE ON)
+#set (CMAKE_VERBOSE_MAKEFILE ON)
 include(variables.cmake)
 
 include_directories(${INCLUDE_DIR})
@@ -23,11 +24,10 @@ target_link_libraries(4a-engine vertex-buffer)
 target_link_libraries(4a-engine vertex-array)
 target_link_libraries(4a-engine vertex-layout)
 target_link_libraries(4a-engine renderer)
+target_link_libraries(4a-engine camera)
 
 #external libs and modules
-if (BUILD_EXTERNALS)
-    add_subdirectory(${EXTERNALS_DIR})
-endif()
+add_subdirectory(${EXTERNALS_DIR})
 
 target_link_libraries(4a-engine ${GLEW_STATIC_LIB})
 target_link_libraries(4a-engine ${GLFW_STATIC_LIB})

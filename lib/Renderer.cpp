@@ -1,6 +1,6 @@
 #include "Renderer.hpp"
 
-static void GLClearErrors() {
+void GLClearErrors() {
     while (glGetError() != GL_NO_ERROR);
 }
 

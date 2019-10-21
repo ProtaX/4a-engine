@@ -18,6 +18,7 @@
 #include "VertexBuffer.hpp"
 #include "VertexArray.hpp"
 #include "Renderer.hpp"
+#include "Camera.hpp"
 
 class keyHandler {
 private:
@@ -50,7 +51,7 @@ public:
     }
 
     ~keyHandler() {
-        WaitForSingleObject(mtx, INFINITE);
+        //WaitForSingleObject(mtx, INFINITE);
         ReleaseMutex(mtx);
     }
 };
@@ -84,22 +85,22 @@ static const char* strcatcpy(char* string, const char* catstr) {
 }
 
 int main() {
+    
     //Некоторые данные о размере окна и спрайта
-    int windowH = 720, windowW = 1024;  // px
-    int heroH = 125, heroW = 75;  // px
-    int heroCenterH = 0, heroCenterW = 0;
+    float windowH = 720.0f, windowW = 1024.0f;  // px
+    float heroH = 125, heroW = 75;  // px
 
-    int roomH = 1238, roomW = 2000, roomCenterH = 0, roomCenterW = 0;
+    float roomH = 1238, roomW = 2000;
 
     //Инициализация GLFW (для создания окна)
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);  // Задание версии OpenGL
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // Установка профиля, для которого создается контекст 
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);  // Запрет на изменение размера окна
+    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);  // Запрет на изменение размера окна
 
     //Создание окна
-    GLFWwindow* window = glfwCreateWindow(windowW, windowH, "Hello World!", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(windowW, windowH, "4a game", nullptr, nullptr);
     if (window == nullptr)  // Ошибка
     {
 	    std::cout << "Failed to create GLFW window" << std::endl;
@@ -140,8 +141,9 @@ int main() {
 #ifdef TEST_BUILD
     strcpy(&absoluteExePath[absoluteexePathLen - 5], "res\\");
 #else
-    strcpy(&absoluteExePath[absoluteexePathLen], "res\\");
+    strcpy(&absoluteExePath[absoluteexePathLen], "\\res\\");
 #endif
+    std::cout << "Loading resources from " << absoluteExePath << std::endl;
     //TODO: здесь течет память (динамически аллоцируется строка в strcatcpy)
     unsigned char* room1 = SOIL_load_image(strcatcpy(absoluteExePath, "room1.png"), &room1_h, &room1_w, 0, SOIL_LOAD_RGBA);
     unsigned char* image = SOIL_load_image(strcatcpy(absoluteExePath, "left1.png"), &tex_h, &tex_w, 0, SOIL_LOAD_RGBA);
@@ -260,18 +262,18 @@ int main() {
     //UPD: в текущей версии поля r, g, b не используются
     GLfloat vertices[] = {
         // x,   y,      z,     r,     g,      b,     texture coords
-        ((float)(heroCenterW + (heroW))/windowW),   ((float)(heroCenterH + (heroH ))/windowH),  0.0f,  1.0f,  0.0f,   0.0f,  1.0f, 1.0f,
-        ((float)(heroCenterW + (heroW ))/windowW),  ((float)(heroCenterH - (heroH ))/windowH),  0.0f,  0.0f,  1.0f,   0.0f,  1.0f, 0.0f,
-        ((float)(heroCenterW - (heroW ))/windowW),  ((float)(heroCenterH - (heroH ))/windowH),  0.0f,  0.0f,  0.0f,   1.0f,  0.0f, 0.0f,
-        ((float)(heroCenterW - (heroW ))/windowW),  ((float)(heroCenterH + (heroH ))/windowH),  0.0f,  1.0f,  0.0f,   0.0f,  0.0f, 1.0f
+        heroW,  heroH,    0.0f,  1.0f,  0.0f,   0.0f,  1.0f, 1.0f,
+        heroW,  0,        0.0f,  0.0f,  1.0f,   0.0f,  1.0f, 0.0f,
+        0,      0,        0.0f,  0.0f,  0.0f,   1.0f,  0.0f, 0.0f,
+        0,      heroH,    0.0f,  1.0f,  0.0f,   0.0f,  0.0f, 1.0f
     };
     //То же самое, но для фона
     GLfloat verticesRoom[] = {
         // x,   y,      z,     r,     g,      b,     texture coords                                    r      g       b      x     y
-        ((float)(roomCenterW + (roomW))/windowW),   ((float)(roomCenterH + (roomH ))/windowH),  0.0f,  1.0f,  0.0f,   0.0f,  1.0f, 1.0f,
-        ((float)(roomCenterW + (roomW ))/windowW),  ((float)(roomCenterH - (roomH ))/windowH),  0.0f,  0.0f,  1.0f,   0.0f,  1.0f, 0.0f,
-        ((float)(roomCenterW - (roomW ))/windowW),  ((float)(roomCenterH - (roomH ))/windowH),  0.0f,  0.0f,  0.0f,   1.0f,  0.0f, 0.0f,
-        ((float)(roomCenterW - (roomW ))/windowW),  ((float)(roomCenterH + (roomH ))/windowH),  0.0f,  1.0f,  0.0f,   0.0f,  0.0f, 1.0f
+        roomW,  roomH,    0.0f,  1.0f,  0.0f,   0.0f,  1.0f, 1.0f,
+        roomW,  0,        0.0f,  0.0f,  1.0f,   0.0f,  1.0f, 0.0f,
+        0,      0,        0.0f,  0.0f,  0.0f,   1.0f,  0.0f, 0.0f,
+        0,       roomH,   0.0f,  1.0f,  0.0f,   0.0f,  0.0f, 1.0f
     };
     //Порядок, в котором надо нарисовать из них треугольники
     GLuint indices[] = {
@@ -335,7 +337,6 @@ int main() {
         else { \n\
             TexCoord.x = texCoord.x; \n\
         } \n\
-        //gl_Position = vec4(position, 1.0f); \n\
         ourColor = color; \n\
     }";
     vShaderStr[0] = (char*)vertexShaderSrc.c_str();
@@ -368,7 +369,7 @@ int main() {
     void main() { \n\
         color = texture(ourTexture, TexCoord); \n\
     }";
-    vShaderStrFragment[1] = (char*)fragmentShaderSrc.c_str();
+    vShaderStrFragment[0] = (char*)fragmentShaderSrc.c_str();
     glShaderSource(fragment_shader, 1, vShaderStrFragment, NULL);
     glCompileShader(fragment_shader);
     memset(infoLog, 0, sizeof(infoLog));
@@ -419,9 +420,15 @@ int main() {
     int animationFrames = 7 - 1;
 
     //Добавим возможность трансформации:
-    glm::mat4 model = glm::mat4(1.0f);  // Единичная матрица 4х4
-    float cameraPosX = 1, cameraPosY = 0;
-    glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 100.0f);
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(windowW, windowH, 0.0f));
+    Camera orthCam(windowW, windowH);
+    glm::mat4 proj = orthCam.GetProj();
+    glm::mat4 view;
+    glm::vec3 heroGoLeft = glm::vec3(0.0f);
+    glm::vec3 heroGoRight = glm::vec3(0.0f);
+
+    //Размещение всех unform
+    GLint orientationLocation, modelLocation, projLocation, veiwLocation;
 
     //Теперь это можно отрисовывать в игровом цикле
     //Цикл, который держит окно, пока его не закроют
@@ -429,37 +436,26 @@ int main() {
     {
         glUseProgram(shaderProgram);
         glClear(GL_COLOR_BUFFER_BIT);
+        view = orthCam.GetVeiw();
+
         //Теперь можно исользовать созданную программу
-        GLint orientationLocation = glGetUniformLocation(shaderProgram, "orientation");
-        GLint projLocation = glGetUniformLocation(shaderProgram, "proj");
-        GLint transLocation = glGetUniformLocation(shaderProgram, "model");
-        GLint veiwLocation = glGetUniformLocation(shaderProgram, "view");
+        orientationLocation = glGetUniformLocation(shaderProgram, "orientation");
+        projLocation = glGetUniformLocation(shaderProgram, "proj");
+        modelLocation = glGetUniformLocation(shaderProgram, "model");
+        veiwLocation = glGetUniformLocation(shaderProgram, "view");
 
-        glm::vec3 heroGoLeft = glm::vec3((- (float)heroW / (float)windowW / animationFrames), 0.0f, 0.0f);
-        glm::vec3 heroGoRight = glm::vec3(((float)heroW / (float)windowW / animationFrames), 0.0f, 0.0f);
-
-        cameraPosX = model[3][0];
-
-
-        //TODO: Сделать камеру плавной, сейчас она привязана к изменениб коорлинат ГГ
-        //Также, сейчас камера привязана только к X-координате
-        glm::mat4 view = glm::lookAt(
-            glm::vec3(cameraPosX,cameraPosY,3), // Камера находится в мировых координатах (4,3,3)
-            glm::vec3(cameraPosX,cameraPosY,0), // И направлена в начало координат
-            glm::vec3(0,1,0)  // "Голова" находится сверху
-        );
-
+        heroGoLeft[0] = - heroW /  animationFrames;
+        heroGoRight[0] = heroW  / animationFrames;
 
         //Трансформация
         GLCall(glUniformMatrix4fv(projLocation, 1, GL_FALSE, glm::value_ptr(proj)));
         GLCall(glUniformMatrix4fv(veiwLocation, 1, GL_FALSE, glm::value_ptr(view)));
-        GLCall(glUniformMatrix4fv(transLocation, 1, GL_FALSE, glm::value_ptr(model)));  // 1- сколько матриц отправляем, GL_FALSE - надо ли траспонировать
+        GLCall(glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model)));  // 1- сколько матриц отправляем, GL_FALSE - надо ли траспонировать
         glfwPollEvents();  // Проверяет события (как ввод с клавиатуры) и дергает соответсвующие callback`и
 
-        //TODO: разобраться с возможной потерей 6-го кадра
         int currentKeyPressed = wasdHandler.getData();
-        std::cout << "Current key pressed: " << currentKeyPressed << "\n";
-        std::cout << "(framesDrawn % sceneFramesPerAnim) " << (framesDrawn % sceneFramesPerAnim) << "\n";
+        //std::cout << "Current key pressed: " << currentKeyPressed << "\n";
+        //std::cout << "(framesDrawn % sceneFramesPerAnim) " << (framesDrawn % sceneFramesPerAnim) << "\n";
         
         //Этот большой блок if-else можно запихнуть в функцию и передавать туда адрес currentGlTexture
         if (!(framesDrawn % sceneFramesPerAnim) && currentKeyPressed) {  // Если нажата кнопка и текущий кадр подходит по времени для отрисовки спрайта
@@ -478,8 +474,8 @@ int main() {
                         currentGlTexture = GL_TEXTURE1;
                     else
                         currentGlTexture ++;
-                    std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n"; 
                     model = glm::translate(model, heroGoLeft);
+                    orthCam.MoveCamera(heroGoRight);
                 break;
                 case GLFW_KEY_D:
                     if (currentKeyPressed == GLFW_KEY_A) {
@@ -495,8 +491,8 @@ int main() {
                         currentGlTexture = GL_TEXTURE1;
                     else
                         currentGlTexture ++;
-                    std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n";
                     model = glm::translate(model, heroGoRight);
+                    orthCam.MoveCamera(heroGoLeft);
                 break;
                 default:  // Анимация не происходит
                     animationState = currentKeyPressed;  // Запустим анимацию
@@ -515,8 +511,8 @@ int main() {
                     }
                     else
                         currentGlTexture ++;
-                    std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n"; 
                     model = glm::translate(model, heroGoLeft);
+                    orthCam.MoveCamera(heroGoRight);
                 break;
                 case GLFW_KEY_D:
                     glUniform1i(orientationLocation, 1);
@@ -526,8 +522,8 @@ int main() {
                     }
                     else
                         currentGlTexture ++;
-                    std::cout << "currentGlTexture: " << currentGlTexture - GL_TEXTURE0 << "\n"; 
                     model = glm::translate(model, heroGoRight);
+                    orthCam.MoveCamera(heroGoLeft);
                 break;
                 default:  // Анимация не происходит
                     currentGlTexture = GL_TEXTURE1;
@@ -559,7 +555,7 @@ int main() {
         Sleep(50);  // Чтобы не нагружать карту - ограничение 20 фпс
         framesDrawn = framesDrawn % 20;
         framesDrawn++;
-        std::cout << "framesDrawn: " << framesDrawn << "\n";
+        //std::cout << "framesDrawn: " << framesDrawn << "\n";
     }
     std::cout << "Loop done\n";
     //Очитска выделенных ресурсов

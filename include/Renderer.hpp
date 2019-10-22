@@ -2,7 +2,6 @@
 
 #include "glew.h"
 #include <iostream>
-#include "Settings.hpp"
 
 #define GLCall(x) \
         GLClearErrors(); \

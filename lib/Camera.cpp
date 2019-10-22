@@ -1,5 +1,7 @@
 #include "Camera.hpp"
 
+namespace fae {
+
 Camera::Camera(float windowH, float windowW) {
         view = glm::lookAt(
             glm::vec3(windowW / 2, windowH / 2, 1.0f),
@@ -20,4 +22,6 @@ void Camera::MoveCamera(float offX, float offY, float offZ) {
 void Camera::MoveCamera(glm::vec3& transVec) {
     translateVec = transVec;
     view = glm::translate(view, translateVec);
+}
+
 }

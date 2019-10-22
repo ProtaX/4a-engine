@@ -3,6 +3,8 @@
 #include "glew.h"
 #include "Renderer.hpp"
 
+namespace fae {
+
 class VertexBuffer {
     GLuint id;
 
@@ -15,3 +17,5 @@ public:
 
     void Unbind();
 };
+
+}

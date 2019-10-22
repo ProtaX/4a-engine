@@ -1,5 +1,7 @@
 #include "VertexBuffer.hpp"
 
+namespace fae {
+
 VertexBuffer::VertexBuffer(const void* data, unsigned int size) {
     glGenBuffers(1, &id);
     glBindBuffer(GL_ARRAY_BUFFER, id);
@@ -16,4 +18,6 @@ void VertexBuffer::Bind() {
 
 void VertexBuffer::Unbind() {
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+}
+
 }

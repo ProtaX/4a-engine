@@ -3,6 +3,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+namespace fae {
+
 class Camera {
 private:
     int h, w;
@@ -33,3 +35,5 @@ public:
         return proj * view;
     }
 };
+
+}

@@ -1,5 +1,7 @@
 #include "VertexLayout.hpp"
 
+namespace fae {
+
 VertexLayout::~VertexLayout() {
 
 }
@@ -20,4 +22,6 @@ template<>
 void VertexLayout::Push<GLubyte>(GLint count) {
     attributes.push_back({GL_UNSIGNED_BYTE, count, GL_TRUE});
     stride += sizeof(GLubyte) * count;
+}
+
 }

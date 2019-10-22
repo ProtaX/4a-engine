@@ -1,5 +1,7 @@
 #include "VertexArray.hpp"
 
+namespace fae {
+
 VertexArray::VertexArray() {
     glGenVertexArrays(1, &id);
     glBindVertexArray(id);
@@ -29,3 +31,4 @@ VertexArray::~VertexArray() {
 
 }
 
+}

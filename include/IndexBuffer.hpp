@@ -3,6 +3,8 @@
 #include "glew.h"
 #include "Renderer.hpp"
 
+namespace fae {
+
 class IndexBuffer {
     GLuint id;
 
@@ -16,3 +18,5 @@ public:
     void Unbind();
 
 };
+
+}

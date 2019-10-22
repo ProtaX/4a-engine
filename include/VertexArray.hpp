@@ -6,6 +6,8 @@
 #include "Renderer.hpp"
 #include <vector>
 
+namespace fae {
+
 class VertexArray {
 private:
     GLuint id;
@@ -21,3 +23,5 @@ public:
 
     void Unbind() const;
 };
+
+}

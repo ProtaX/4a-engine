@@ -1,5 +1,7 @@
 #include "IndexBuffer.hpp"
 
+namespace fae {
+
 IndexBuffer::IndexBuffer(const void* data, unsigned int size) {
     glGenBuffers(1, &id);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
@@ -16,4 +18,6 @@ void IndexBuffer::Unbind() {
 
 IndexBuffer::~IndexBuffer() {
      glDeleteBuffers(1, &id);
+}
+
 }

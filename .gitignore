@@ -1,2 +1,4 @@
 build/*
 .*
+externals/glew-2.0.0/auto
+externals/glew-2.0.0/lib

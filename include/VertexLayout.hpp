@@ -4,6 +4,8 @@
 #include <vector>
 #include "Renderer.hpp"
 
+namespace fae {
+
 struct VertexBufferAttributes {
     //Тип аттрибута
     GLuint attribType;
@@ -40,3 +42,5 @@ public:
         return 0;
     }
 };
+
+}

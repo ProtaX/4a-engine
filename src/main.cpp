@@ -51,28 +51,28 @@ public:
     }
 
     ~keyHandler() {
-        //WaitForSingleObject(mtx, INFINITE);
-        ReleaseMutex(mtx);
+        WaitForSingleObject(mtx, INFINITE);
+        CloseHandle(mtx);
     }
 };
 
-keyHandler wasdHandler(0);
+keyHandler* wasdHandler = new keyHandler(0);
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
     if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-        wasdHandler.setData(GLFW_KEY_A);
+        wasdHandler->setData(GLFW_KEY_A);
     }
     if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-        wasdHandler.setData(GLFW_KEY_W);
+        wasdHandler->setData(GLFW_KEY_W);
     }
     if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-        wasdHandler.setData(GLFW_KEY_S);
+        wasdHandler->setData(GLFW_KEY_S);
     }
     if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-        wasdHandler.setData(GLFW_KEY_D);
+        wasdHandler->setData(GLFW_KEY_D);
     }
     if (action == GLFW_RELEASE) {
-        wasdHandler.setData(0);
+        wasdHandler->setData(0);
     }
 }
 
@@ -89,40 +89,10 @@ int main() {
     //Некоторые данные о размере окна и спрайта
     float windowH = 720.0f, windowW = 1024.0f;  // px
     float heroH = 125, heroW = 75;  // px
-
     float roomH = 1238, roomW = 2000;
 
-    //Инициализация GLFW (для создания окна)
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);  // Задание версии OpenGL
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // Установка профиля, для которого создается контекст 
-    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);  // Запрет на изменение размера окна
-
-    //Создание окна
-    GLFWwindow* window = glfwCreateWindow(windowW, windowH, "4a game", nullptr, nullptr);
-    if (window == nullptr)  // Ошибка
-    {
-	    std::cout << "Failed to create GLFW window" << std::endl;
-	    glfwTerminate();
-	    return -1;
-    }
-    glfwMakeContextCurrent(window);  // Задает контекст окна текущим контекстом для этого потока
-
-    //Инициализация функций OpenGL с помощью GLEW
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK)
-    {
-        std::cout << "Failed to initialize GLEW" << std::endl;
-        return -1;
-    }
-
-    //Теперь можно использовать функции OpenGL
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);  // Функция из glfw для получения width и height окна window
-    glViewport(0, 0, width, height);  // 0,0 - позиция нижнего левого угла окна. Эта величина от 0 до 1 (здесь это будет (0, 720) или (0, 1024))
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
+    fae::Renderer renderer(windowH, windowW, "4a-engine");
+    GLFWwindow* window = renderer.InitWindow();
 
     //Загрузим все спрайты анимации
     int tex_h, tex_w, 
@@ -261,7 +231,7 @@ int main() {
     //Набор вершин и цветов для двух тругольников
     //UPD: в текущей версии поля r, g, b не используются
     GLfloat vertices[] = {
-        // x,   y,      z,     r,     g,      b,     texture coords
+        // x,   y,       z,      r,     g,      b,     texture coords
         heroW,  heroH,    0.0f,  1.0f,  0.0f,   0.0f,  1.0f, 1.0f,
         heroW,  0,        0.0f,  0.0f,  1.0f,   0.0f,  1.0f, 0.0f,
         0,      0,        0.0f,  0.0f,  0.0f,   1.0f,  0.0f, 0.0f,
@@ -269,7 +239,6 @@ int main() {
     };
     //То же самое, но для фона
     GLfloat verticesRoom[] = {
-        // x,   y,      z,     r,     g,      b,     texture coords                                    r      g       b      x     y
         roomW,  roomH,    0.0f,  1.0f,  0.0f,   0.0f,  1.0f, 1.0f,
         roomW,  0,        0.0f,  0.0f,  1.0f,   0.0f,  1.0f, 0.0f,
         0,      0,        0.0f,  0.0f,  0.0f,   1.0f,  0.0f, 0.0f,
@@ -281,17 +250,18 @@ int main() {
         1, 2, 3
     };
 
-    VertexBuffer vb(vertices, sizeof(vertices));
-    VertexBuffer vb_room(verticesRoom, sizeof(verticesRoom));
-    VertexArray va, va_room;
-    IndexBuffer ib(indices, sizeof(indices));
+    fae::VertexBuffer vb(vertices, sizeof(vertices));
+    fae::VertexBuffer vb_room(verticesRoom, sizeof(verticesRoom));
+    fae::VertexArray va, va_room;
+    fae::IndexBuffer ib(indices, sizeof(indices));
+    fae::Camera orthCam(windowW, windowH);
 
-    VertexLayout vl(0);
+    fae::VertexLayout vl(0);
     vl.Push<float>(3);
     vl.Push<float>(3);
     vl.Push<float>(2);
 
-    VertexLayout vl_room(0);
+    fae::VertexLayout vl_room(0);
     vl_room.Push<float>(3);
     vl_room.Push<float>(3);
     vl_room.Push<float>(2);    
@@ -405,8 +375,8 @@ int main() {
     free(vShaderStrFragment[0]);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    //Задаем колбэк - функция при нажатии клавишы
     glfwSetKeyCallback(window, key_callback);
+
     //Начальный спрайт анимации
     int currentGlTexture = GL_TEXTURE1;
     //Зададим количество кадров анимации в секунду
@@ -416,22 +386,27 @@ int main() {
     //Сколько кадров уже было отрисовано
     int framesDrawn = 1;
     //Для кажой отдельной анимации считается: сколько экранных кадров будут рисовать один кадр анимации
-    int sceneFramesPerAnim = floor(20 / (float)animationFps);
+    int sceneFramesPerAnim = floor(144 / (float)animationFps);
     int animationFrames = 7 - 1;
 
     //Добавим возможность трансформации:
     glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(windowW, windowH, 0.0f));
-    Camera orthCam(windowW, windowH);
     glm::mat4 proj = orthCam.GetProj();
     glm::mat4 view;
     glm::vec3 heroGoLeft = glm::vec3(0.0f);
     glm::vec3 heroGoRight = glm::vec3(0.0f);
+    glm::vec3 cameraMoveUp = glm::vec3(0.0f,   -heroW /  animationFrames, 0.0f);
+    glm::vec3 cameraMoveDown = glm::vec3(0.0f, heroW /  animationFrames, 0.0f);
 
     //Размещение всех unform
     GLint orientationLocation, modelLocation, projLocation, veiwLocation;
 
     //Теперь это можно отрисовывать в игровом цикле
     //Цикл, который держит окно, пока его не закроют
+
+    glfwSwapInterval(1);  // Сколько кадров рисует перед свапом буфферов
+    // Если 1 - 1 кадр на свап, значит будет VSync
+    // Если 2 - 2 кадра на свап, будет Vsync / 2
     while(!glfwWindowShouldClose(window))
     {
         glUseProgram(shaderProgram);
@@ -453,7 +428,7 @@ int main() {
         GLCall(glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model)));  // 1- сколько матриц отправляем, GL_FALSE - надо ли траспонировать
         glfwPollEvents();  // Проверяет события (как ввод с клавиатуры) и дергает соответсвующие callback`и
 
-        int currentKeyPressed = wasdHandler.getData();
+        int currentKeyPressed = wasdHandler->getData();
         //std::cout << "Current key pressed: " << currentKeyPressed << "\n";
         //std::cout << "(framesDrawn % sceneFramesPerAnim) " << (framesDrawn % sceneFramesPerAnim) << "\n";
         
@@ -497,7 +472,16 @@ int main() {
                 default:  // Анимация не происходит
                     animationState = currentKeyPressed;  // Запустим анимацию
                     currentGlTexture = GL_TEXTURE1;  // С начала
+                    //orthCam.MoveCamera(cameraStop);
                 break;
+            }
+            if (currentKeyPressed == GLFW_KEY_W) {
+                animationState = 0;
+                orthCam.MoveCamera(cameraMoveUp);
+            }
+            if (currentKeyPressed == GLFW_KEY_S) {
+                animationState = 0;
+                orthCam.MoveCamera(cameraMoveDown);
             }
         }
         else if (!(framesDrawn % sceneFramesPerAnim)) {
@@ -552,15 +536,13 @@ int main() {
         va.Unbind();
 
         glfwSwapBuffers(window);  // Заменяет цветовой буфер на подготовленный и показывает его в окне (см. двойная буферизация)
-        Sleep(50);  // Чтобы не нагружать карту - ограничение 20 фпс
-        framesDrawn = framesDrawn % 20;
+        framesDrawn = framesDrawn % 144;
         framesDrawn++;
         //std::cout << "framesDrawn: " << framesDrawn << "\n";
     }
     std::cout << "Loop done\n";
     //Очитска выделенных ресурсов
-    delete &wasdHandler;
-    glfwTerminate();
+    delete wasdHandler;
     std::cout << "glfwTerminate done\n";
     return 0;
 }

@@ -5,8 +5,6 @@ project(4a-engine)
 set (BUILD_GLEW OFF)
 #set (CMAKE_BUILD_TYPE "Debug")
 set (CMAKE_BUILD_TYPE "Release")
-#set (CMAKE_AUTOGEN_VERBOSE ON)
-#set (CMAKE_VERBOSE_MAKEFILE ON)
 include(variables.cmake)
 
 include_directories(${INCLUDE_DIR})
@@ -26,12 +24,14 @@ target_link_libraries(4a-engine vertex-layout)
 target_link_libraries(4a-engine renderer)
 target_link_libraries(4a-engine camera)
 
-#external libs and modules
+#externals
 add_subdirectory(${EXTERNALS_DIR})
-
-target_link_libraries(4a-engine ${GLEW_STATIC_LIB})
-target_link_libraries(4a-engine ${GLFW_STATIC_LIB})
 target_link_libraries(4a-engine ${SOIL_STATIC_LIB})
-target_link_libraries(4a-engine ${GLM_STATIC_LIB})
+target_link_libraries(4a-engine ${GLEW_STATIC_LIB})
+target_link_libraries(4a-engine glfw)
+target_link_libraries(4a-engine glm_static)
 target_link_libraries(4a-engine opengl32)
 target_link_libraries(4a-engine m)
+
+#tests
+#add_subdirectory(${TESTS_DIR})

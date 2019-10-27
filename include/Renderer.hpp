@@ -1,7 +1,7 @@
 #pragma once
 
-#include "glew.h"
-#include "glfw3.h"
+#include "glew/glew.h"
+#include "glew/glfw3.h"
 #include <iostream>
 
 //Фуцнкия, обернутая в этот макро, не может вернуть занчение
@@ -17,7 +17,7 @@
             const char** errMsgLoc = &errMsg; \
             int code = glfwGetError(errMsgLoc); \
             if (code != GLFW_NO_ERROR) { \
-                std::cout << "Failed to create GLFW window: " << errMsg << std::endl; \
+                std::cout << "GLFW error: " << errMsg << std::endl; \
                 glfwTerminate(); \
             } \
         } while (0) \

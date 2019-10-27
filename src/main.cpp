@@ -1,8 +1,8 @@
 #define TEST_BUILD
 #define GLEW_STATIC
 
-#include "glew.h"
-#include "glfw3.h"
+#include "glew/glew.h"
+#include "glew/glfw3.h"
 #include "SOIL.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"

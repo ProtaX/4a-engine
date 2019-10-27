@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glew.h"
+#include "glew/glew.h"
 #include "VertexLayout.hpp"
 #include "VertexBuffer.hpp"
 #include "Renderer.hpp"

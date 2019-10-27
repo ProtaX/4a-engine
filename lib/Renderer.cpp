@@ -58,7 +58,9 @@ namespace fae
 
     void Renderer::Start() {
         while(!glfwWindowShouldClose(window)) {
+            //TODO: добавить код подсчета времени сюда
             OnFrame();
+            //Ограничение по фпс будет в этом цикле
         }
     }
 

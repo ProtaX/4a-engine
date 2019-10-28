@@ -27,7 +27,6 @@ target_link_libraries(4a-engine camera)
 #externals
 add_subdirectory(${EXTERNALS_DIR})
 target_link_libraries(4a-engine ${SOIL_STATIC_LIB})
-#target_link_libraries(4a-engine glew_s)
 target_link_libraries(4a-engine glew)
 target_link_libraries(4a-engine glfw)
 target_link_libraries(4a-engine glm_static)
@@ -35,4 +34,4 @@ target_link_libraries(4a-engine opengl32)
 target_link_libraries(4a-engine m)
 
 #tests
-#add_subdirectory(${TESTS_DIR})
+add_subdirectory(${TESTS_DIR})

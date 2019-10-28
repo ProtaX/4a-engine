@@ -14,7 +14,4 @@ set (SRC_DIR ${PROJECT_DIR}/src)
 
 set (MAIN_SRC ${SRC_DIR}/main.cpp)
 
-set (GLEW_STATIC_LIB ${EXTERNALS_DIR}/glew-2.0.0/lib/libglew32.dll.a)
 set (SOIL_STATIC_LIB ${EXTERNALS_DIR}/soil/libSOIL.a)
-set (GLM_STATIC_LIB ${PROJECT_DIR}/build/externals/glm/glm/libglm_static.a)
-

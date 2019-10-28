@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glew/glfw3.h"
+#include "glfw/glfw3.h"
 
 namespace fae {
 

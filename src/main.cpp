@@ -1,8 +1,7 @@
 #define TEST_BUILD
-#define GLEW_STATIC
 
 #include "glew/glew.h"
-#include "glew/glfw3.h"
+#include "glfw/glfw3.h"
 #include "SOIL.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -351,7 +350,6 @@ int main() {
         glfwTerminate();
         return -1;
     } //Если все ок, то вершинный шейдер будет собран
-
 
     //Теперь нужно собрать шейдерную программу - результат комбинации нескольких шейдеров
     GLuint shaderProgram;

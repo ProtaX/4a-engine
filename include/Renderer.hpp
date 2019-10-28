@@ -1,7 +1,7 @@
 #pragma once
 
 #include "glew/glew.h"
-#include "glew/glfw3.h"
+#include "glfw/glfw3.h"
 #include <iostream>
 
 //Фуцнкия, обернутая в этот макро, не может вернуть занчение

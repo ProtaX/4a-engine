@@ -1,6 +1,5 @@
 #pragma once
 
-#include "glew/glew.h"
 #include "Renderer.hpp"
 
 namespace fae {

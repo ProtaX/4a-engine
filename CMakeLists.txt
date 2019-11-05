@@ -2,12 +2,16 @@ cmake_minimum_required(VERSION 3.0)
 
 project(4a-engine)
 
-set (BUILD_GLEW OFF)
 #set (CMAKE_BUILD_TYPE "Debug")
 set (CMAKE_BUILD_TYPE "Release")
 include(variables.cmake)
 
 include_directories(${INCLUDE_DIR})
+include_directories(${GLM_INCLUDE_DIR})
+include_directories(${GLEW_INCLUDE_DIR})
+include_directories(${GLFW_INCLUDE_DIR})
+include_directories(${SOIL_INCLUDE_DIR})
+include_directories(${CATCH2_SINGLE_INCLUDE_DIR})
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -O2 -Wall")
 add_compile_options(-lopengl32)

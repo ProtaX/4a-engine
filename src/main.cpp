@@ -1,7 +1,5 @@
 #define TEST_BUILD
 
-#include "glew/glew.h"
-#include "glfw/glfw3.h"
 #include "SOIL.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -10,7 +8,6 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
-#include <windows.h>
 #include <math.h>
 
 #include "IndexBuffer.hpp"
@@ -402,9 +399,6 @@ int main() {
     //Теперь это можно отрисовывать в игровом цикле
     //Цикл, который держит окно, пока его не закроют
 
-    glfwSwapInterval(1);  // Сколько кадров рисует перед свапом буфферов
-    // Если 1 - 1 кадр на свап, значит будет VSync
-    // Если 2 - 2 кадра на свап, будет Vsync / 2
     while(!glfwWindowShouldClose(window))
     {
         glUseProgram(shaderProgram);

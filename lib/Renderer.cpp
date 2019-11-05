@@ -13,8 +13,8 @@ void GLGetErrors(int line) {
 namespace fae
 {
     Renderer::Renderer(int windowH, int windowW, std::string name) { 
-        this->windowW = (float)windowW;
-        this->windowH = (float)windowH;
+        this->window_w = (float)windowW;
+        this->window_h = (float)windowH;
         glwf_context_version_major = 3;
         glwf_context_version_minor = 3;
         glfw_opengl_profile = GLFW_OPENGL_CORE_PROFILE;
@@ -23,8 +23,9 @@ namespace fae
         glew_experimantal = GL_TRUE;
         glBlend_sfactor = GL_SRC_ALPHA;
         glBlend_dfactor = GL_ONE_MINUS_SRC_ALPHA;
-        windowName = name;
+        window_name = name;
         fps = 60;
+        frame_time = 1./(double)fps;
     }
 
     GLFWwindow* Renderer::InitWindow() {
@@ -34,7 +35,7 @@ namespace fae
         glfwWindowHint(GLFW_OPENGL_PROFILE, glfw_opengl_profile);
         glfwWindowHint(GLFW_RESIZABLE, glfw_resizable);
 
-        window = GLFWCall(glfwCreateWindow(windowW, windowH, windowName.c_str(), nullptr, nullptr));
+        window = GLFWCall(glfwCreateWindow(window_w, window_h, window_name.c_str(), nullptr, nullptr));
         if (window == nullptr) 
 	        return nullptr;
         
@@ -52,15 +53,21 @@ namespace fae
         glViewport(0, 0, FBwidth, FBheight);
         glBlendFunc(glBlend_sfactor, glBlend_dfactor);
         glEnable(GL_BLEND);
+        glfwSwapInterval(1);
 
         return window;
     }
 
     void Renderer::Start() {
+        double start, wait_time, post_frame;
         while(!glfwWindowShouldClose(window)) {
-            //TODO: добавить код подсчета времени сюда
+            start = glfwGetTime();
             OnFrame();
-            //Ограничение по фпс будет в этом цикле
+            post_frame = glfwGetTime();
+            wait_time = frame_time - (post_frame - start);
+            if (wait_time <= 0)
+                continue;
+            Sleep(wait_time * 1000);
         }
     }
 

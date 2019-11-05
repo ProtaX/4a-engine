@@ -8,4 +8,4 @@ add_subdirectory(${EXTERNALS_DIR}/soil)
 
 add_subdirectory(${EXTERNALS_DIR}/glm)
 
-#add_subdirectory(${EXTERNALS_DIR}/googletest)
+add_subdirectory(${EXTERNALS_DIR}/Catch2)

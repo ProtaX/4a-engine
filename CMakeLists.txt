@@ -25,6 +25,7 @@ target_link_libraries(4a-engine vertex-array)
 target_link_libraries(4a-engine vertex-layout)
 target_link_libraries(4a-engine renderer)
 target_link_libraries(4a-engine camera)
+target_link_libraries(4a-engine control)
 
 #external libs and modules
 add_subdirectory(${EXTERNALS_DIR})

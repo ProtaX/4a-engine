@@ -19,60 +19,16 @@
 #include "VertexArray.hpp"
 #include "Renderer.hpp"
 #include "Camera.hpp"
+#include "Control.hpp"
 
-class keyHandler {
-private:
-    int data;
-    HANDLE mtx;
-public:
-    keyHandler(int data) {
-        mtx = CreateMutex(NULL, FALSE, NULL);
-        if (!mtx) {
-            std::cout << "Error creating mutex\n";
-        }
-        this->data = data;
-    }
-    void setData(int newData) {
-        DWORD res = WaitForSingleObject(mtx, INFINITE);
-        if (res == WAIT_OBJECT_0) {
-            this->data = newData;
-        }
-        ReleaseMutex(mtx);
-    }
-    int getData() {
-        int ret = -1;
-        DWORD res = WaitForSingleObject(mtx, INFINITE);
-        if (res == WAIT_OBJECT_0) {
-            ret = this->data;
-        }
-        ReleaseMutex(mtx);
 
-        return ret;
-    }
 
-    ~keyHandler() {
-        WaitForSingleObject(mtx, INFINITE);
-        CloseHandle(mtx);
-    }
-};
-
-keyHandler* wasdHandler = new keyHandler(0);
+KeyPressed* control = new KeyPressed(GLFW_KEY_A, GLFW_KEY_D, GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_F);
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
-    if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-        wasdHandler->setData(GLFW_KEY_A);
-    }
-    if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-        wasdHandler->setData(GLFW_KEY_W);
-    }
-    if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-        wasdHandler->setData(GLFW_KEY_S);
-    }
-    if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-        wasdHandler->setData(GLFW_KEY_D);
-    }
-    if (action == GLFW_RELEASE) {
-        wasdHandler->setData(0);
+    if (action == GLFW_PRESS) 
+    {
+        control.action(key);
     }
 }
 

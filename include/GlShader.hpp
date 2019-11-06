@@ -29,17 +29,17 @@ class GlShader
         GLint getUniformLocation (const GLchar* name) const;
         GLint getUniformLocation (const std :: string& name) const;
       //! Uniform set
-        //void setUniform (GLint location, const vec4& value);
-         //void setUniform (GLint location, const vec3& value);
-         //void setUniform (GLint location, const vec2& value);
+        void setUniform (GLint location, const vec4& value);
+        void setUniform (GLint location, const vec3& value);
+        void setUniform (GLint location, const vec2& value);
 
-         //void setUniform (GLint location, const mat4& value);
-         void setUniform (GLint location, const GLint& value);
+        void setUniform (GLint location, const mat4& value);
+        void setUniform (GLint location, const GLint& value);
 
          private:
          void printInfoLogShader (GLuint shader);
 
-         void printInfoLogShader (GLuint shader);
+         void printInfoLogProgram (GLuint shader);
 
          GLuint loadSourcefile(const string& source_file_name, GLuint shader_type);
 

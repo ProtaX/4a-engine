@@ -1,8 +1,9 @@
 #pragma once
 
-#include "glew.h"
 #include <vector>
 #include "Renderer.hpp"
+
+namespace fae {
 
 struct VertexBufferAttributes {
     //Тип аттрибута
@@ -24,7 +25,7 @@ public:
     ~VertexLayout();
 
     template<typename T>
-    void Push(GLuint count);
+    void Push(GLint count);
 
     inline unsigned int GetStride() { return stride; };
 
@@ -40,3 +41,5 @@ public:
         return 0;
     }
 };
+
+}

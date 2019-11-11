@@ -1,0 +1,45 @@
+#pragma once
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <windows.h>
+#include <iostream>
+#include <memory>
+
+//Фуцнкия, обернутая в этот макро, не может вернуть занчение
+#define GLCall(x) \
+        while (glGetError() != GL_NO_ERROR); \
+        x; \
+        while (GLenum error = glGetError()) std::cout << "[OpenGL error]: 0x" << std::hex << error << " on line " << std::dec << __LINE__ << "\n" \
+
+#define GLFWCall(x) \
+        x; \
+        do { \
+            const char* errMsg; \
+            const char** errMsgLoc = &errMsg; \
+            int code = glfwGetError(errMsgLoc); \
+            if (code != GLFW_NO_ERROR) { \
+                std::cout << "GLFW error: " << errMsg << std::endl; \
+                glfwTerminate(); \
+            } \
+        } while (0) \
+
+namespace fae {
+
+typedef struct {
+    float x, y;
+}point2_t;
+
+typedef struct {
+    float x, y, z;
+}point3_t;
+
+typedef struct {
+    float r, g, b;
+}color_t;
+
+}

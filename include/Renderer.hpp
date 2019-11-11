@@ -1,31 +1,9 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <windows.h>
-#include <iostream>
+#include "Core.hpp"
 
-//Фуцнкия, обернутая в этот макро, не может вернуть занчение
-#define GLCall(x) \
-        GLClearErrors(); \
-        x; \
-        GLGetErrors(__LINE__) \
-
-#define GLFWCall(x) \
-        x; \
-        do { \
-            const char* errMsg; \
-            const char** errMsgLoc = &errMsg; \
-            int code = glfwGetError(errMsgLoc); \
-            if (code != GLFW_NO_ERROR) { \
-                std::cout << "GLFW error: " << errMsg << std::endl; \
-                glfwTerminate(); \
-            } \
-        } while (0) \
-
-void GLClearErrors();
-
-void GLGetErrors(int line) ;
+#include <GameObject.hpp>
+#include <Camera.hpp>
 
 namespace fae {
 
@@ -42,6 +20,8 @@ private:
     unsigned int fps;
     double frame_time;
     int stopRenderer = 0;
+    std::unique_ptr<Camera> p_camera;
+    int default_shader_program;
 
     //Что делать каждый кадр
     void OnFrame();
@@ -49,8 +29,10 @@ private:
     //TODO: временная функция
     void MoveMainCharacter();
 
+    void DrawGameObject(GameObject& game_object);
+
 public:
-    Renderer(int window_h, int window_w, std::string name);
+    Renderer(int window_h, int window_w, std::string name, int shader);
 
     GLFWwindow* InitWindow();
 
@@ -59,6 +41,8 @@ public:
     void Stop();
 
     ~Renderer();
+
+    inline void SetShader(int shader) { this->default_shader_program = shader; }
     
 };
 

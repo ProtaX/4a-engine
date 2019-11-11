@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Core.hpp"
 #include <vector>
-#include "Renderer.hpp"
 
 namespace fae {
 
@@ -20,7 +20,7 @@ private:
     std::vector<struct VertexBufferAttributes> attributes;
 
 public:
-    VertexLayout(unsigned int stride) : stride (stride) { };
+    VertexLayout(unsigned int stride = 0) : stride (stride) { };
 
     ~VertexLayout();
 

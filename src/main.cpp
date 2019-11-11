@@ -1,15 +1,12 @@
 #define TEST_BUILD
 
 #include <SOIL.h>
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
-
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
+#include "Core.hpp"
 #include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
 #include "VertexArray.hpp"
@@ -87,7 +84,7 @@ int main() {
     float heroH = 125, heroW = 75;  // px
     float roomH = 1238, roomW = 2000;
 
-    fae::Renderer renderer(windowH, windowW, "4a-engine");
+    fae::Renderer renderer(windowH, windowW, "4a-engine", 0);
     GLFWwindow* window = renderer.InitWindow();
 
     //Загрузим все спрайты анимации
@@ -252,12 +249,12 @@ int main() {
     fae::IndexBuffer ib(indices, sizeof(indices));
     fae::Camera orthCam(windowW, windowH);
 
-    fae::VertexLayout vl(0);
+    fae::VertexLayout vl;
     vl.Push<float>(3);
     vl.Push<float>(3);
     vl.Push<float>(2);
 
-    fae::VertexLayout vl_room(0);
+    fae::VertexLayout vl_room;
     vl_room.Push<float>(3);
     vl_room.Push<float>(3);
     vl_room.Push<float>(2);    
@@ -509,10 +506,10 @@ int main() {
         
 
         //back
-        va_room.Bind();
-        vb_room.Bind();
         glUniform1i(glGetUniformLocation(shaderProgram, "is_transformable"), 0);
         glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture"), 7);
+        va_room.Bind();
+        vb_room.Bind();
         ib.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         va_room.Unbind();

@@ -15,6 +15,7 @@
 #include "VertexArray.hpp"
 #include "Renderer.hpp"
 #include "Camera.hpp"
+#include <GlShader.hpp>
 
 class keyHandler {
 private:
@@ -80,42 +81,10 @@ static const char* strcatcpy(char* string, const char* catstr) {
     return newStr;
 }
 
-GLuint vertex_shader;
-    GLint Attrib_vertex;
-    GLint Attrib_color;
-    GLint Unif_matrix;
-    GLuint VBO_color;
-    GLuint VBO_vertex;
-    GLuint VBO_element;
-    GLint Indices_count;
-    mat4 Matrix_projection;
-    struct vertex
-    {
-        GLfloat x;
-        GLfloat y;
-        GLfloat z;
-    };
-    void initGL()
-    {
-        glClearColor (0,0,0,0);
-        glEnable (GL_GEPTH_TEST);
-    }
-    void initShader()
-    {
+    
 
-       //Спросить про пути для LoadFiles
        
-        ///! Вытягиваем ID атрибута из собранной программы 
-        Attrib_vertex = shader.getAttribLocation("coord");
-
-        //! Вытягиваем ID юниформ
-        Attrib_color = shader.getAttribLocation("color");
-
-        //! Вытягиваем ID юниформ матрицы проекции
-        Unif_matrix = shader.getUniformLocation("matrix");
-
-        checkOpenGLerror(); 
-}
+  GlShader shader;    
 int main() {
     
     //Некоторые данные о размере окна и спрайта
@@ -318,103 +287,105 @@ int main() {
 
 
 
-  //oldkod
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);  // Создаем шейдер с типом VERTEX
-    //Надо подгрузить его в С-строку из файла (но сейчас он просто здесь)
-    char **vShaderStr = (char**)malloc(2 * sizeof(char*));
-    std::string vertexShaderSrc = 
-    "#version 330 core \n\
-    layout (location = 0) in vec3 position; \n\
-    layout (location = 1) in vec3 color; \n\
-    layout (location = 2) in vec2 texCoord; \n\
-    out vec3 ourColor; \n\
-    out vec2 TexCoord; \n\
-    uniform int orientation; \n\
-    uniform mat4 model; \n\
-    uniform int is_transformable; \n\
-    uniform mat4 proj; \n\
-    uniform mat4 view; \n\
-    void main() { \n\
-        if (is_transformable == 1) { \n\
-            gl_Position = proj * view * model * vec4(position, 1.0f); \n\
-        } \n\
-        else { \n\
-            gl_Position = proj * view * vec4(position, 1.0f); \n\
-        } \n\
-        TexCoord.y = 1.0f - texCoord.y; \n\
-        if (orientation == 1 && is_transformable == 1) { \n\
-            TexCoord.x = 1.0f - texCoord.x; \n\
-        } \n\
-        else { \n\
-            TexCoord.x = texCoord.x; \n\
-        } \n\
-        ourColor = color; \n\
-    }";
-    vShaderStr[0] = (char*)vertexShaderSrc.c_str();
-    //Привязываем исходный код шейдера к объекту шейдера
-    glShaderSource(vertex_shader, 1, vShaderStr, NULL); // Здесь 1 - количсество строк
-    glCompileShader(vertex_shader);  // Компилируем его
-    //Проверим, удачно ли он скомпилился
-    GLint success;
-    GLchar infoLog[512];
-    glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        //Печатем в infoLog ошибку
-        glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
-	    std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-        glfwTerminate();
-        return -1;
-    } //Если все ок, то вершинный шейдер будет собран
+//   //oldkod
+//     vertex_shader = glCreateShader(GL_VERTEX_SHADER);  // Создаем шейдер с типом VERTEX
+//     //Надо подгрузить его в С-строку из файла (но сейчас он просто здесь)
+//     char **vShaderStr = (char**)malloc(2 * sizeof(char*));
+//     std::string vertexShaderSrc = 
+//     "#version 330 core \n\
+//     layout (location = 0) in vec3 position; \n\
+//     layout (location = 1) in vec3 color; \n\
+//     layout (location = 2) in vec2 texCoord; \n\
+//     out vec3 ourColor; \n\
+//     out vec2 TexCoord; \n\
+//     uniform int orientation; \n\
+//     uniform mat4 model; \n\
+//     uniform int is_transformable; \n\
+//     uniform mat4 proj; \n\
+//     uniform mat4 view; \n\
+//     void main() { \n\
+//         if (is_transformable == 1) { \n\
+//             gl_Position = proj * view * model * vec4(position, 1.0f); \n\
+//         } \n\
+//         else { \n\
+//             gl_Position = proj * view * vec4(position, 1.0f); \n\
+//         } \n\
+//         TexCoord.y = 1.0f - texCoord.y; \n\
+//         if (orientation == 1 && is_transformable == 1) { \n\
+//             TexCoord.x = 1.0f - texCoord.x; \n\
+//         } \n\
+//         else { \n\
+//             TexCoord.x = texCoord.x; \n\
+//         } \n\
+//         ourColor = color; \n\
+//     }";
+//     vShaderStr[0] = (char*)vertexShaderSrc.c_str();
+//     //Привязываем исходный код шейдера к объекту шейдера
+//     glShaderSource(vertex_shader, 1, vShaderStr, NULL); // Здесь 1 - количсество строк
+//     glCompileShader(vertex_shader);  // Компилируем его
+//     //Проверим, удачно ли он скомпилился
+//     GLint success;
+//     GLchar infoLog[512];
+//     glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
+//     if (!success) {
+//         //Печатем в infoLog ошибку
+//         glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
+// 	    std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+//         glfwTerminate();
+//         return -1;
+//     } //Если все ок, то вершинный шейдер будет собран
 
-    //Теперь то же самое для фрагментного шейдера
-    GLuint fragment_shader;
-    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    char **vShaderStrFragment = (char**)malloc(2 * sizeof(char*));
-    //Используем заданный программно цвет
-    std::string fragmentShaderSrc = 
-    "#version 330 core \n\
-    in vec3 ourColor; \n\
-    in vec2 TexCoord; \n\
-    out vec4 color; \n\
-    uniform sampler2D ourTexture; \n\
-    void main() { \n\
-        color = texture(ourTexture, TexCoord); \n\
-    }";
-    vShaderStrFragment[0] = (char*)fragmentShaderSrc.c_str();
-    glShaderSource(fragment_shader, 1, vShaderStrFragment, NULL);
-    glCompileShader(fragment_shader);
-    memset(infoLog, 0, sizeof(infoLog));
-    glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        //Печатем в infoLog ошибку
-        glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
-	    std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-        glfwTerminate();
-        return -1;
-    } //Если все ок, то вершинный шейдер будет собран
+//     //Теперь то же самое для фрагментного шейдера
+//     GLuint fragment_shader;
+//     fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+//     char **vShaderStrFragment = (char**)malloc(2 * sizeof(char*));
+//     //Используем заданный программно цвет
+//     std::string fragmentShaderSrc = 
+//     "#version 330 core \n\
+//     in vec3 ourColor; \n\
+//     in vec2 TexCoord; \n\
+//     out vec4 color; \n\
+//     uniform sampler2D ourTexture; \n\
+//     void main() { \n\
+//         color = texture(ourTexture, TexCoord); \n\
+//     }";
+//     vShaderStrFragment[0] = (char*)fragmentShaderSrc.c_str();
+//     glShaderSource(fragment_shader, 1, vShaderStrFragment, NULL);
+//     glCompileShader(fragment_shader);
+//     memset(infoLog, 0, sizeof(infoLog));
+//     glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
+//     if (!success) {
+//         //Печатем в infoLog ошибку
+//         glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
+// 	    std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+//         glfwTerminate();
+//         return -1;
+//     } //Если все ок, то вершинный шейдер будет собран
 
-    //Теперь нужно собрать шейдерную программу - результат комбинации нескольких шейдеров
+//     //Теперь нужно собрать шейдерную программу - результат комбинации нескольких шейдеров
+//     GLuint shaderProgram;
+//     shaderProgram = glCreateProgram();
+//     glAttachShader(shaderProgram, vertex_shader);  // Присоединяем к программе шейдеры (они уже типизированы ранее)
+//     glAttachShader(shaderProgram, fragment_shader);
+//     glLinkProgram(shaderProgram);  // Связывание шейдеров
+//     //Проверим успешность сборки программы
+//     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+//     memset(infoLog, 0, sizeof(infoLog));
+//     if (!success) {
+//         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+//         std::cout << "ERROR::SHADER_PROGRAM::LINK_FAILED\n" << infoLog << std::endl;
+//         glfwTerminate();
+//         return -1;
+//     }
+//     //После связывыния шейдеры можно удалить
+//     glDeleteShader(vertex_shader);
+//     glDeleteShader(fragment_shader);
+//     free(vShaderStr[0]);
+//     free(vShaderStrFragment[0]);
+//     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     GLuint shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertex_shader);  // Присоединяем к программе шейдеры (они уже типизированы ранее)
-    glAttachShader(shaderProgram, fragment_shader);
-    glLinkProgram(shaderProgram);  // Связывание шейдеров
-    //Проверим успешность сборки программы
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    memset(infoLog, 0, sizeof(infoLog));
-    if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER_PROGRAM::LINK_FAILED\n" << infoLog << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    //После связывыния шейдеры можно удалить
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
-    free(vShaderStr[0]);
-    free(vShaderStrFragment[0]);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+    shaderProgram =shader.loadFiles ("C:\\git\\4a-engine\\shaders\\vs.glsl", "C:\\git\\4a-engine\\shaders\\fs.glsl")
     glfwSetKeyCallback(window, key_callback);
 
     //Начальный спрайт анимации

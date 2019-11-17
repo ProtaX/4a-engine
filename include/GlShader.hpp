@@ -10,6 +10,7 @@
 #include "glm/glm.hpp"
 
 using std::string;
+using namespace glm;
 class GlShader
      {
          public:
@@ -29,11 +30,11 @@ class GlShader
         GLint getUniformLocation (const GLchar* name) const;
         GLint getUniformLocation (const std :: string& name) const;
       //! Uniform set
-        void setUniform (GLint location, const vec4& value);
-        void setUniform (GLint location, const vec3& value);
-        void setUniform (GLint location, const vec2& value);
+        void setUniform (GLint location, const  vec4& value);
+        void setUniform (GLint location, const  vec3& value);
+        void setUniform (GLint location, const  vec2& value);
 
-        void setUniform (GLint location, const mat4& value);
+        void setUniform (GLint location, const  mat4& value);
         void setUniform (GLint location, const GLint& value);
 
          private:

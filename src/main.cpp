@@ -1,6 +1,6 @@
 #define TEST_BUILD
 
-#include "SOIL.h"
+#include <SOIL.h>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -80,6 +80,42 @@ static const char* strcatcpy(char* string, const char* catstr) {
     return newStr;
 }
 
+GLuint vertex_shader;
+    GLint Attrib_vertex;
+    GLint Attrib_color;
+    GLint Unif_matrix;
+    GLuint VBO_color;
+    GLuint VBO_vertex;
+    GLuint VBO_element;
+    GLint Indices_count;
+    mat4 Matrix_projection;
+    struct vertex
+    {
+        GLfloat x;
+        GLfloat y;
+        GLfloat z;
+    };
+    void initGL()
+    {
+        glClearColor (0,0,0,0);
+        glEnable (GL_GEPTH_TEST);
+    }
+    void initShader()
+    {
+
+       //Спросить про пути для LoadFiles
+       
+        ///! Вытягиваем ID атрибута из собранной программы 
+        Attrib_vertex = shader.getAttribLocation("coord");
+
+        //! Вытягиваем ID юниформ
+        Attrib_color = shader.getAttribLocation("color");
+
+        //! Вытягиваем ID юниформ матрицы проекции
+        Unif_matrix = shader.getUniformLocation("matrix");
+
+        checkOpenGLerror(); 
+}
 int main() {
     
     //Некоторые данные о размере окна и спрайта
@@ -273,7 +309,16 @@ int main() {
     va_room.Unbind();
 
     //Теперь нужно подключить шейдеры
-    GLuint vertex_shader;
+    
+
+
+    
+
+
+
+
+
+  //oldkod
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);  // Создаем шейдер с типом VERTEX
     //Надо подгрузить его в С-строку из файла (но сейчас он просто здесь)
     char **vShaderStr = (char**)malloc(2 * sizeof(char*));

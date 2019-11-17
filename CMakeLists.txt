@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.0)
 
 project(4a-engine)
 
-#set (CMAKE_BUILD_TYPE "Debug")
-set (CMAKE_BUILD_TYPE "Release")
+set (CMAKE_BUILD_TYPE "Debug")
+#set (CMAKE_BUILD_TYPE "Release")
 include(variables.cmake)
 
 include_directories(${INCLUDE_DIR})
@@ -18,6 +18,8 @@ add_compile_options(-lopengl32)
 add_compile_options(-lm)
 
 add_executable(4a-engine ${MAIN_SRC})
+#tmp
+add_library(shader-load ${SRC_DIR}/ShaderLoad.cpp)
 
 #modules
 add_subdirectory(${LIB_DIR})
@@ -28,6 +30,7 @@ target_link_libraries(4a-engine vertex-layout)
 target_link_libraries(4a-engine renderer)
 target_link_libraries(4a-engine camera)
 target_link_libraries(4a-engine game-object)
+target_link_libraries(4a-engine shader-load)
 
 #externals
 add_subdirectory(${EXTERNALS_DIR})
@@ -40,3 +43,4 @@ target_link_libraries(4a-engine m)
 
 #tests
 add_subdirectory(${TESTS_DIR})
+

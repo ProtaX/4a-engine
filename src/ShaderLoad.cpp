@@ -1,15 +1,7 @@
-#define GLEW_STATIC
-#include "glew.h"
-#include <iostream>
-#include <stdlib.h>
-#include <string.h>
-#include <windows.h>
-#include <math.h>
 #include "GlShader.hpp"
+#include <iostream>
 #include <fstream>
-#include <string>
-using std :: ifstream;
-using namespace std;
+#include <math.h>
 
 GlShader::GlShader():ShaderProgram(0)
 {
@@ -22,14 +14,14 @@ GlShader::~GlShader()
     glDeleteShader(fragment_shader);
     glDeleteShader(ShaderProgram);
 }
-GLuint GlShader :: loadFiles (const string& vertex_file_name, const string& fragment_file_name)
+GLuint GlShader :: loadFiles (const std::string& vertex_file_name, const std::string& fragment_file_name)
 {
     vertex_shader = loadSourcefile (vertex_file_name, GL_VERTEX_SHADER);
     fragment_shader = loadSourcefile (fragment_file_name, GL_FRAGMENT_SHADER);
-linkProgram();
-return ShaderProgram;
+    linkProgram();
+    return ShaderProgram;
 }
-GLuint  GlShader ::load(const string& vertex_source, const string& fragment_source)
+GLuint  GlShader ::load(const std::string& vertex_source, const std::string& fragment_source)
 {
     vertex_shader = compileSource (vertex_source.c_str(), GL_VERTEX_SHADER);
     fragment_shader = compileSource (fragment_source.c_str(), GL_FRAGMENT_SHADER);
@@ -78,16 +70,18 @@ GLuint GlShader :: compileSource (const GLchar* source, GLuint shader_type)
     printInfoLogShader(shader);
     return shader;
 } 
-GLuint GlShader :: loadSourcefile (const string& source_file_name, GLuint shader_type)
+GLuint GlShader :: loadSourcefile (const std::string& source_file_name, GLuint shader_type)
 {
-    ifstream file(source_file_name.c_str());
-    if (!file){
-    std :: cout<<source_file_name<<" file not found\n";
-    return GL_FALSE;
+    const char* path = source_file_name.c_str();
+    std::cout << path << "\n";
+    std::ifstream m_shader(path);
+    if (!m_shader){
+        std :: cout<< source_file_name << " file not found\n";
+        return GL_FALSE;
     }
-    std :: istreambuf_iterator<char> begin(file), end;
-    string sourceStr (begin, end);
-    file.close();
+    std :: istreambuf_iterator<char> begin(m_shader), end;
+    std::string sourceStr (begin, end);
+    m_shader.close();
     return compileSource (sourceStr.c_str(), shader_type);
 }
 //Attribute get
@@ -98,7 +92,7 @@ GLint GlShader :: getAttribLocation(const GLchar* name) const{
         std :: cout<<"Could not bind attribute" << name << "\n";
     return location;
 }
-GLint GlShader :: getAttribLocation (const std :: string& name) const{
+GLint GlShader :: getAttribLocation (const std::string& name) const{
     return getAttribLocation(name.c_str());
 
 }
@@ -111,7 +105,7 @@ GLint GlShader :: getUniformLocation(const GLchar* name) const
         std :: cout<<"Could not bind uniform"<< name<<"\n";
     return location;
 }
-GLint GlShader :: getUniformLocation (const std :: string& name) const
+GLint GlShader :: getUniformLocation (const std::string& name) const
 {
     return getUniformLocation (name.c_str());
 }

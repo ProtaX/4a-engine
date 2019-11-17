@@ -4,9 +4,9 @@
 [submodule "externals/glfw"]
 	path = externals/glfw
 	url = https://github.com/glfw/glfw.git
-[submodule "externals/glew-2.0.0"]
-	path = externals/glew-2.0.0
-	url = https://github.com/edoren/glew.git
 [submodule "externals/Catch2"]
 	path = externals/Catch2
 	url = https://github.com/catchorg/Catch2.git
+[submodule "externals/glew2"]
+	path = externals/glew2
+	url = https://github.com/edoren/glew.git

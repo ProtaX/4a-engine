@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Core.hpp"
 #include "VertexLayout.hpp"
 #include "VertexBuffer.hpp"
-#include "Renderer.hpp"
 #include <vector>
 
 namespace fae {
@@ -17,6 +17,8 @@ public:
     ~VertexArray();
 
     void AddBuffer(VertexBuffer& buffer, VertexLayout& layout);
+
+    void AddBuffer(VertexBuffer* buffer, VertexLayout* layout);
 
     void Bind() const;
 

@@ -19,7 +19,6 @@ add_compile_options(-lm)
 
 add_executable(4a-engine ${MAIN_SRC})
 #tmp
-add_library(shader-load ${SRC_DIR}/ShaderLoad.cpp)
 
 #modules
 add_subdirectory(${LIB_DIR})
@@ -30,7 +29,7 @@ target_link_libraries(4a-engine vertex-layout)
 target_link_libraries(4a-engine renderer)
 target_link_libraries(4a-engine camera)
 target_link_libraries(4a-engine game-object)
-target_link_libraries(4a-engine shader-load)
+target_link_libraries(4a-engine glshader)
 
 #externals
 add_subdirectory(${EXTERNALS_DIR})

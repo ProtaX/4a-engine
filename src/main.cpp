@@ -382,9 +382,8 @@ int main() {
 //     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     GLuint shaderProgram;
-    shaderProgram =shader.loadFiles ("C:\\git\\4a-engine\\shaders\\vs.glsl", "C:\\git\\4a-engine\\shaders\\fs.glsl")
+    shaderProgram = shader.loadFiles ("C:/git/4a-engine/shaders/vs.glsl", "C:/git/4a-engine/shaders/fs.glsl");
     glfwSetKeyCallback(window, key_callback);
-
     //Начальный спрайт анимации
     int currentGlTexture = GL_TEXTURE1;
     //Зададим количество кадров анимации в секунду

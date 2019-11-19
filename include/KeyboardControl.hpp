@@ -12,12 +12,6 @@ private:
         action_btn,
         esc_btn;
     } m_key_data;
-
-    std::list<std::function>
-
-    void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode) {
-
-    }
     
 public:
     KeyboardControl(GLFWwindow* window,
@@ -33,7 +27,6 @@ public:
         m_key_data.down_btn = down_btn;
         m_key_data.action_btn = action_btn;
         m_key_data.esc_btn = esc_btn;
-        glfwSetKeyCallback(window, this->KeyCallback);
     }
 
 };

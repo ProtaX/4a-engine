@@ -13,7 +13,7 @@ include_directories(${GLFW_INCLUDE_DIR})
 include_directories(${SOIL_INCLUDE_DIR})
 include_directories(${CATCH2_SINGLE_INCLUDE_DIR})
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -O2 -Wall")
+set(CMAKE_CXX_FLAGS "-std=c++17 -Wall")
 add_compile_options(-lopengl32)
 add_compile_options(-lm)
 

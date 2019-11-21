@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.0)
 
 project(4a-engine)
 
-#set (CMAKE_BUILD_TYPE "Debug")
-set (CMAKE_BUILD_TYPE "Release")
+set (CMAKE_BUILD_TYPE "Debug")
+#set (CMAKE_BUILD_TYPE "Release")
 include(variables.cmake)
 
 include_directories(${INCLUDE_DIR})
@@ -40,4 +40,4 @@ target_link_libraries(4a-engine opengl32)
 target_link_libraries(4a-engine m)
 
 #tests
-add_subdirectory(${TESTS_DIR})
+include(${TESTS_DIR}/Tests.cmake)

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <stdlib.h>
 #include <SOIL.h>
 
 //Фуцнкия, обернутая в этот макро, не может вернуть занчение

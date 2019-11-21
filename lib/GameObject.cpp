@@ -104,24 +104,6 @@ void GameObject::UseShaderProgram() {
 }
 
 GameObject::GameObject() {
-    //TEST
-    /*
-    m_verticies[0].coords = {200., 100., 0.};
-    m_verticies[0].color = {0., 0., 0.};
-    m_verticies[0].tex_coords = {1., 1.};
-
-    m_verticies[1].coords = {200., 100., 0.};
-    m_verticies[1].color = {0., 0., 0.};
-    m_verticies[1].tex_coords = {1., 0.};
-
-    m_verticies[2].coords = {200., 100., 0.};
-    m_verticies[2].color = {0., 0., 0.};
-    m_verticies[2].tex_coords = {0., 0.};
-
-    m_verticies[3].coords = {200., 100., 0.};
-    m_verticies[3].color = {0., 0., 0.};
-    m_verticies[3].tex_coords = {0., 1.};
-    */
     p_vertex_buffer = std::make_unique<VertexBuffer>(m_verticies, sizeof(m_verticies));
     p_vertex_layout = std::make_unique<VertexLayout>();
     p_index_buffer = std::make_unique<IndexBuffer>(m_indicies, sizeof(m_indicies));
@@ -142,8 +124,6 @@ GameObject::GameObject() {
     p_index_buffer->Bind();
     p_vertex_array->AddBuffer(p_vertex_buffer.get(), p_vertex_layout.get());
     p_vertex_array->Unbind();
-
-    m_texture.target = GL_TEXTURE7;
 }
 
 void GameObject::Draw() {

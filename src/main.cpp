@@ -1,7 +1,5 @@
 #define TEST_BUILD
 
-#include <iostream>
-#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 

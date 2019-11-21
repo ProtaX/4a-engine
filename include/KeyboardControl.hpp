@@ -2,6 +2,7 @@
 #include "Core.hpp"
 #include <list>
 
+//Keyboard event dispatcher
 class KeyboardControl {
 private:
     struct {

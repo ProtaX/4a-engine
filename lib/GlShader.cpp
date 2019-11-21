@@ -44,7 +44,7 @@ void GlShader :: linkProgram (){
     if (!link_ok) {
         std::cout<< "glLinkProgram:";
         //функция на вывод информации о линке 
-        printInfoLogShader(ShaderProgram);
+        //printInfoLogShader(ShaderProgram);
         ShaderProgram = GL_FALSE;
         return;
         }
@@ -53,10 +53,13 @@ void GlShader :: use(){
     glUseProgram(ShaderProgram);
 }
 GLuint GlShader :: compileSource (const GLchar* source, GLuint shader_type){
-    GLuint shader = glCreateShader(shader_type);
+    std::cout << source;
+    
+    GLuint shader = GLCall(glCreateShader(shader_type));
+    std::cout << source;
     glShaderSource(shader,1,&source,NULL);
     glCompileShader(shader);
-    printInfoLogShader(shader);
+    //printInfoLogShader(shader);
     return shader;
 } 
 GLuint GlShader :: loadSourcefile (const std::string& source_file_name, GLuint shader_type){

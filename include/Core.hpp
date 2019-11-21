@@ -9,11 +9,13 @@
 #include <windows.h>
 #include <iostream>
 #include <memory>
+#include <string>
+#include <SOIL.h>
 
 //Фуцнкия, обернутая в этот макро, не может вернуть занчение
 #define GLCall(x) \
         x; \
-        glGetErrors(__LINE__); \
+        glGetErrors(__LINE__, __FILE__); \
         glClearErrors() \
 
 #define GLFWCall(x) \
@@ -28,7 +30,7 @@
             } \
         } while (0) \
 
-void glGetErrors(int line);
+void glGetErrors(int line, const char* file);
 
 void glClearErrors();
 

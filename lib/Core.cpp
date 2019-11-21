@@ -1,8 +1,8 @@
 #include "Core.hpp"
 
-void glGetErrors(int line) {
+void glGetErrors(int line, const char* file) {
     while (GLenum error = glGetError()) 
-        std::cout << "[OpenGL error]: 0x" << std::hex << error << " on line " << std::dec << __LINE__ << "\n";
+        std::cout << "[OpenGL error]: 0x" << std::hex << error << " " <<  file << " on line " << std::dec << line << "\n";
 }
 
 void glClearErrors() {

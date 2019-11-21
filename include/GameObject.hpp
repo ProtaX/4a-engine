@@ -11,12 +11,25 @@ struct GameVertex
     point3_t coords;
     color_t color;
     point2_t tex_coords;
+
+    GameVertex() {
+        coords = {0., 0., 0.};
+        color = {0., 0., 0.};
+        tex_coords = {0., 0.};
+    }
 };
 
 struct GameTexture2D {
     GLuint id;
     unsigned char* p_image_data;
-    int target = GL_TEXTURE;
+    GLuint target;
+
+    GameTexture2D() {
+        id = 0;
+        //Not used
+        p_image_data = nullptr;
+        target = 0;
+    }
 };
 
 typedef struct GameVertex vertex_t;
@@ -59,7 +72,7 @@ public:
     //Take (0, 0) as a lb point
     void SetSize(point2_t rt);
 
-    void SetSingleTexture(unsigned char* pixel_data, int h, int w, int target);
+    void SetSingleTexture(unsigned char* pixel_data, int h, int w, int target = GL_TEXTURE);
 
     void SetShaderProgram(int shader) { this->m_shader_program = shader; }
 
@@ -80,9 +93,14 @@ public:
 
     inline glm::mat4 GetModelMtx() const { return this->m_model_mtx; }
 
+    inline vertex_t* GetVertexDataPtr() const { return (vertex_t*)m_verticies; }
+
     //TODO: функции взаимодействия с матрицей модели
 
-    virtual ~GameObject();
+    virtual ~GameObject() { }
+
+    //Что-то сделать с этим надо
+    void Draw();
 };
 
 }

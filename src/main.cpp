@@ -1,6 +1,5 @@
 #define TEST_BUILD
 
-#include <SOIL.h>
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
@@ -127,21 +126,9 @@ int main() {
         return -1;
     }
 
-    GLuint heroAnimation[7];
     float borderColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
-    //Текстура для пола комнаты
-    GLuint room_tex;
-    glGenTextures(1, &room_tex);
-    glActiveTexture(GL_TEXTURE7);
-    glBindTexture(GL_TEXTURE_2D, room_tex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, room1_h, room1_w, 0, GL_RGBA, GL_UNSIGNED_BYTE, room1);
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glGenerateMipmap(GL_TEXTURE_2D);
 
+    GLuint heroAnimation[7];
     glGenTextures(7, heroAnimation);
 
     glActiveTexture(GL_TEXTURE0);
@@ -153,7 +140,7 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
     glGenerateMipmap(GL_TEXTURE_2D);
-
+    
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, heroAnimation[1]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex_h1, tex_w1, 0, GL_RGBA, GL_UNSIGNED_BYTE, left1);
@@ -221,8 +208,7 @@ int main() {
     SOIL_free_image_data(left3);
     SOIL_free_image_data(left4);
     SOIL_free_image_data(left5);
-    SOIL_free_image_data(room1);
-    glBindTexture(GL_TEXTURE_2D, 0);  // Отвяжем объект текстуры
+    SOIL_free_image_data(left6);
 
     //поместим четырехугольник в центр экрана, сохраняя пропорции
 
@@ -249,8 +235,7 @@ int main() {
     };
 
     fae::VertexBuffer vb(vertices, sizeof(vertices));
-    fae::VertexBuffer vb_room(verticesRoom, sizeof(verticesRoom));
-    fae::VertexArray va, va_room;
+    fae::VertexArray va;
     fae::IndexBuffer ib(indices, sizeof(indices));
     fae::Camera orthCam(windowW, windowH);
 
@@ -262,7 +247,7 @@ int main() {
     fae::VertexLayout vl_room;
     vl_room.Push<float>(3);
     vl_room.Push<float>(3);
-    vl_room.Push<float>(2);    
+    vl_room.Push<float>(2);
 
     va.Bind();
     ib.Bind();
@@ -300,7 +285,6 @@ int main() {
 
     //Размещение всех unform
     GLint orientationLocation, modelLocation, projLocation, veiwLocation;
-
     //Теперь это можно отрисовывать в игровом цикле
     //Цикл, который держит окно, пока его не закроют
 
@@ -414,19 +398,15 @@ int main() {
         
 
         //back
-        glUniform1i(glGetUniformLocation(shaderProgram, "is_transformable"), 0);
-        glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture"), 7);
-        va_room.Bind();
-        vb_room.Bind();
-        ib.Bind();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        va_room.Unbind();
-        
+        room.SetShaderProgram(shaderProgram);
+        room.Draw();
+
         //hero
         va.Bind();
         vb.Bind();
-        GLCall(glUniform1i(glGetUniformLocation(shaderProgram, "is_transformable"), 1));
         GLint tex_loc = glGetUniformLocation(shaderProgram, "ourTexture");
+        GLint trans_loc = glGetUniformLocation(shaderProgram, "is_transformable");
+        GLCall(glUniform1i(trans_loc, 1));
         GLCall(glUniform1i(tex_loc, currentGlTexture - GL_TEXTURE0 - 1));  // Спрайт рисуется
         ib.Bind();
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));

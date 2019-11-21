@@ -9,12 +9,14 @@
 #include <windows.h>
 #include <iostream>
 #include <memory>
+#include <string>
+#include <SOIL.h>
 
 //Фуцнкия, обернутая в этот макро, не может вернуть занчение
 #define GLCall(x) \
-        while (glGetError() != GL_NO_ERROR); \
         x; \
-        while (GLenum error = glGetError()) std::cout << "[OpenGL error]: 0x" << std::hex << error << " on line " << std::dec << __LINE__ << "\n" \
+        glGetErrors(__LINE__, __FILE__); \
+        glClearErrors() \
 
 #define GLFWCall(x) \
         x; \
@@ -27,6 +29,10 @@
                 glfwTerminate(); \
             } \
         } while (0) \
+
+void glGetErrors(int line, const char* file);
+
+void glClearErrors();
 
 namespace fae {
 

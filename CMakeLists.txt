@@ -13,7 +13,7 @@ include_directories(${GLFW_INCLUDE_DIR})
 include_directories(${SOIL_INCLUDE_DIR})
 include_directories(${CATCH2_SINGLE_INCLUDE_DIR})
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -O2 -Wall")
+set(CMAKE_CXX_FLAGS "-std=c++17 -Wall")
 add_compile_options(-lopengl32)
 add_compile_options(-lm)
 
@@ -30,6 +30,7 @@ target_link_libraries(4a-engine renderer)
 target_link_libraries(4a-engine camera)
 target_link_libraries(4a-engine game-object)
 target_link_libraries(4a-engine glshader)
+target_link_libraries(4a-engine core)
 
 #externals
 add_subdirectory(${EXTERNALS_DIR})
@@ -41,5 +42,4 @@ target_link_libraries(4a-engine opengl32)
 target_link_libraries(4a-engine m)
 
 #tests
-add_subdirectory(${TESTS_DIR})
-
+include(${TESTS_DIR}/Tests.cmake)

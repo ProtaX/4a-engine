@@ -255,10 +255,10 @@ int main() {
     va.AddBuffer(vb, vl);
     va.Unbind();
 
-    va_room.Bind();
+   /* va_room.Bind();
     ib.Bind();
     va_room.AddBuffer(vb_room, vl_room);
-    va_room.Unbind();
+    va_room.Unbind();*/
     GlShader shader;
     GLuint shaderProgram;
     shaderProgram = shader.loadFiles ("C:/git/4a-engine/shaders/vs.glsl", "C:/git/4a-engine/shaders/fs.glsl");
@@ -399,8 +399,8 @@ int main() {
         
 
         //back
-        room.SetShaderProgram(shaderProgram);
-        room.Draw();
+        /*room.SetShaderProgram(shaderProgram);
+        room.Draw();*/
 
         //hero
         va.Bind();

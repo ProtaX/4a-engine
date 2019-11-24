@@ -13,6 +13,7 @@
 #include "Camera.hpp"
 #include <GlShader.hpp>
 
+using namespace fae;
 class keyHandler {
 private:
     int data;
@@ -80,7 +81,7 @@ static const char* strcatcpy(char* string, const char* catstr) {
     
 
        
-  GlShader shader;    
+    
 int main() {
     
     //Некоторые данные о размере окна и спрайта
@@ -258,7 +259,7 @@ int main() {
     ib.Bind();
     va_room.AddBuffer(vb_room, vl_room);
     va_room.Unbind();
-    
+    GlShader shader;
     GLuint shaderProgram;
     shaderProgram = shader.loadFiles ("C:/git/4a-engine/shaders/vs.glsl", "C:/git/4a-engine/shaders/fs.glsl");
     glfwSetKeyCallback(window, key_callback);

@@ -6,6 +6,7 @@
 #include <math.h>
 
 using namespace glm;
+namespace fae {
 class GlShader
      {
         public:
@@ -46,3 +47,4 @@ class GlShader
           GLuint vertex_shader;
           GLuint fragment_shader;
     };
+}

@@ -78,6 +78,18 @@ void GameObject::SetCoords(point3_t lb, point3_t rt) {
     p_vertex_buffer->ReloadData(m_verticies);
 }
 
+void GameObject::SetLayer(float z) {
+    m_verticies[0].coords.z = z;
+    m_verticies[1].coords.z = z;
+    m_verticies[2].coords.z = z;
+    m_verticies[3].coords.z = z;
+    if (!p_vertex_buffer) {
+        std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
+        return;
+    }
+    p_vertex_buffer->ReloadData(m_verticies);
+}
+
 void GameObject::SetSingleTexture(unsigned char* pixel_data, int h, int w, int target) {
     float borderColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
     m_texture.target = target;
@@ -126,6 +138,11 @@ GameObject::GameObject() {
     p_vertex_array->Unbind();
 }
 
+GameObject::GameObject(const GameObject& right) {
+    p_index_buffer = std::move(right.p_index_buffer);
+
+}
+
 void GameObject::Draw() {
     UseShaderProgram();
     BindVertexArray();
@@ -135,6 +152,16 @@ void GameObject::Draw() {
     UnbindVertexBuffer();
     UnbindIndexBuffer();
     UnbindVertexArray();
+}
+
+float GameObject::GetLayer() {
+    if (m_verticies[0].coords.z == 
+        m_verticies[1].coords.z == 
+        m_verticies[2].coords.z ==
+        m_verticies[3].coords.z) {
+            return m_verticies[0].coords.z;
+        }
+    else return -1.0f;
 }
 
 }

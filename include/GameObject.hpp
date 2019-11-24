@@ -57,11 +57,13 @@ public:
     //creates VAO and VBO, uses default IBO
     GameObject();
 
-    void SetTextureCoords(point2_t lb, point2_t lt, point2_t rt, point2_t rb);
+    GameObject(const GameObject& right);
 
-    void SetCoords(point2_t lb, point2_t lt, point2_t rt, point2_t rb);
+    void SetTextureCoords(point2_t rt, point2_t rb, point2_t lb, point2_t lt);
 
-    void SetCoords(point3_t lb, point3_t lt, point3_t rt, point3_t rb);
+    void SetCoords(point2_t rt, point2_t rb, point2_t lb, point2_t lt);
+
+    void SetCoords(point3_t rt, point3_t rb, point3_t lb, point3_t lt);
 
     //For rectangles only, z = 0
     void SetCoords(point2_t lb, point2_t rt);
@@ -71,6 +73,8 @@ public:
 
     //Take (0, 0) as a lb point
     void SetSize(point2_t rt);
+
+    void SetLayer(float z);
 
     void SetSingleTexture(unsigned char* pixel_data, int h, int w, int target = GL_TEXTURE);
 
@@ -94,6 +98,29 @@ public:
     inline glm::mat4 GetModelMtx() const { return this->m_model_mtx; }
 
     inline vertex_t* GetVertexDataPtr() const { return (vertex_t*)m_verticies; }
+
+    float GetLayer();
+
+    bool operator<(GameObject& right) {
+        if ((this->m_verticies[0].coords.z < right.m_verticies[0].coords.z) &&
+            (this->m_verticies[1].coords.z < right.m_verticies[1].coords.z) &&
+            (this->m_verticies[2].coords.z < right.m_verticies[2].coords.z) &&
+            (this->m_verticies[3].coords.z < right.m_verticies[3].coords.z))
+            {
+                return true;
+            }
+        return false;
+    }
+
+    /* Not used
+    bool operator==(GameObject& right) {
+        int res_v = std::memcmp(m_verticies, right.m_verticies, sizeof(m_verticies));
+        int res_t = std::memcmp(&m_texture, &right.m_texture, sizeof(m_texture));
+        if (!res_v && !res_t)
+            return true;
+        return false;
+    }
+    */
 
     //TODO: функции взаимодействия с матрицей модели
 

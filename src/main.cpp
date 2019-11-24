@@ -215,12 +215,13 @@ int main() {
         0,      heroH,    0.0f,  1.0f,  0.0f,   0.0f,  0.0f, 1.0f
     };
     //То же самое, но для фона
+    /*
     GLfloat verticesRoom[] = {
         roomW,  roomH,    0.0f,  1.0f,  0.0f,   0.0f,  1.0f, 1.0f,
         roomW,  0,        0.0f,  0.0f,  1.0f,   0.0f,  1.0f, 0.0f,
         0,      0,        0.0f,  0.0f,  0.0f,   1.0f,  0.0f, 0.0f,
         0,       roomH,   0.0f,  1.0f,  0.0f,   0.0f,  0.0f, 1.0f
-    };
+    };*/
     //Порядок, в котором надо нарисовать из них треугольники
     GLuint indices[] = {
         0, 1, 3,
@@ -250,6 +251,7 @@ int main() {
     fae::GameObject room;
     room.SetSize({roomW, roomH});
     room.SetSingleTexture(room1, room1_h, room1_w, GL_TEXTURE7);
+    room.SetLayer(0.1f);
 
     //Теперь нужно подключить шейдеры
     GLuint vertex_shader;
@@ -485,7 +487,6 @@ int main() {
             }
         }
         
-
         //back
         room.SetShaderProgram(shaderProgram);
         room.Draw();
@@ -510,5 +511,4 @@ int main() {
     //Очитска выделенных ресурсов
     delete wasdHandler;
     std::cout << "glfwTerminate done\n";
-    return 0;
 }

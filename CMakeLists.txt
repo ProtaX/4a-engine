@@ -29,6 +29,7 @@ target_link_libraries(4a-engine renderer)
 target_link_libraries(4a-engine camera)
 target_link_libraries(4a-engine game-object)
 target_link_libraries(4a-engine core)
+target_link_libraries(4a-engine game-scene)
 
 #externals
 add_subdirectory(${EXTERNALS_DIR})

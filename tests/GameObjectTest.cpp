@@ -7,7 +7,7 @@ using namespace fae;
 
 TEST_CASE("SetSize", "[GameObject]") {
     //Arrange
-    fae::Renderer renderer(100., 200., "4a-engine", 0);
+    Renderer renderer(100., 200., "4a-engine");
     GLFWwindow* window = renderer.InitWindow();
     GameObject obj;
     float x = 100, y = 200;

@@ -4,6 +4,7 @@
 
 #include <GameObject.hpp>
 #include <Camera.hpp>
+#include <GameScene.hpp>
 
 namespace fae {
 
@@ -20,8 +21,7 @@ private:
     unsigned int fps;
     double frame_time;
     int stopRenderer = 0;
-    std::unique_ptr<Camera> p_camera;
-    int default_shader_program;
+    std::shared_ptr<GameScene> p_scene;
 
     //Что делать каждый кадр
     void OnFrame();
@@ -29,10 +29,8 @@ private:
     //TODO: временная функция
     void MoveMainCharacter();
 
-    void DrawGameObject(GameObject& game_object);
-
 public:
-    Renderer(int window_h, int window_w, std::string name, int shader);
+    Renderer(int window_h, int window_w, std::string name);
 
     GLFWwindow* InitWindow();
 
@@ -40,9 +38,11 @@ public:
 
     void Stop();
 
-    ~Renderer();
+    void SetScene(std::shared_ptr<GameScene> scene) { this->p_scene = scene; }
 
-    inline void SetShader(int shader) { this->default_shader_program = shader; }
+    void SetFps(unsigned int fps) { this->fps = fps; }
+
+    ~Renderer();
     
 };
 

@@ -10,6 +10,8 @@
 #include "Renderer.hpp"
 #include "Camera.hpp"
 
+using namespace fae;
+
 class keyHandler {
 private:
     int data;
@@ -81,7 +83,7 @@ int main() {
     float heroH = 125, heroW = 75;  // px
     float roomH = 1238, roomW = 2000;
 
-    fae::Renderer renderer(windowH, windowW, "4a-engine", 0);
+    Renderer renderer(windowH, windowW, "4a-engine");
     GLFWwindow* window = renderer.InitWindow();
 
     //Загрузим все спрайты анимации
@@ -203,56 +205,6 @@ int main() {
     SOIL_free_image_data(left5);
     SOIL_free_image_data(left6);
 
-    //поместим четырехугольник в центр экрана, сохраняя пропорции
-
-    //Набор вершин и цветов для двух тругольников
-    //UPD: в текущей версии поля r, g, b не используются
-    GLfloat vertices[] = {
-        // x,   y,       z,      r,     g,      b,     texture coords
-        heroW,  heroH,    0.0f,  1.0f,  0.0f,   0.0f,  1.0f, 1.0f,
-        heroW,  0,        0.0f,  0.0f,  1.0f,   0.0f,  1.0f, 0.0f,
-        0,      0,        0.0f,  0.0f,  0.0f,   1.0f,  0.0f, 0.0f,
-        0,      heroH,    0.0f,  1.0f,  0.0f,   0.0f,  0.0f, 1.0f
-    };
-    //То же самое, но для фона
-    /*
-    GLfloat verticesRoom[] = {
-        roomW,  roomH,    0.0f,  1.0f,  0.0f,   0.0f,  1.0f, 1.0f,
-        roomW,  0,        0.0f,  0.0f,  1.0f,   0.0f,  1.0f, 0.0f,
-        0,      0,        0.0f,  0.0f,  0.0f,   1.0f,  0.0f, 0.0f,
-        0,       roomH,   0.0f,  1.0f,  0.0f,   0.0f,  0.0f, 1.0f
-    };*/
-    //Порядок, в котором надо нарисовать из них треугольники
-    GLuint indices[] = {
-        0, 1, 3,
-        1, 2, 3
-    };
-
-    fae::VertexBuffer vb(vertices, sizeof(vertices));
-    fae::VertexArray va;
-    fae::IndexBuffer ib(indices, sizeof(indices));
-    fae::Camera orthCam(windowW, windowH);
-
-    fae::VertexLayout vl;
-    vl.Push<float>(3);
-    vl.Push<float>(3);
-    vl.Push<float>(2);
-
-    fae::VertexLayout vl_room;
-    vl_room.Push<float>(3);
-    vl_room.Push<float>(3);
-    vl_room.Push<float>(2);
-
-    va.Bind();
-    ib.Bind();
-    va.AddBuffer(vb, vl);
-    va.Unbind();
-    
-    fae::GameObject room;
-    room.SetSize({roomW, roomH});
-    room.SetSingleTexture(room1, room1_h, room1_w, GL_TEXTURE7);
-    room.SetLayer(0.1f);
-
     //Теперь нужно подключить шейдеры
     GLuint vertex_shader;
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);  // Создаем шейдер с типом VERTEX
@@ -349,166 +301,36 @@ int main() {
     glDeleteShader(fragment_shader);
     free(vShaderStr[0]);
     free(vShaderStrFragment[0]);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+    //Задаем callback при нажатии на клавиатуру 
     glfwSetKeyCallback(window, key_callback);
 
-    //Начальный спрайт анимации
-    int currentGlTexture = GL_TEXTURE1;
-    //Зададим количество кадров анимации в секунду
-    int animationFps = 10;
-    //Состояние анимации - происходит и, если да, какая
-    int animationState = 0;
-    //Сколько кадров уже было отрисовано
-    int framesDrawn = 1;
-    //Для кажой отдельной анимации считается: сколько экранных кадров будут рисовать один кадр анимации
-    int sceneFramesPerAnim = floor(144 / (float)animationFps);
-    int animationFrames = 7 - 1;
+    //Камера с видом сверху
+    std::shared_ptr<Camera> orthCam = std::make_shared<Camera>(windowW, windowH);
+    //Сцена, которую будут наполнять объекты
+    std::shared_ptr<GameScene> scene = std::make_shared<GameScene>();
+    
+    //Так создается объект
+    //Это задний фон
+    GameObject room;
+    room.SetSize({roomW, roomH});
+    room.SetSingleTexture(room1, room1_h, room1_w, GL_TEXTURE7);
+    room.SetShaderProgram(shaderProgram);
+    
+    //Картника поверх заднего фона
+    GameObject img;
+    img.SetCoords({500., 600.}, {600., 700.});
+    img.SetSingleTexture(room1, room1_h, room1_w, GL_TEXTURE8);
+    img.SetShaderProgram(shaderProgram);
 
-    //Добавим возможность трансформации:
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(windowW, windowH, 0.0f));
-    glm::mat4 proj = orthCam.GetProj();
-    glm::mat4 view;
-    glm::vec3 heroGoLeft = glm::vec3(0.0f);
-    glm::vec3 heroGoRight = glm::vec3(0.0f);
-    glm::vec3 cameraMoveUp = glm::vec3(0.0f,   -heroW /  animationFrames, 0.0f);
-    glm::vec3 cameraMoveDown = glm::vec3(0.0f, heroW /  animationFrames, 0.0f);
-
-    //Размещение всех unform
-    GLint orientationLocation, modelLocation, projLocation, veiwLocation;
-    //Теперь это можно отрисовывать в игровом цикле
-    //Цикл, который держит окно, пока его не закроют
-
-    while(!glfwWindowShouldClose(window))
-    {
-        glUseProgram(shaderProgram);
-        glClear(GL_COLOR_BUFFER_BIT);
-        view = orthCam.GetVeiw();
-
-        //Теперь можно исользовать созданную программу
-        orientationLocation = glGetUniformLocation(shaderProgram, "orientation");
-        projLocation = glGetUniformLocation(shaderProgram, "proj");
-        modelLocation = glGetUniformLocation(shaderProgram, "model");
-        veiwLocation = glGetUniformLocation(shaderProgram, "view");
-
-        heroGoLeft[0] = - heroW /  animationFrames;
-        heroGoRight[0] = heroW  / animationFrames;
-
-        //Трансформация
-        GLCall(glUniformMatrix4fv(projLocation, 1, GL_FALSE, glm::value_ptr(proj)));
-        GLCall(glUniformMatrix4fv(veiwLocation, 1, GL_FALSE, glm::value_ptr(view)));
-        GLCall(glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model)));  // 1- сколько матриц отправляем, GL_FALSE - надо ли траспонировать
-        glfwPollEvents();  // Проверяет события (как ввод с клавиатуры) и дергает соответсвующие callback`и
-
-        int currentKeyPressed = wasdHandler->getData();
-        //std::cout << "Current key pressed: " << currentKeyPressed << "\n";
-        //std::cout << "(framesDrawn % sceneFramesPerAnim) " << (framesDrawn % sceneFramesPerAnim) << "\n";
-        
-        //Этот большой блок if-else можно запихнуть в функцию и передавать туда адрес currentGlTexture
-        if (!(framesDrawn % sceneFramesPerAnim) && currentKeyPressed) {  // Если нажата кнопка и текущий кадр подходит по времени для отрисовки спрайта
-            switch (animationState) {
-                case GLFW_KEY_A:
-                    //Изменяем поворот спрайта и отрисовываем следующий кадр
-                    if (currentKeyPressed == GLFW_KEY_D) {
-                        //Изменяем поворот спрайта и отрисовываем следующий кадр
-                        glUniform1i(orientationLocation, 1);
-                        currentGlTexture = GL_TEXTURE1;
-                        animationState = 0;
-                        break;
-                    } 
-                    glUniform1i(orientationLocation, -1);
-                    if (currentGlTexture - GL_TEXTURE0 >= animationFrames)
-                        currentGlTexture = GL_TEXTURE1;
-                    else
-                        currentGlTexture ++;
-                    model = glm::translate(model, heroGoLeft);
-                    orthCam.MoveCamera(heroGoRight);
-                break;
-                case GLFW_KEY_D:
-                    if (currentKeyPressed == GLFW_KEY_A) {
-                        //Изменяем поворот спрайта и отрисовываем следующий кадр
-                        glUniform1i(orientationLocation, -1);
-                        currentGlTexture = GL_TEXTURE1;
-                        animationState = 0;
-                        break;
-                    } 
-                    //Аналогично
-                    glUniform1i(orientationLocation, 1);
-                    if (currentGlTexture - GL_TEXTURE0 >= animationFrames)
-                        currentGlTexture = GL_TEXTURE1;
-                    else
-                        currentGlTexture ++;
-                    model = glm::translate(model, heroGoRight);
-                    orthCam.MoveCamera(heroGoLeft);
-                break;
-                default:  // Анимация не происходит
-                    animationState = currentKeyPressed;  // Запустим анимацию
-                    currentGlTexture = GL_TEXTURE1;  // С начала
-                    //orthCam.MoveCamera(cameraStop);
-                break;
-            }
-            if (currentKeyPressed == GLFW_KEY_W) {
-                animationState = 0;
-                orthCam.MoveCamera(cameraMoveUp);
-            }
-            if (currentKeyPressed == GLFW_KEY_S) {
-                animationState = 0;
-                orthCam.MoveCamera(cameraMoveDown);
-            }
-        }
-        else if (!(framesDrawn % sceneFramesPerAnim)) {
-            switch (animationState) {
-                case GLFW_KEY_A:
-                    //Изменяем поворот спрайта и отрисовываем следующий кадр
-                    glUniform1i(orientationLocation, -1);
-                    if (currentGlTexture - GL_TEXTURE0 >= animationFrames) {
-                        currentGlTexture = GL_TEXTURE1;
-                        animationState = 0;
-                    }
-                    else
-                        currentGlTexture ++;
-                    model = glm::translate(model, heroGoLeft);
-                    orthCam.MoveCamera(heroGoRight);
-                break;
-                case GLFW_KEY_D:
-                    glUniform1i(orientationLocation, 1);
-                    if (currentGlTexture - GL_TEXTURE0 >= animationFrames) {
-                        currentGlTexture = GL_TEXTURE1;
-                        animationState = 0;
-                    }
-                    else
-                        currentGlTexture ++;
-                    model = glm::translate(model, heroGoRight);
-                    orthCam.MoveCamera(heroGoLeft);
-                break;
-                default:  // Анимация не происходит
-                    currentGlTexture = GL_TEXTURE1;
-                break;
-            }
-        }
-        
-        //back
-        room.SetShaderProgram(shaderProgram);
-        room.Draw();
-
-        //hero
-        va.Bind();
-        vb.Bind();
-        GLint tex_loc = glGetUniformLocation(shaderProgram, "ourTexture");
-        GLint trans_loc = glGetUniformLocation(shaderProgram, "is_transformable");
-        GLCall(glUniform1i(trans_loc, 1));
-        GLCall(glUniform1i(tex_loc, currentGlTexture - GL_TEXTURE0 - 1));  // Спрайт рисуется
-        ib.Bind();
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
-        va.Unbind();
-
-        glfwSwapBuffers(window);  // Заменяет цветовой буфер на подготовленный и показывает его в окне (см. двойная буферизация)
-        framesDrawn = framesDrawn % 144;
-        framesDrawn++;
-        //std::cout << "framesDrawn: " << framesDrawn << "\n";
-    }
-    std::cout << "Loop done\n";
-    //Очитска выделенных ресурсов
+    //Добавляем объекты на сцену
+    scene->AddObject(room);
+    scene->AddObject(img);
+    scene->SetCamera(orthCam);
+    //Говорим рендереру, какую сцену рисовать 
+    renderer.SetScene(scene);
+    //Запуск рендера
+    renderer.Start();
+    
     delete wasdHandler;
-    std::cout << "glfwTerminate done\n";
 }

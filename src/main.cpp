@@ -9,6 +9,7 @@
 #include "VertexArray.hpp"
 #include "Renderer.hpp"
 #include "Camera.hpp"
+#include "KeyboardControl.hpp"
 
 using namespace fae;
 
@@ -303,13 +304,15 @@ int main() {
     free(vShaderStrFragment[0]);
 
     //Задаем callback при нажатии на клавиатуру 
-    glfwSetKeyCallback(window, key_callback);
+    
 
     //Камера с видом сверху
     std::shared_ptr<Camera> orthCam = std::make_shared<Camera>(windowW, windowH);
     //Сцена, которую будут наполнять объекты
     std::shared_ptr<GameScene> scene = std::make_shared<GameScene>();
-    
+    //Управление с клавиатуры
+    KeyboardControl* ctrl = new KeyboardControl(window);
+
     //Так создается объект
     //Это задний фон
     GameObject room;
@@ -322,6 +325,7 @@ int main() {
     img.SetCoords({500., 600.}, {600., 700.});
     img.SetSingleTexture(room1, room1_h, room1_w, GL_TEXTURE8);
     img.SetShaderProgram(shaderProgram);
+    ctrl->PushCallback(&img);
 
     //Добавляем объекты на сцену
     scene->AddObject(room);

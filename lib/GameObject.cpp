@@ -1,4 +1,5 @@
 #include "GameObject.hpp"
+#include <functional>
 
 namespace fae {
 
@@ -7,18 +8,6 @@ void GameObject::SetTextureCoords(point2_t rt, point2_t rb, point2_t lb, point2_
     m_verticies[1].tex_coords = rb;
     m_verticies[2].tex_coords = lb;
     m_verticies[3].tex_coords = lt;
-    if (!p_vertex_buffer) {
-        std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
-        return;
-    }
-    p_vertex_buffer->ReloadData(m_verticies);
-}
-
-void GameObject::SetCoords(point2_t lb, point2_t lt, point2_t rt, point2_t rb) {
-    m_verticies[0].coords = {rt.x, rt.y, 0.};
-    m_verticies[1].coords = {rb.x, rb.y, 0.};
-    m_verticies[2].coords = {lb.x, lb.y, 0.};
-    m_verticies[3].coords = {lt.x, lt.y, 0.};
     if (!p_vertex_buffer) {
         std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
         return;
@@ -133,6 +122,28 @@ float GameObject::GetLayer() {
             return m_verticies[0].coords.z;
         }
     else return -1.0f;
+}
+
+void GameObject::OnEvent(Event& e) {
+    EventDispatcher disp(e);
+    
+    disp.Dispatch<KeyPressedEvent>(std::bind(&OnKeyPressed, this, std::placeholders::_1));
+}
+
+bool GameObject::OnKeyPressed(KeyPressedEvent& e) {
+    int keycode = e.GetKeyCode();
+    //TODO: заменить на изменение матрицы модели 
+    if (keycode == GLFW_KEY_A) {
+        std::cout << "'A' key pressed\n";
+        m_verticies[0].coords.y--;
+        m_verticies[1].coords.y--;
+        m_verticies[2].coords.y--;
+        m_verticies[3].coords.y--;
+    }
+    if (p_vertex_buffer)
+        p_vertex_buffer->ReloadData(m_verticies);
+    else return false;
+    return true;
 }
 
 }

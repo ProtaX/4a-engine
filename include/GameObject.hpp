@@ -3,6 +3,7 @@
 #include "Core.hpp"
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
+#include "Event.hpp"
 
 namespace fae {
 
@@ -52,6 +53,8 @@ private:
     };
 
     int m_shader_program;
+
+    bool OnKeyPressed(KeyPressedEvent& e);
     
 public:
     //Sets up default vertex buffer layout, texture coords, 
@@ -61,8 +64,6 @@ public:
     GameObject(const GameObject& right) = default;
 
     void SetTextureCoords(point2_t rt, point2_t rb, point2_t lb, point2_t lt);
-
-    void SetCoords(point2_t rt, point2_t rb, point2_t lb, point2_t lt);
 
     void SetCoords(point3_t rt, point3_t rb, point3_t lb, point3_t lt);
 
@@ -122,6 +123,8 @@ public:
     }*/
 
     //TODO: функции взаимодействия с матрицей модели
+
+    void OnEvent(Event& e);
 
     virtual ~GameObject() { }
 };

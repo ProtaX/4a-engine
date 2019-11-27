@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-
+add_library(glshader ${LIB_DIR}/GlShader.cpp)
 add_library(index-buffer ${LIB_DIR}/IndexBuffer.cpp)
 add_library(vertex-buffer ${LIB_DIR}/VertexBuffer.cpp)
 add_library(vertex-array ${LIB_DIR}/VertexArray.cpp)

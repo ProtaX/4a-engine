@@ -18,6 +18,7 @@ add_compile_options(-lopengl32)
 add_compile_options(-lm)
 
 add_executable(4a-engine ${MAIN_SRC})
+#tmp
 
 #modules
 add_subdirectory(${LIB_DIR})
@@ -28,6 +29,7 @@ target_link_libraries(4a-engine vertex-array)
 target_link_libraries(4a-engine vertex-layout)
 target_link_libraries(4a-engine renderer)
 target_link_libraries(4a-engine camera)
+target_link_libraries(4a-engine glshader)
 target_link_libraries(4a-engine core)
 target_link_libraries(4a-engine game-scene)
 target_link_libraries(4a-engine event)

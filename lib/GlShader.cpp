@@ -2,36 +2,32 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
-namespace fae{
-GlShader::GlShader():ShaderProgram(0){
-}
+
+namespace fae {
+
+GlShader::GlShader():ShaderProgram(0) { }
+
 GlShader::~GlShader(){
     glUseProgram(0);
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
     glDeleteShader(ShaderProgram);
 }
-/*static const char* GlShader::PathSource(const char* catstr){
-    char absoluteExePath[256];
-    GetCurrentDirectoryA(256, absoluteExePath);
-    int absoluteexePathLen = strlen(absoluteExePath);
-    strcpy(&absoluteExePath[absoluteexePathLen - 5], "shaders\\");
-    //char* newStr = new char[absoluteexePathLen + strlen(catstr)];
 
-
-}*/
 GLuint GlShader :: loadFiles (const std::string& vertex_file_name, const std::string& fragment_file_name){
     vertex_shader = loadSourcefile (vertex_file_name, GL_VERTEX_SHADER);
     fragment_shader = loadSourcefile (fragment_file_name, GL_FRAGMENT_SHADER);
     linkProgram();
     return ShaderProgram;
 }
+
 GLuint  GlShader ::load(const std::string& vertex_source, const std::string& fragment_source){
     vertex_shader = compileSource (vertex_source.c_str(), GL_VERTEX_SHADER);
     fragment_shader = compileSource (fragment_source.c_str(), GL_FRAGMENT_SHADER);
     linkProgram();
     return ShaderProgram;
 }
+
 GLuint  GlShader ::load(const GLchar* vertex_source, const GLchar* fragment_source){
     vertex_shader = compileSource (vertex_source, GL_VERTEX_SHADER);
     fragment_shader = compileSource (fragment_source, GL_FRAGMENT_SHADER);
@@ -39,7 +35,7 @@ GLuint  GlShader ::load(const GLchar* vertex_source, const GLchar* fragment_sour
     return ShaderProgram;
 }
 
-void GlShader :: linkProgram (){
+void GlShader :: linkProgram () {
     GLint link_ok = GL_FALSE;
     if (!vertex_shader || !fragment_shader){
         ShaderProgram = GL_FALSE;
@@ -56,18 +52,21 @@ void GlShader :: linkProgram (){
         printInfoLogShader(ShaderProgram);
         ShaderProgram = GL_FALSE;
         return;
-        }
     }
+}
+
 void GlShader :: use(){
     glUseProgram(ShaderProgram);
 }
+
 GLuint GlShader :: compileSource (const GLchar* source, GLuint shader_type){
     GLuint shader = glCreateShader(shader_type);
     glShaderSource(shader,1,&source,NULL);
     glCompileShader(shader);
     printInfoLogShader(shader);
     return shader;
-} 
+}
+
 GLuint GlShader :: loadSourcefile (const std::string& source_file_name, GLuint shader_type){
     const char* path = source_file_name.c_str();
     std::ifstream m_shader(path);
@@ -80,6 +79,7 @@ GLuint GlShader :: loadSourcefile (const std::string& source_file_name, GLuint s
     m_shader.close();
     return compileSource (sourceStr.c_str(), shader_type);
 }
+
 //Attribute get
 GLint GlShader :: getAttribLocation(const GLchar* name) const{
     GLint location = -1;
@@ -88,9 +88,11 @@ GLint GlShader :: getAttribLocation(const GLchar* name) const{
         std :: cout<<"Could not bind attribute" << name << "\n";
     return location;
 }
+
 GLint GlShader :: getAttribLocation (const std::string& name) const{
     return getAttribLocation(name.c_str());
 }
+
 //Uniform
 GLint GlShader :: getUniformLocation(const GLchar* name) const{
     GLint location = -1;
@@ -99,22 +101,28 @@ GLint GlShader :: getUniformLocation(const GLchar* name) const{
         std :: cout<<"Could not bind uniform"<< name<<"\n";
     return location;
 }
+
 GLint GlShader :: getUniformLocation (const std::string& name) const{
     return getUniformLocation (name.c_str());
 }
+
 //Set Uniform 
 void GlShader :: setUniform(GLint location, const vec4& value){
     glUniform4fv(location,1,&value[0]);
 }
+
 void GlShader :: setUniform(GLint location, const vec3& value){
     glUniform3fv(location,1,&value[0]);
 }
+
 void GlShader :: setUniform(GLint location, const vec2& value){
     glUniform2fv(location,1,&value[0]);
 }
+
 void GlShader :: setUniform(GLint location, const mat4& value){
     glUniformMatrix4fv(location,1,GL_FALSE, &value[0][0]);
 }
+
 void GlShader :: setUniform(GLint location, const GLint& value){
     glUniform1i(location,value);
 }
@@ -136,6 +144,7 @@ void GlShader :: setUniform(GLint location, const GLint& value){
         delete [] infoLog;
     }
 }
+
 //Лог линковки шейдерной программы
 void GlShader :: printInfoLogProgram (GLuint shader){
     int infologLen=0;
@@ -152,34 +161,5 @@ void GlShader :: printInfoLogProgram (GLuint shader){
         delete [] infoLog;
     }
 }
+
 }
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

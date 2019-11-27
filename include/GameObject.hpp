@@ -39,10 +39,10 @@ typedef struct GameTexture2D texture_t;
 class GameObject {
 private:
     //Destructs on ~GameObject()
-    std::shared_ptr<VertexBuffer> p_vertex_buffer;
-    std::shared_ptr<VertexArray> p_vertex_array;
-    std::shared_ptr<VertexLayout> p_vertex_layout;
-    std::shared_ptr<IndexBuffer> p_index_buffer;
+    std::unique_ptr<VertexBuffer> p_vertex_buffer;
+    std::unique_ptr<VertexArray> p_vertex_array;
+    std::unique_ptr<VertexLayout> p_vertex_layout;
+    std::unique_ptr<IndexBuffer> p_index_buffer;
 
     glm::mat4 m_model_mtx;
     vertex_t m_verticies[4];
@@ -61,7 +61,7 @@ public:
     //creates VAO and VBO, uses default IBO
     GameObject();
 
-    GameObject(const GameObject& right) = default;
+    GameObject(GameObject&& right);
 
     void SetTextureCoords(point2_t rt, point2_t rb, point2_t lb, point2_t lt);
 
@@ -126,7 +126,9 @@ public:
 
     void OnEvent(Event& e);
 
-    virtual ~GameObject() { }
+    virtual ~GameObject() {
+        std::cout << "[~] GameObject " << std::endl;
+    }
 };
 
 }

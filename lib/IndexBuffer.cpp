@@ -17,7 +17,8 @@ void IndexBuffer::Unbind() {
 }
 
 IndexBuffer::~IndexBuffer() {
-     glDeleteBuffers(1, &id);
+    std::cout << "[~] IndexBuffer " << id << std::endl;
+    glDeleteBuffers(1, &id);
 }
 
 }

@@ -1,7 +1,6 @@
 #pragma once
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
+
+#include "Core.hpp"
 
 namespace fae {
 
@@ -17,7 +16,9 @@ private:
 
 public:
     Camera(float windowH, float windowW);
-    ~Camera() { }
+    ~Camera() {
+        std::cout << "[~] Camera " << std::endl;
+     }
 
     void MoveCamera(float offX, float offY, float offZ);
 

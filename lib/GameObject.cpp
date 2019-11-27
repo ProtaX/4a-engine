@@ -92,10 +92,10 @@ void GameObject::UseShaderProgram() {
 }
 
 GameObject::GameObject() {
-    p_vertex_buffer = std::make_shared<VertexBuffer>(m_verticies, sizeof(m_verticies));
-    p_vertex_layout = std::make_shared<VertexLayout>();
-    p_index_buffer = std::make_shared<IndexBuffer>(m_indicies, sizeof(m_indicies));
-    p_vertex_array = std::make_shared<VertexArray>();
+    p_vertex_buffer = std::make_unique<VertexBuffer>(m_verticies, sizeof(m_verticies));
+    p_vertex_layout = std::make_unique<VertexLayout>();
+    p_index_buffer = std::make_unique<IndexBuffer>(m_indicies, sizeof(m_indicies));
+    p_vertex_array = std::make_unique<VertexArray>();
     
     SetTextureCoords({1., 1.},
                      {1., 0.},
@@ -144,6 +144,21 @@ bool GameObject::OnKeyPressed(KeyPressedEvent& e) {
         p_vertex_buffer->ReloadData(m_verticies);
     else return false;
     return true;
+}
+
+GameObject::GameObject(GameObject&& right) {
+    p_vertex_buffer = std::move(right.p_vertex_buffer);
+    p_vertex_array = std::move(right.p_vertex_array);
+    p_vertex_layout = std::move(right.p_vertex_layout);
+    p_index_buffer = std::move(right.p_index_buffer);
+
+    m_model_mtx = right.m_model_mtx;
+    m_verticies[0] = right.m_verticies[0];
+    m_verticies[1] = right.m_verticies[1];
+    m_verticies[2] = right.m_verticies[2];
+    m_verticies[3] = right.m_verticies[3];
+    m_texture = right.m_texture;
+    m_shader_program = right.m_shader_program;
 }
 
 }

@@ -5,7 +5,7 @@ namespace fae {
 void GameScene::AddObject(GameObject& obj) {
     //TODO: добавить сортировку по признаку
     //координаты z
-    m_scene_storage.push_back(obj);
+    m_scene_storage.push_back(std::move(obj));
 }
 
 void GameScene::Draw() {

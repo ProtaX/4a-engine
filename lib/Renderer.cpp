@@ -80,7 +80,8 @@ void Renderer::OnFrame() {
 }
 
 Renderer::~Renderer() {
-    glfwTerminate();
+    std::cout << "[~] Renderer " << std::endl;
+    //glfwTerminate();
 }
 
 } 

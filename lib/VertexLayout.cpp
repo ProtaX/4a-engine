@@ -3,7 +3,7 @@
 namespace fae {
 
 VertexLayout::~VertexLayout() {
-
+    std::cout << "[~] VertexLayout " << std::endl;
 }
 
 template<>

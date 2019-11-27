@@ -15,12 +15,17 @@ private:
 public:
     GameScene() { }
 
+    ~GameScene() {
+        std::cout << "[~] GameScene " << std::endl;
+    }
+
     void AddObject(GameObject& obj);
 
     void SetCamera(std::shared_ptr<Camera> camera) { p_camera = camera; }
 
     //Draw every object on the scene
     void Draw();
+
 };
 
 }

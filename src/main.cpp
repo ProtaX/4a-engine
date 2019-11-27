@@ -198,7 +198,6 @@ int main() {
     glGenerateMipmap(GL_TEXTURE_2D);
 
     // Можно убрать спрайты из памяти
-    SOIL_free_image_data(image);
     SOIL_free_image_data(left1);
     SOIL_free_image_data(left2);
     SOIL_free_image_data(left3);
@@ -322,9 +321,10 @@ int main() {
     
     //Картника поверх заднего фона
     GameObject img;
-    img.SetCoords({500., 600.}, {600., 700.});
-    img.SetSingleTexture(room1, room1_h, room1_w, GL_TEXTURE8);
+    img.SetCoords({500., 600.}, {500.+heroW, 600.+heroH});
+    img.SetSingleTexture(image, tex_h, tex_w, GL_TEXTURE8);
     img.SetShaderProgram(shaderProgram);
+    //Задаем возможность управления для этого объекта
     ctrl->PushCallback(&img);
 
     //Добавляем объекты на сцену
@@ -337,4 +337,5 @@ int main() {
     renderer.Start();
     
     delete wasdHandler;
+    //TODO: сделать вызов glfwTerminate();
 }

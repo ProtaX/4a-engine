@@ -3,8 +3,8 @@
 namespace fae {
 
 VertexArray::VertexArray() {
-    glGenVertexArrays(1, &id);
-    glBindVertexArray(id);
+    GLCall(glGenVertexArrays(1, &id));
+    GLCall(glBindVertexArray(id));
 }
 
 void VertexArray::AddBuffer(VertexBuffer& buffer, VertexLayout& layout) {
@@ -40,7 +40,8 @@ void VertexArray::Unbind() const {
 }
 
 VertexArray::~VertexArray() {
-
+    std::cout << "[~] VertexArray " << id << std::endl;
+    GLCall(glDeleteVertexArrays(1, &id));
 }
 
 }

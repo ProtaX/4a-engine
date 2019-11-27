@@ -12,6 +12,7 @@
 #include <string>
 #include <stdlib.h>
 #include <SOIL.h>
+#include <stdlib.h>
 
 //Фуцнкия, обернутая в этот макро, не может вернуть занчение
 #define GLCall(x) \

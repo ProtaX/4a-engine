@@ -36,8 +36,7 @@ TEST_CASE("GlShader class", "[load]"){
             TexCoord.x = texCoord.x; \n\
         } \n\
         ourColor = color; \n\
-    }";
-    std::cout << "Created vs\n"; 
+    }"; 
     std::string fsSource = "#version 330 core \n\
     in vec3 ourColor; \n\
     in vec2 TexCoord; \n\
@@ -46,13 +45,9 @@ TEST_CASE("GlShader class", "[load]"){
     void main() { \n\
         color = texture(ourTexture, TexCoord); \n\
     }";
-    std::cout << "Created fs\n";
-    //GlShader load(vsSource, fsSource);
-    /*GlShader shader;
+    GlShader shader;
     GLuint shaderProgram;
-    std::cout << "Created shader+int\n";
     shaderProgram = shader.load(vsSource, fsSource);
-    std::cout << "Shader loaded\n";
-    REQUIRE(shaderProgram != 0);*/
+    REQUIRE(shaderProgram != 0);
 
 }

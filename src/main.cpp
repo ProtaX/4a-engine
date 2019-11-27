@@ -261,7 +261,24 @@ int main() {
     va_room.Unbind();*/
     GlShader shader;
     GLuint shaderProgram;
-    shaderProgram = shader.loadFiles ("C:/git/4a-engine/shaders/vs.glsl", "C:/git/4a-engine/shaders/fs.glsl");
+    #ifdef TEST_BUILD
+        strcpy(&absoluteExePath[absoluteexePathLen - 5], "shaders\\");
+    #else
+        strcpy(&absoluteExePath[absoluteexePathLen], "\\shaders\\");
+    #endif
+    std::cout << "Loading resources from " << absoluteExePath << std::endl;
+    std::string absoluteExePath1 = absoluteExePath;
+    //std::string absoluteExePath1 = std::string(absoluteExePath);
+    std::string vs ="vs.glsl";
+    std:: string vertex_file_name=absoluteExePath + vs;
+    std::cout<<vertex_file_name<<'\n';
+    std::string fs ="fs.glsl";
+    std:: string fragment_file_name=absoluteExePath + fs;
+    std::cout<<fragment_file_name<<'\n';
+    //const char* fragment_file_name=strcatcpy(absoluteExePath, "fs.glsl");
+    // std::cout<<vertex_file_name<<'\n'<<fragment_file_name<<'\n';
+    shaderProgram = shader.loadFiles (vertex_file_name, fragment_file_name);
+    //shaderProgram = shader.loadFiles ("C:/git/4a-engine/shaders/vs.glsl", "C:/git/4a-engine/shaders/fs.glsl");
     glfwSetKeyCallback(window, key_callback);
     //Начальный спрайт анимации
     int currentGlTexture = GL_TEXTURE1;

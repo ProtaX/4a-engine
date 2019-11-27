@@ -11,6 +11,15 @@ GlShader::~GlShader(){
     glDeleteShader(fragment_shader);
     glDeleteShader(ShaderProgram);
 }
+/*static const char* GlShader::PathSource(const char* catstr){
+    char absoluteExePath[256];
+    GetCurrentDirectoryA(256, absoluteExePath);
+    int absoluteexePathLen = strlen(absoluteExePath);
+    strcpy(&absoluteExePath[absoluteexePathLen - 5], "shaders\\");
+    //char* newStr = new char[absoluteexePathLen + strlen(catstr)];
+
+
+}*/
 GLuint GlShader :: loadFiles (const std::string& vertex_file_name, const std::string& fragment_file_name){
     vertex_shader = loadSourcefile (vertex_file_name, GL_VERTEX_SHADER);
     fragment_shader = loadSourcefile (fragment_file_name, GL_FRAGMENT_SHADER);
@@ -44,7 +53,7 @@ void GlShader :: linkProgram (){
     if (!link_ok) {
         std::cout<< "glLinkProgram:";
         //функция на вывод информации о линке 
-        //printInfoLogShader(ShaderProgram);
+        printInfoLogShader(ShaderProgram);
         ShaderProgram = GL_FALSE;
         return;
         }
@@ -53,18 +62,14 @@ void GlShader :: use(){
     glUseProgram(ShaderProgram);
 }
 GLuint GlShader :: compileSource (const GLchar* source, GLuint shader_type){
-    std::cout << source;
-    
-    GLuint shader = GLCall(glCreateShader(shader_type));
-    std::cout << source;
+    GLuint shader = glCreateShader(shader_type);
     glShaderSource(shader,1,&source,NULL);
     glCompileShader(shader);
-    //printInfoLogShader(shader);
+    printInfoLogShader(shader);
     return shader;
 } 
 GLuint GlShader :: loadSourcefile (const std::string& source_file_name, GLuint shader_type){
     const char* path = source_file_name.c_str();
-    std::cout << path << "\n";
     std::ifstream m_shader(path);
     if (!m_shader){
         std :: cout<< source_file_name << " file not found\n";

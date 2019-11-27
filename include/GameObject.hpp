@@ -37,10 +37,11 @@ typedef struct GameTexture2D texture_t;
 
 class GameObject {
 private:
-    std::unique_ptr<VertexBuffer> p_vertex_buffer;
-    std::unique_ptr<VertexArray> p_vertex_array;
-    std::unique_ptr<VertexLayout> p_vertex_layout;
-    std::unique_ptr<IndexBuffer> p_index_buffer;
+    //Destructs on ~GameObject()
+    std::shared_ptr<VertexBuffer> p_vertex_buffer;
+    std::shared_ptr<VertexArray> p_vertex_array;
+    std::shared_ptr<VertexLayout> p_vertex_layout;
+    std::shared_ptr<IndexBuffer> p_index_buffer;
 
     glm::mat4 m_model_mtx;
     vertex_t m_verticies[4];
@@ -49,7 +50,7 @@ private:
         0, 1, 3,
         1, 2, 3
     };
-    
+
     int m_shader_program;
     
 public:
@@ -57,20 +58,20 @@ public:
     //creates VAO and VBO, uses default IBO
     GameObject();
 
-    void SetTextureCoords(point2_t lb, point2_t lt, point2_t rt, point2_t rb);
+    GameObject(const GameObject& right) = default;
 
-    void SetCoords(point2_t lb, point2_t lt, point2_t rt, point2_t rb);
+    void SetTextureCoords(point2_t rt, point2_t rb, point2_t lb, point2_t lt);
 
-    void SetCoords(point3_t lb, point3_t lt, point3_t rt, point3_t rb);
+    void SetCoords(point2_t rt, point2_t rb, point2_t lb, point2_t lt);
 
-    //For rectangles only, z = 0
-    void SetCoords(point2_t lb, point2_t rt);
+    void SetCoords(point3_t rt, point3_t rb, point3_t lb, point3_t lt);
 
-    //For rectangles only, z = lb.z = rt.z
     void SetCoords(point3_t lb, point3_t rt);
 
     //Take (0, 0) as a lb point
     void SetSize(point2_t rt);
+
+    void SetLayer(float z);
 
     void SetSingleTexture(unsigned char* pixel_data, int h, int w, int target = GL_TEXTURE);
 
@@ -95,12 +96,34 @@ public:
 
     inline vertex_t* GetVertexDataPtr() const { return (vertex_t*)m_verticies; }
 
+    inline int GetShaderProgram() const { return this->m_shader_program; }
+
+    inline float GetLayer();
+
+    bool operator<(GameObject& right) {
+        if ((this->m_verticies[0].coords.z < right.m_verticies[0].coords.z) &&
+            (this->m_verticies[1].coords.z < right.m_verticies[1].coords.z) &&
+            (this->m_verticies[2].coords.z < right.m_verticies[2].coords.z) &&
+            (this->m_verticies[3].coords.z < right.m_verticies[3].coords.z))
+            {
+                return true;
+            }
+        return false;
+    }
+
+    GameObject& operator=(const GameObject& right) = default;
+    /*{
+        this->p_index_buffer = right.p_index_buffer;
+        this->p_vertex_array = right.p_vertex_array;
+        this->p_vertex_buffer = right.p_vertex_buffer;
+        this->p_vertex_layout = right.p_vertex_layout;
+
+        this->
+    }*/
+
     //TODO: функции взаимодействия с матрицей модели
 
     virtual ~GameObject() { }
-
-    //Что-то сделать с этим надо
-    void Draw();
 };
 
 }

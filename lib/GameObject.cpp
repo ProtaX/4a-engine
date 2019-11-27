@@ -38,11 +38,15 @@ void GameObject::SetCoords(point3_t lb, point3_t lt, point3_t rt, point3_t rb) {
     p_vertex_buffer->ReloadData(m_verticies);
 }
 
-void GameObject::SetCoords(point2_t lb, point2_t rt) {
-    m_verticies[0].coords = {rt.x, rt.y, 0.};
-    m_verticies[1].coords = {rt.x, lb.y, 0.};
-    m_verticies[2].coords = {lb.x, lb.y, 0.};
-    m_verticies[3].coords = {lb.x, rt.y, 0.};
+void GameObject::SetCoords(point3_t lb, point3_t rt) {
+    if (lb.z != rt.z) {
+        std::cout << "GameObject::SetCoords::Error: Bad z coordinate" << std::endl;
+        return;
+    }
+    m_verticies[0].coords = {rt.x, rt.y, lb.z};
+    m_verticies[1].coords = {rt.x, lb.y, lb.z};
+    m_verticies[2].coords = {lb.x, lb.y, lb.z};
+    m_verticies[3].coords = {lb.x, rt.y, lb.z};
     if (!p_vertex_buffer) {
         std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
         return;
@@ -62,15 +66,11 @@ void GameObject::SetSize(point2_t rt) {
     p_vertex_buffer->ReloadData(m_verticies);
 }
 
-void GameObject::SetCoords(point3_t lb, point3_t rt) {
-    if (lb.z != rt.z) {
-        std::cout << "GameObject::SetCoords::Error: Bad z coordinate" << std::endl;
-        return;
-    }
-    m_verticies[0].coords = {rt.x, rt.y, lb.z};
-    m_verticies[1].coords = {rt.x, lb.y, lb.z};
-    m_verticies[2].coords = {lb.x, lb.y, lb.z};
-    m_verticies[3].coords = {lb.x, rt.y, lb.z};
+void GameObject::SetLayer(float z) {
+    m_verticies[0].coords.z = z;
+    m_verticies[1].coords.z = z;
+    m_verticies[2].coords.z = z;
+    m_verticies[3].coords.z = z;
     if (!p_vertex_buffer) {
         std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
         return;
@@ -91,7 +91,6 @@ void GameObject::SetSingleTexture(unsigned char* pixel_data, int h, int w, int t
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     GLCall(glGenerateMipmap(GL_TEXTURE_2D));
-    SOIL_free_image_data(pixel_data);
 }
 
 void GameObject::UseShaderProgram() {
@@ -104,28 +103,10 @@ void GameObject::UseShaderProgram() {
 }
 
 GameObject::GameObject() {
-    //TEST
-    /*
-    m_verticies[0].coords = {200., 100., 0.};
-    m_verticies[0].color = {0., 0., 0.};
-    m_verticies[0].tex_coords = {1., 1.};
-
-    m_verticies[1].coords = {200., 100., 0.};
-    m_verticies[1].color = {0., 0., 0.};
-    m_verticies[1].tex_coords = {1., 0.};
-
-    m_verticies[2].coords = {200., 100., 0.};
-    m_verticies[2].color = {0., 0., 0.};
-    m_verticies[2].tex_coords = {0., 0.};
-
-    m_verticies[3].coords = {200., 100., 0.};
-    m_verticies[3].color = {0., 0., 0.};
-    m_verticies[3].tex_coords = {0., 1.};
-    */
-    p_vertex_buffer = std::make_unique<VertexBuffer>(m_verticies, sizeof(m_verticies));
-    p_vertex_layout = std::make_unique<VertexLayout>();
-    p_index_buffer = std::make_unique<IndexBuffer>(m_indicies, sizeof(m_indicies));
-    p_vertex_array = std::make_unique<VertexArray>();
+    p_vertex_buffer = std::make_shared<VertexBuffer>(m_verticies, sizeof(m_verticies));
+    p_vertex_layout = std::make_shared<VertexLayout>();
+    p_index_buffer = std::make_shared<IndexBuffer>(m_indicies, sizeof(m_indicies));
+    p_vertex_array = std::make_shared<VertexArray>();
     
     SetTextureCoords({1., 1.},
                      {1., 0.},
@@ -142,19 +123,16 @@ GameObject::GameObject() {
     p_index_buffer->Bind();
     p_vertex_array->AddBuffer(p_vertex_buffer.get(), p_vertex_layout.get());
     p_vertex_array->Unbind();
-
-    m_texture.target = GL_TEXTURE7;
 }
 
-void GameObject::Draw() {
-    UseShaderProgram();
-    BindVertexArray();
-    BindVertexBuffer();
-    BindIndexBuffer();
-    GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
-    UnbindVertexBuffer();
-    UnbindIndexBuffer();
-    UnbindVertexArray();
+float GameObject::GetLayer() {
+    if (m_verticies[0].coords.z == 
+        m_verticies[1].coords.z == 
+        m_verticies[2].coords.z ==
+        m_verticies[3].coords.z) {
+            return m_verticies[0].coords.z;
+        }
+    else return -1.0f;
 }
 
 }

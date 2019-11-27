@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-add_executable(test ${TESTS_DIR}/test.cpp)
-target_link_libraries(test Catch2)
-
 add_executable(VertexLayoutTest ${TESTS_DIR}/VertexLayoutTest.cpp)
 target_link_libraries(VertexLayoutTest Catch2)
 target_link_libraries(VertexLayoutTest vertex-layout)

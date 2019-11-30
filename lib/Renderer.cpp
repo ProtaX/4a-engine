@@ -16,7 +16,7 @@ Renderer::Renderer(int windowH, int windowW, std::string name) {
     glBlend_dfactor = GL_ONE_MINUS_SRC_ALPHA;
     window_name = name;
     fps = 60;
-    frame_time = 1./(double)fps;
+    frame_time = 1./(double)fps;    
 }
 
 GLFWwindow* Renderer::InitWindow() {
@@ -44,6 +44,8 @@ GLFWwindow* Renderer::InitWindow() {
     glViewport(0, 0, FBwidth, FBheight);
     glBlendFunc(glBlend_sfactor, glBlend_dfactor);
     glEnable(GL_BLEND);
+    AppInfo* p_app_info = new AppInfo();
+    glfwSetWindowUserPointer(window, (void*)p_app_info);
     
     return window;
 }
@@ -81,6 +83,8 @@ void Renderer::OnFrame() {
 
 Renderer::~Renderer() {
     std::cout << "[~] Renderer " << std::endl;
+    AppInfo* app = reinterpret_cast<AppInfo*>(glfwGetWindowUserPointer(window));
+    delete app;
     //glfwTerminate();
 }
 

@@ -2,10 +2,14 @@
 
 namespace fae {
 
-void GameScene::AddObject(GameObject& obj) {
+GameScene::GameScene() {
+}
+
+game_object_id GameScene::AddObject(GameObject& obj) {
     //TODO: добавить сортировку по признаку
     //координаты z
     m_scene_storage.push_back(std::move(obj));
+    return m_scene_storage[m_scene_storage.size() - 1].id;
 }
 
 void GameScene::Draw() {
@@ -26,6 +30,14 @@ void GameScene::Draw() {
         object.UnbindIndexBuffer();
         object.UnbindVertexArray();
     }
+}
+
+//TODO: сделать оптимизированный поиск
+GameObject* GameScene::GetObjectById(game_object_id id) {
+    for (auto& object: m_scene_storage)
+        if (object.id == id)
+            return &object;
+    return nullptr;
 }
 
 }

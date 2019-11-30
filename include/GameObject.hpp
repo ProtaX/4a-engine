@@ -22,14 +22,17 @@ struct GameVertex
 
 struct GameTexture2D {
     GLuint id;
-    unsigned char* p_image_data;
     GLuint target;
+    unsigned int h;
+    unsigned int w;
+    unsigned char* p_image_data;
 
     GameTexture2D() {
         id = 0;
-        //Not used
-        p_image_data = nullptr;
         target = 0;
+        h = 0;
+        w = 0;
+        p_image_data = nullptr;
     }
 };
 
@@ -57,6 +60,7 @@ private:
     bool OnKeyPressed(KeyPressedEvent& e);
     
 public:
+    game_object_id id;
     //Sets up default vertex buffer layout, texture coords, 
     //creates VAO and VBO, uses default IBO
     GameObject();
@@ -127,7 +131,12 @@ public:
     void OnEvent(Event& e);
 
     virtual ~GameObject() {
-        std::cout << "[~] GameObject " << std::endl;
+        if (!p_index_buffer &&
+            !p_vertex_array &&
+            !p_vertex_buffer &&
+            !p_vertex_layout)
+            std::cout << "[~] Empty GameObject " << id << std::endl;
+        else std::cout << "[~] GameObject " << id << std::endl;
     }
 };
 

@@ -70,6 +70,8 @@ void GameObject::SetLayer(float z) {
 void GameObject::SetSingleTexture(unsigned char* pixel_data, int h, int w, int target) {
     float borderColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
     m_texture.target = target;
+    m_texture.h = h;
+    m_texture.w = w;
     GLCall(glGenTextures(1, &(m_texture.id)));
     GLCall(glActiveTexture(m_texture.target));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_texture.id));
@@ -85,13 +87,14 @@ void GameObject::SetSingleTexture(unsigned char* pixel_data, int h, int w, int t
 void GameObject::UseShaderProgram() {
     GLCall(glUseProgram(m_shader_program));
     //TODO: эти вызовы должны быть частью класса шейдера
-    GLint texture_loc = GLCall(glGetUniformLocation(m_shader_program, "ourTexture"));
-    GLint transform_loc = GLCall(glGetUniformLocation(m_shader_program, "is_transformable"));
-    GLCall(glUniform1i(transform_loc, 0));
+    GLint model_mtx_loc = GLCall(glGetUniformLocation(m_shader_program, "model"));
+    GLint texture_loc = GLCall(glGetUniformLocation(m_shader_program, "Texture"));
+    GLCall(glUniformMatrix4fv(model_mtx_loc, 1, GL_FALSE, glm::value_ptr(m_model_mtx)));
     GLCall(glUniform1i(texture_loc, m_texture.target - GL_TEXTURE0 ));
 }
 
 GameObject::GameObject() {
+    id = (game_object_id)this;
     p_vertex_buffer = std::make_unique<VertexBuffer>(m_verticies, sizeof(m_verticies));
     p_vertex_layout = std::make_unique<VertexLayout>();
     p_index_buffer = std::make_unique<IndexBuffer>(m_indicies, sizeof(m_indicies));
@@ -112,13 +115,14 @@ GameObject::GameObject() {
     p_index_buffer->Bind();
     p_vertex_array->AddBuffer(p_vertex_buffer.get(), p_vertex_layout.get());
     p_vertex_array->Unbind();
+
+    std::cout << "[Created] GameObject " << id << std::endl;
 }
 
 float GameObject::GetLayer() {
-    if (m_verticies[0].coords.z == 
-        m_verticies[1].coords.z == 
-        m_verticies[2].coords.z ==
-        m_verticies[3].coords.z) {
+    if ((m_verticies[0].coords.z == m_verticies[1].coords.z) && 
+        (m_verticies[2].coords.z == m_verticies[3].coords.z) &&
+        (m_verticies[1].coords.z == m_verticies[2].coords.z)) {
             return m_verticies[0].coords.z;
         }
     else return -1.0f;
@@ -132,21 +136,27 @@ void GameObject::OnEvent(Event& e) {
 
 bool GameObject::OnKeyPressed(KeyPressedEvent& e) {
     int keycode = e.GetKeyCode();
-    //TODO: заменить на изменение матрицы модели 
-    if (keycode == GLFW_KEY_A) {
-        std::cout << "'A' key pressed\n";
-        m_verticies[0].coords.y--;
-        m_verticies[1].coords.y--;
-        m_verticies[2].coords.y--;
-        m_verticies[3].coords.y--;
+    //TODO: заменить на изменение матрицы модели
+    glm::vec3 heroMove = glm::vec3(0.0f); 
+    if (keycode == GLFW_KEY_W) {
+        std::cout << "[Going upwards]" << id << std::endl;
     }
-    if (p_vertex_buffer)
-        p_vertex_buffer->ReloadData(m_verticies);
+    else if (keycode == GLFW_KEY_A) {
+        heroMove[0] = -(double)m_texture.h / 6.;
+    }
+    else if (keycode == GLFW_KEY_S) {
+        std::cout << "[Going downwards]" << id << std::endl;
+    }
+    else if (keycode == GLFW_KEY_D) {
+        heroMove[0] = (double)m_texture.h / 6.;
+    }
     else return false;
+    m_model_mtx = glm::translate(m_model_mtx, heroMove);
     return true;
 }
 
 GameObject::GameObject(GameObject&& right) {
+    id = (game_object_id)this;
     p_vertex_buffer = std::move(right.p_vertex_buffer);
     p_vertex_array = std::move(right.p_vertex_array);
     p_vertex_layout = std::move(right.p_vertex_layout);
@@ -159,6 +169,7 @@ GameObject::GameObject(GameObject&& right) {
     m_verticies[3] = right.m_verticies[3];
     m_texture = right.m_texture;
     m_shader_program = right.m_shader_program;
+    std::cout << "[Moved] GameObject " << id << std::endl;
 }
 
 }

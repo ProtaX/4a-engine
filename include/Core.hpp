@@ -50,4 +50,11 @@ typedef struct {
     float r, g, b;
 }color_t;
 
+typedef unsigned long int game_object_id;
+
+//All classes that are to use callbacks
+struct AppInfo {
+    void* p_kb_ctl;
+};
+
 }

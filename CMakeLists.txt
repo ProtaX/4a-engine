@@ -14,8 +14,6 @@ include_directories(${SOIL_INCLUDE_DIR})
 include_directories(${CATCH2_SINGLE_INCLUDE_DIR})
 
 set(CMAKE_CXX_FLAGS "-std=c++17 -Wall")
-add_compile_options(-lopengl32)
-add_compile_options(-lm)
 
 add_executable(4a-engine ${MAIN_SRC})
 #tmp
@@ -33,6 +31,7 @@ target_link_libraries(4a-engine glshader)
 target_link_libraries(4a-engine core)
 target_link_libraries(4a-engine game-scene)
 target_link_libraries(4a-engine event)
+target_link_libraries(4a-engine keyboard-control)
 
 #externals
 add_subdirectory(${EXTERNALS_DIR})

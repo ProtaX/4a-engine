@@ -3,6 +3,7 @@
 #include <Core.hpp>
 #include <GameObject.hpp>
 #include <vector>
+#include <map>
 #include <Camera.hpp>
 
 namespace fae {
@@ -10,7 +11,7 @@ namespace fae {
 class GameScene {
 private:
     //vector sorted by z value of each GameObject
-    std::vector<GameObject> m_scene_storage;
+    std::multimap<float, GameObject> m_scene_storage;
     std::shared_ptr<Camera> p_camera;
 public:
     GameScene();

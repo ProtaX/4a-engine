@@ -32,6 +32,8 @@
         } while (0) \
 
 #define RGBA_TEXTURE SOIL_LOAD_RGBA
+#define BG_LAYER (0.f)
+#define HERO_LAYER (0.1f)
 
 void glGetErrors(int line, const char* file);
 

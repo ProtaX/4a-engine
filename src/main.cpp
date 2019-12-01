@@ -57,30 +57,30 @@ int main() {
     //Controls
     KeyboardControl* ctrl = new KeyboardControl(window);
 
-
+    //Objects can be added in any order, they 
+    //will be sorted by LAYER in the scene storage
     //Background
     GameObject room;
     room.SetTexture(room_tex);
-    //Right-top will be calculated using p_texture
-    room.SetCoords({0., 0.});
+    room.SetCoords({0., 0., BG_LAYER});  // Right-top will be calculated using p_texture
     room.SetShaderProgram(shaderProgram);
     
     //Hero
     GameObject hero;
     hero.SetTexture(hero_tex);
-    hero.SetCoords({500., 600.});
+    hero.SetCoords({500., 600., HERO_LAYER});  // LAYER value is optional
     hero.SetShaderProgram(shaderProgram);
 
     //Hero 2
     GameObject hero2;
     hero2.SetTexture(hero_tex);
-    hero2.SetCoords({600., 700.});
+    hero2.SetCoords({600., 700., HERO_LAYER});
     hero2.SetShaderProgram(shaderProgram);
 
     //Objects in the scene are no longer cannot be accessed from here
-    scene->UploadObject(room);
     //To access uploaded object there is a game_object_id
     game_object_id hero_id = scene->UploadObject(hero);
+    scene->UploadObject(room);
     game_object_id hero2_id = scene->UploadObject(hero2);
     //OnEvent() function of img_id object will be called 
     //whenever a key event occurs

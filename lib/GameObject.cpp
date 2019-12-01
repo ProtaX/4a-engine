@@ -177,4 +177,17 @@ GameObject::GameObject(GameObject&& right) {
     std::cout << "[Moved] GameObject " << id << std::endl;
 }
 
+GameObject& GameObject::operator=(const GameObject& right) {
+    id = right.id;
+    p_texture = right.p_texture;
+    m_model_mtx = right.m_model_mtx;
+    m_verticies[0] = right.m_verticies[0];
+    m_verticies[1] = right.m_verticies[1];
+    m_verticies[2] = right.m_verticies[2];
+    m_verticies[3] = right.m_verticies[3];
+    m_shader_program = right.m_shader_program;
+
+    return *this;
+}
+
 }

@@ -53,8 +53,9 @@ public:
 
     //TODO: возможно, сделать копирование только вершинных данных
     GameObject(const GameObject&) = delete;
-    //TODO: аналогично
-    GameObject& operator=(const GameObject&) = delete;
+
+    //Copies ONLY not unique data
+    GameObject& operator=(const GameObject&);
 
     void SetTextureCoords(point2_t rt, point2_t rb, point2_t lb, point2_t lt);
 
@@ -94,7 +95,7 @@ public:
 
     inline int GetShaderProgram() const { return this->m_shader_program; }
 
-    inline float GetLayer();
+    float GetLayer();
 
     inline game_object_id GetId() const { return id; }
 

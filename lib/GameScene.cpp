@@ -1,4 +1,5 @@
 #include <GameScene.hpp>
+#include <algorithm>
 
 namespace fae {
 
@@ -6,14 +7,13 @@ GameScene::GameScene() {
 }
 
 game_object_id GameScene::UploadObject(GameObject& obj) {
-    //TODO: добавить сортировку по признаку
-    //координаты z
-    m_scene_storage.push_back(std::move(obj));
-    return m_scene_storage[m_scene_storage.size() - 1].GetId();
+    game_object_id added_id = m_scene_storage.insert(std::pair<float, GameObject>(obj.GetLayer(), std::move(obj)))->second.GetId();
+    return added_id;
 }
 
 void GameScene::Draw() {
-    for (auto& object: m_scene_storage) {
+    for (auto& pair: m_scene_storage) {
+        GameObject& object = pair.second;
         object.UseShaderProgram();
         glm::mat4 proj = p_camera->GetProj();
         glm::mat4 view = p_camera->GetVeiw();
@@ -34,9 +34,9 @@ void GameScene::Draw() {
 
 //TODO: сделать оптимизированный поиск
 GameObject* GameScene::GetObjectById(game_object_id id) {
-    for (auto& object: m_scene_storage)
-        if (object.GetId() == id)
-            return &object;
+    for (auto& pair: m_scene_storage)
+        if (pair.second.GetId() == id)
+            return &pair.second;
     return nullptr;
 }
 

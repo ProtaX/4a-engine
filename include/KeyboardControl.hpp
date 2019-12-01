@@ -24,7 +24,6 @@ private:
 
     void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
         if (action == GLFW_RELEASE) return;
-        std::cout << "Key Pressed\n";
         KeyPressedEvent event(key);
         AppInfo* app = reinterpret_cast<AppInfo*>(glfwGetWindowUserPointer(window));
         KeyboardControl* this_obj = reinterpret_cast<KeyboardControl*>(app->p_kb_ctl);

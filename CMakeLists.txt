@@ -32,6 +32,7 @@ target_link_libraries(4a-engine core)
 target_link_libraries(4a-engine game-scene)
 target_link_libraries(4a-engine event)
 target_link_libraries(4a-engine keyboard-control)
+target_link_libraries(4a-engine texture)
 
 #externals
 add_subdirectory(${EXTERNALS_DIR})

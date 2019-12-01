@@ -14,7 +14,6 @@
 #include <SOIL.h>
 #include <stdlib.h>
 
-//Фуцнкия, обернутая в этот макро, не может вернуть занчение
 #define GLCall(x) \
         x; \
         glGetErrors(__LINE__, __FILE__); \
@@ -31,6 +30,8 @@
                 glfwTerminate(); \
             } \
         } while (0) \
+
+#define RGBA_TEXTURE SOIL_LOAD_RGBA
 
 void glGetErrors(int line, const char* file);
 
@@ -51,6 +52,8 @@ typedef struct {
 }color_t;
 
 typedef unsigned long int game_object_id;
+
+typedef unsigned char rgba_t;
 
 //All classes that are to use callbacks
 struct AppInfo {

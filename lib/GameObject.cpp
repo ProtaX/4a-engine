@@ -43,6 +43,25 @@ void GameObject::SetCoords(point3_t lb, point3_t rt) {
     p_vertex_buffer->ReloadData(m_verticies);
 }
 
+void GameObject::SetCoords(point3_t lb) {
+    if (!p_texture) {
+        std::cout << "GameObject::SetCoords::Error: texture is not set" << std::endl;
+        return;
+    }
+
+    //rt.x -> lb.x + p_texture->GetH()
+    //rt.y -> lb.y + p_texture->GetW()
+    m_verticies[0].coords = {lb.x + p_texture->GetH(), lb.y + p_texture->GetW(),   lb.z};
+    m_verticies[1].coords = {lb.x + p_texture->GetH(), lb.y,                       lb.z};
+    m_verticies[2].coords = {lb.x,                     lb.y,                       lb.z};
+    m_verticies[3].coords = {lb.x,                     lb.y + p_texture->GetW(),   lb.z};
+    if (!p_vertex_buffer) {
+        std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
+        return;
+    }
+    p_vertex_buffer->ReloadData(m_verticies);
+}
+
 void GameObject::SetSize(point2_t rt) {
     m_verticies[0].coords = {rt.x, rt.y, 0.};
     m_verticies[1].coords = {rt.x, 0.,   0.};
@@ -67,30 +86,16 @@ void GameObject::SetLayer(float z) {
     p_vertex_buffer->ReloadData(m_verticies);
 }
 
-void GameObject::SetSingleTexture(unsigned char* pixel_data, int h, int w, int target) {
-    float borderColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
-    m_texture.target = target;
-    m_texture.h = h;
-    m_texture.w = w;
-    GLCall(glGenTextures(1, &(m_texture.id)));
-    GLCall(glActiveTexture(m_texture.target));
-    GLCall(glBindTexture(GL_TEXTURE_2D, m_texture.id));
-    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, h, w, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixel_data));
-    GLCall(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor));
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER));
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER));
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST));
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-    GLCall(glGenerateMipmap(GL_TEXTURE_2D));
+void GameObject::SetTexture(std::shared_ptr<Texture> texture) {
+    p_texture = texture;
 }
 
 void GameObject::UseShaderProgram() {
     GLCall(glUseProgram(m_shader_program));
-    //TODO: эти вызовы должны быть частью класса шейдера
     GLint model_mtx_loc = GLCall(glGetUniformLocation(m_shader_program, "model"));
     GLint texture_loc = GLCall(glGetUniformLocation(m_shader_program, "Texture"));
     GLCall(glUniformMatrix4fv(model_mtx_loc, 1, GL_FALSE, glm::value_ptr(m_model_mtx)));
-    GLCall(glUniform1i(texture_loc, m_texture.target - GL_TEXTURE0 ));
+    GLCall(glUniform1i(texture_loc, p_texture->GetTargetN()));
 }
 
 GameObject::GameObject() {
@@ -142,13 +147,13 @@ bool GameObject::OnKeyPressed(KeyPressedEvent& e) {
         std::cout << "[Going upwards]" << id << std::endl;
     }
     else if (keycode == GLFW_KEY_A) {
-        heroMove[0] = -(double)m_texture.h / 6.;
+        heroMove[0] = -(double)p_texture->GetH() / 6.;
     }
     else if (keycode == GLFW_KEY_S) {
         std::cout << "[Going downwards]" << id << std::endl;
     }
     else if (keycode == GLFW_KEY_D) {
-        heroMove[0] = (double)m_texture.h / 6.;
+        heroMove[0] = (double)p_texture->GetH() / 6.;
     }
     else return false;
     m_model_mtx = glm::translate(m_model_mtx, heroMove);
@@ -161,13 +166,13 @@ GameObject::GameObject(GameObject&& right) {
     p_vertex_array = std::move(right.p_vertex_array);
     p_vertex_layout = std::move(right.p_vertex_layout);
     p_index_buffer = std::move(right.p_index_buffer);
+    p_texture = right.p_texture;
 
     m_model_mtx = right.m_model_mtx;
     m_verticies[0] = right.m_verticies[0];
     m_verticies[1] = right.m_verticies[1];
     m_verticies[2] = right.m_verticies[2];
     m_verticies[3] = right.m_verticies[3];
-    m_texture = right.m_texture;
     m_shader_program = right.m_shader_program;
     std::cout << "[Moved] GameObject " << id << std::endl;
 }

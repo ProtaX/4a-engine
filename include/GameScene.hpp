@@ -22,8 +22,8 @@ public:
     GameObject* GetObjectById(game_object_id id);
 
     //When object is added to the scene, it can be
-    // accessed ONLY with id returned by AddObject
-    game_object_id AddObject(GameObject& obj);
+    // accessed ONLY with id returned by UploadObject
+    game_object_id UploadObject(GameObject& obj);
 
     void SetCamera(std::shared_ptr<Camera> camera) { p_camera = camera; }
 

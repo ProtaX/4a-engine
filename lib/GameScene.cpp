@@ -5,11 +5,11 @@ namespace fae {
 GameScene::GameScene() {
 }
 
-game_object_id GameScene::AddObject(GameObject& obj) {
+game_object_id GameScene::UploadObject(GameObject& obj) {
     //TODO: добавить сортировку по признаку
     //координаты z
     m_scene_storage.push_back(std::move(obj));
-    return m_scene_storage[m_scene_storage.size() - 1].id;
+    return m_scene_storage[m_scene_storage.size() - 1].GetId();
 }
 
 void GameScene::Draw() {
@@ -35,7 +35,7 @@ void GameScene::Draw() {
 //TODO: сделать оптимизированный поиск
 GameObject* GameScene::GetObjectById(game_object_id id) {
     for (auto& object: m_scene_storage)
-        if (object.id == id)
+        if (object.GetId() == id)
             return &object;
     return nullptr;
 }

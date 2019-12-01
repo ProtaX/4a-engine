@@ -10,92 +10,76 @@
 #include "Camera.hpp"
 #include "GlShader.hpp"
 #include "KeyboardControl.hpp"
+#include "Texture.hpp"
 
 using namespace fae;
 
-static const char* strcatcpy(char* string, const char* catstr) {
-    unsigned int stringLen = strlen(string);
-    char* newStr = new char[stringLen + strlen(catstr)];
-    strcpy(newStr, string);
-    strcpy(&newStr[stringLen], catstr);
-    return newStr;
-}
-    
+//Increments when a new Texture object is created 
+GLuint Texture::vaccant_tex_target = GL_TEXTURE0;
+
 int main() {
-    
-    //Некоторые данные о размере окна и спрайта
     float windowH = 720.0f, windowW = 1024.0f;  // px
-    float heroH = 125, heroW = 75;  // px
-    float roomH = 1238, roomW = 2000;
 
     Renderer renderer(windowH, windowW, "4a-engine");
     GLFWwindow* window = renderer.InitWindow();
 
-    int tex_h, tex_w;
-    int room1_h, room1_w;
-
     char absoluteExePath[256];
     GetCurrentDirectoryA(256, absoluteExePath);
-    int absoluteexePathLen = strlen(absoluteExePath);
-    
-#ifdef TEST_BUILD
-    strcpy(&absoluteExePath[absoluteexePathLen - 5], "res\\");
-#else
-    strcpy(&absoluteExePath[absoluteexePathLen], "\\res\\");
-#endif
-    std::cout << "Loading resources from " << absoluteExePath << std::endl;
-    //TODO: здесь течет память (динамически аллоцируется строка в strcatcpy)
-    unsigned char* room1 = SOIL_load_image(strcatcpy(absoluteExePath, "room1.png"), &room1_h, &room1_w, 0, SOIL_LOAD_RGBA);
-    unsigned char* image = SOIL_load_image(strcatcpy(absoluteExePath, "left1.png"), &tex_h, &tex_w, 0, SOIL_LOAD_RGBA);
-    if (!image || !room1) {
-        std::cout << "ERROR::SOIL::IMAGE::LOAD_FAILED\n";
-        glfwTerminate();
-        return -1;
-    }
+    int absPathLen = strlen(absoluteExePath);
 
     GlShader shader;
     GLuint shaderProgram;
 
-    std::string absoluteShadersPath = absoluteExePath;
     #ifdef TEST_BUILD
-        absoluteShadersPath += "../shaders/";
-    #else
-        absoluteShadersPath += "shaders/";
+        absoluteExePath[absPathLen - strlen("build")] = '\0';
     #endif
+    std::string absoluteShadersPath = absoluteExePath;
+    std::string absoluteResourcePath = absoluteExePath;
+    absoluteShadersPath += "shaders\\";
+    absoluteResourcePath += "res\\";
+    //Load external data form disc
     std::cout << "Loading shaders from " << absoluteShadersPath << std::endl;
+    std::cout << "Loading resources from " << absoluteResourcePath << std::endl;
+    //Shaders
     shaderProgram = shader.loadFiles (absoluteShadersPath + "vs.glsl", absoluteShadersPath + "fs.glsl");
+    //Textures
+    std::shared_ptr<Texture> room_tex = std::make_shared<Texture>();
+    std::shared_ptr<Texture> hero_tex = std::make_shared<Texture>();
+    room_tex->LoadImage(absoluteResourcePath + "room1.png");
+    hero_tex->LoadImage(absoluteResourcePath + "left1.png");
 
-    //Камера с видом сверху
+    //Orth Camera
+    //TODO: why shared?
     std::shared_ptr<Camera> orthCam = std::make_shared<Camera>(windowW, windowH);
-    //Сцена, которую будут наполнять объекты
+    //Scene containing all game objects
     std::shared_ptr<GameScene> scene = std::make_shared<GameScene>();
     scene->SetCamera(orthCam);
-    //Управление с клавиатуры
+    //Controls
     KeyboardControl* ctrl = new KeyboardControl(window);
 
-    //Так создается объект
-    //Это задний фон
+
+    //Background
     GameObject room;
-    room.SetSize({roomW, roomH});
-    room.SetSingleTexture(room1, room1_h, room1_w, GL_TEXTURE7);
+    room.SetTexture(room_tex);
+    //Right-top will be calculated using p_texture
+    room.SetCoords({0., 0.});
     room.SetShaderProgram(shaderProgram);
     
-    //Картника поверх заднего фона
-    GameObject img;
-    img.SetCoords({500.f, 600.f}, {500.f+heroW, 600.f+heroH});
-    img.SetSingleTexture(image, tex_h, tex_w, GL_TEXTURE8);
-    img.SetShaderProgram(shaderProgram);
+    //Hero
+    GameObject hero;
+    hero.SetTexture(hero_tex);
+    hero.SetCoords({500., 600.});
+    hero.SetShaderProgram(shaderProgram);
 
-    //Добавляем объекты на сцену
-    scene->AddObject(room);
-    //Получим id Этого объекта внутри сцены, чтобы задать для него управление
-    game_object_id img_id = scene->AddObject(img);
-    //Задаем возможность управления для этого объекта
+    //Objects in the scene are no longer cannot be accessed from here
+    scene->UploadObject(room);
+    //To access uploaded object there is a game_object_id
+    game_object_id img_id = scene->UploadObject(hero);
+    //OnEvent() function of img_id object will be called 
+    //whenever a key event occurs
     ctrl->PushCallback(scene->GetObjectById(img_id));
 
-    //Говорим рендереру, какую сцену рисовать 
     renderer.SetScene(scene);
-    //Запуск рендера
     renderer.Start();
     //TODO: сделать вызов glfwTerminate();
 }

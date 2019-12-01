@@ -21,9 +21,9 @@ KeyboardControl::KeyboardControl(GLFWwindow* window,
         glfwSetKeyCallback(window, reinterpret_cast<GLFWkeyfun>(&this->key_callback));
 }
 
-void KeyboardControl::PushCallback(GameObject* object) {
+void KeyboardControl::AddEventListener(GameObject* object) {
     if (!object) {
-       std::cout << "KeyboardControl::PushCallback::Error: got null object" << std::endl;
+       std::cout << "KeyboardControl::AddEventListener::Error: got null object" << std::endl;
        return;
     }
     std::function<void(Event&)> f = std::bind(&GameObject::OnEvent, object, std::placeholders::_1);

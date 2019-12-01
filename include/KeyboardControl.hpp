@@ -40,7 +40,7 @@ public:
                     int action_btn = GLFW_KEY_ENTER, 
                     int esc_btn = GLFW_KEY_ESCAPE);
 
-    void PushCallback(GameObject* object);
+    void AddEventListener(GameObject* object);
 
 };
 

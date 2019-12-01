@@ -25,6 +25,7 @@ Texture::~Texture() {
         if (pixel_data)
             SOIL_free_image_data(pixel_data);
         GLCall(glDeleteTextures(1, &id));
+        std::cout << "[~] Texture " << id << std::endl;
     }
 
 }

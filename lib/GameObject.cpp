@@ -161,7 +161,7 @@ bool GameObject::OnKeyPressed(KeyPressedEvent& e) {
 }
 
 GameObject::GameObject(GameObject&& right) {
-    id = (game_object_id)this;
+    id = right.id;
     p_vertex_buffer = std::move(right.p_vertex_buffer);
     p_vertex_array = std::move(right.p_vertex_array);
     p_vertex_layout = std::move(right.p_vertex_layout);

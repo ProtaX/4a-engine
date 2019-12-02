@@ -7,6 +7,3 @@
 [submodule "externals/Catch2"]
 	path = externals/Catch2
 	url = https://github.com/catchorg/Catch2.git
-[submodule "externals/glew2"]
-	path = externals/glew2
-	url = https://github.com/edoren/glew.git

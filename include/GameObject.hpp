@@ -21,6 +21,22 @@ struct GameVertex
     }
 };
 
+struct ModelMtx {
+    glm::mat4 translation;
+    glm::mat4 rotation;
+    glm::mat4 scale;
+
+    ModelMtx() {
+        translation = glm::mat4(1.0f);
+        rotation = glm::mat4(1.0f);
+        scale = glm::mat4(1.0f);
+    }
+
+    inline glm::mat4 GetModelMtx() const {
+        return translation * rotation * scale;
+    }
+};
+
 typedef struct GameVertex vertex_t;
 
 class GameObject {
@@ -33,7 +49,7 @@ private:
     std::unique_ptr<IndexBuffer> p_index_buffer;
     std::shared_ptr<Texture> p_texture;
 
-    glm::mat4 m_model_mtx;
+    ModelMtx m_model_mtx;
     vertex_t m_verticies[4];
     GLuint m_indicies[6] = {
         0, 1, 3,
@@ -89,13 +105,17 @@ public:
 
     inline void UnbindIndexBuffer() const { this->p_index_buffer->Unbind(); }
 
-    inline glm::mat4 GetModelMtx() const { return this->m_model_mtx; }
+    inline glm::mat4 GetModelMtx() const { return this->m_model_mtx.GetModelMtx(); }
 
     inline vertex_t* GetVertexDataPtr() const { return (vertex_t*)m_verticies; }
 
     inline int GetShaderProgram() const { return this->m_shader_program; }
 
     float GetLayer();
+
+    void Scale(float percent);
+
+    void Scale(point3_t percent);
 
     inline game_object_id GetId() const { return id; }
 

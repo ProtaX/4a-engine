@@ -88,13 +88,14 @@ void GameObject::SetLayer(float z) {
 
 void GameObject::SetTexture(std::shared_ptr<Texture> texture) {
     p_texture = texture;
+    SetCoords({-texture->GetH()/2.f, -texture->GetW()/2.f}, {texture->GetH()/2.f, texture->GetW()/2.f});
 }
 
 void GameObject::UseShaderProgram() {
     GLCall(glUseProgram(m_shader_program));
     GLint model_mtx_loc = GLCall(glGetUniformLocation(m_shader_program, "model"));
     GLint texture_loc = GLCall(glGetUniformLocation(m_shader_program, "Texture"));
-    GLCall(glUniformMatrix4fv(model_mtx_loc, 1, GL_FALSE, glm::value_ptr(m_model_mtx)));
+    GLCall(glUniformMatrix4fv(model_mtx_loc, 1, GL_FALSE, glm::value_ptr(m_model_mtx.GetModelMtx())));
     GLCall(glUniform1i(texture_loc, p_texture->GetTargetN()));
 }
 
@@ -109,8 +110,6 @@ GameObject::GameObject() {
                      {1., 0.},
                      {0., 0.},
                      {0., 1.});
-                     
-    m_model_mtx = glm::mat4(1.0f);
 
     p_vertex_layout->Push<float>(3);
     p_vertex_layout->Push<float>(3);
@@ -147,16 +146,16 @@ bool GameObject::OnKeyPressed(KeyPressedEvent& e) {
         std::cout << "[Going upwards]" << id << std::endl;
     }
     else if (keycode == GLFW_KEY_A) {
-        heroMove[0] = -(double)p_texture->GetH() / 6.;
+        heroMove[0] = -(double)p_texture->GetW() / 4.;
     }
     else if (keycode == GLFW_KEY_S) {
         std::cout << "[Going downwards]" << id << std::endl;
     }
     else if (keycode == GLFW_KEY_D) {
-        heroMove[0] = (double)p_texture->GetH() / 6.;
+        heroMove[0] = (double)p_texture->GetW() / 4.;
     }
     else return false;
-    m_model_mtx = glm::translate(m_model_mtx, heroMove);
+    m_model_mtx.translation = glm::translate(m_model_mtx.translation, heroMove);
     return true;
 }
 
@@ -188,6 +187,14 @@ GameObject& GameObject::operator=(const GameObject& right) {
     m_shader_program = right.m_shader_program;
 
     return *this;
+}
+
+void GameObject::Scale(float percent) {
+    m_model_mtx.scale = glm::scale(m_model_mtx.scale, glm::vec3(percent, percent, percent));
+}
+
+void GameObject::Scale(point3_t percent) {
+    m_model_mtx.scale = glm::scale(m_model_mtx.scale, glm::vec3(percent.x, percent.y, percent.z));
 }
 
 }

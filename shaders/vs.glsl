@@ -10,6 +10,6 @@
     void main() { 
         gl_Position = proj * view * model * vec4(position, 1.0f); 
         TexCoord.y = 1.0f - texCoord.y;
-        TexCoord.x = texCoord.x; 
-        ourColor = color; 
+        TexCoord.x = texCoord.x;
+        ourColor = color;
     }

@@ -20,6 +20,7 @@ target_link_libraries(GameObjectTest glfw)
 target_link_libraries(GameObjectTest glm_static)
 target_link_libraries(GameObjectTest opengl32)
 target_link_libraries(GameObjectTest m)
+target_link_libraries(GameObjectTest game-scene)
 
 add_executable(CameraTest ${TESTS_DIR}/CameraTest.cpp)
 target_link_libraries(CameraTest Catch2)
@@ -41,4 +42,5 @@ target_link_libraries(GLShaderTest glfw)
 target_link_libraries(GLShaderTest glm_static)
 target_link_libraries(GLShaderTest opengl32)
 target_link_libraries(GLShaderTest m)
+target_link_libraries(GLShaderTest game-scene)
 

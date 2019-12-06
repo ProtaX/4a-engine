@@ -45,8 +45,10 @@ int main() {
     //Textures
     std::shared_ptr<Texture> room_tex = std::make_shared<Texture>();
     std::shared_ptr<Texture> hero_tex = std::make_shared<Texture>();
+    std::shared_ptr<Texture> hero2_tex = std::make_shared<Texture>();
     room_tex->LoadImage(absoluteResourcePath + "room1.png");
     hero_tex->LoadImage(absoluteResourcePath + "left1.png");
+    hero2_tex->LoadImage(absoluteResourcePath + "left2.png");
 
     //Orth Camera
     //TODO: why shared?
@@ -62,20 +64,22 @@ int main() {
     //Background
     GameObject room;
     room.SetTexture(room_tex);
-    room.SetCoords({0., 0., BG_LAYER});  // Right-top will be calculated using p_texture
+    room.SetLayer(LAYER_BG);
     room.SetShaderProgram(shaderProgram);
     
     //Hero
     GameObject hero;
     hero.SetTexture(hero_tex);
-    hero.SetCoords({500., 600., HERO_LAYER});  // LAYER value is optional
+    hero.SetLayer(LAYER_HERO);
     hero.SetShaderProgram(shaderProgram);
+    hero.Scale({2.9f, 2.5f});
 
     //Hero 2
     GameObject hero2;
-    hero2.SetTexture(hero_tex);
-    hero2.SetCoords({600., 700., HERO_LAYER});
+    hero2.SetTexture(hero2_tex);
+    hero2.SetLayer(LAYER_HERO);
     hero2.SetShaderProgram(shaderProgram);
+    hero2.Scale(2.f);
 
     //Objects in the scene are no longer cannot be accessed from here
     //To access uploaded object there is a game_object_id

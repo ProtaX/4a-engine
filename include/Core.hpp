@@ -1,8 +1,9 @@
 #pragma once
 
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -32,8 +33,8 @@
         } while (0) \
 
 #define RGBA_TEXTURE SOIL_LOAD_RGBA
-#define BG_LAYER (0.f)
-#define HERO_LAYER (0.1f)
+#define LAYER_BG (0.f)
+#define LAYER_HERO (0.1f)
 
 void glGetErrors(int line, const char* file);
 

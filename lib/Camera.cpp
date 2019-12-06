@@ -4,9 +4,9 @@ namespace fae {
 
 Camera::Camera(float windowH, float windowW) {
         view = glm::lookAt(
-            glm::vec3(windowW / 2, windowH / 2, 1.0f),
-            glm::vec3(windowW / 2, windowH / 2, 0.0f),
-            glm::vec3(0.0f,        1.0f,        0.0f)
+            glm::vec3(-windowH/2, -windowW/2, 1.0f),
+            glm::vec3(-windowH/2, -windowW/2, 0.0f),
+            glm::vec3(0.0f, 1.0f, 0.0f)
         );
         proj = glm::ortho(0.0f, windowH, 0.0f, windowW, 0.0f, 1.0f);
         translateVec = glm::vec3(0.0f);

@@ -8,7 +8,7 @@
 using namespace fae;
 
 TEST_CASE("GlShader class", "[load]"){
-    fae::Renderer renderer(100., 200., "4a-engine", 0);
+    fae::Renderer renderer(100., 200., "4a-engine");
     GLFWwindow* window = renderer.InitWindow();
     std::string vsSource = "#version 330 core \n\
     layout (location = 0) in vec3 position; \n\

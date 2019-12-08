@@ -2,6 +2,11 @@
 
 namespace fae {
 
+Texture::Texture(const std::string& path, int force_channels) {
+    m_force_channels = force_channels;
+    LoadImage(path);
+}
+
 bool Texture::LoadImage(const std::string& path) {
         pixel_data = SOIL_load_image(path.c_str(), &h, &w, 0, m_force_channels);
         target = vaccant_tex_target;

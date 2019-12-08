@@ -1,23 +1,15 @@
 #pragma once
-#include "Core.hpp"
-#include "GameObject.hpp"
-#include "Event.hpp"
 #include <list>
 #include <functional>
+
+#include "Core.hpp"
+#include "GameObject.hpp"
 
 namespace fae {
 
 //Keyboard event dispatcher
 class KeyboardControl {
 private:
-    struct {
-        int left_btn,
-        right_btn,
-        up_btn,
-        down_btn,
-        action_btn,
-        esc_btn;
-    } m_key_data;
     GLFWwindow* window;
 
     std::list<std::function<void(Event&)>> m_callbacks;
@@ -32,16 +24,11 @@ private:
     }
 
 public:
-    KeyboardControl(GLFWwindow* window,
-                    int left_btn = GLFW_KEY_A, 
-                    int right_btn = GLFW_KEY_D, 
-                    int up_btn = GLFW_KEY_W, 
-                    int down_btn = GLFW_KEY_S, 
-                    int action_btn = GLFW_KEY_ENTER, 
-                    int esc_btn = GLFW_KEY_ESCAPE);
+    KeyboardControl(GLFWwindow* window);
 
-    void AddEventListener(GameObject* object);
+    void AddEventListener(IControlable* object);
 
+    void AddEventListener(std::shared_ptr<IControlable> object);
 };
 
 }

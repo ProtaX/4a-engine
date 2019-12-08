@@ -25,6 +25,7 @@ public:
         w(0),
         target(GL_TEXTURE0)
         { }
+    Texture(const std::string& path, int force_channels = RGBA_TEXTURE);
     ~Texture();
 
     bool LoadImage(const std::string& path);

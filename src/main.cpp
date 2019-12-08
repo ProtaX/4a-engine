@@ -43,12 +43,9 @@ int main() {
     //Shaders
     shaderProgram = shader.loadFiles (absoluteShadersPath + "vs.glsl", absoluteShadersPath + "fs.glsl");
     //Textures
-    std::shared_ptr<Texture> room_tex = std::make_shared<Texture>();
-    std::shared_ptr<Texture> hero_tex = std::make_shared<Texture>();
-    std::shared_ptr<Texture> hero2_tex = std::make_shared<Texture>();
-    room_tex->LoadImage(absoluteResourcePath + "room1.png");
-    hero_tex->LoadImage(absoluteResourcePath + "left1.png");
-    hero2_tex->LoadImage(absoluteResourcePath + "left2.png");
+    std::shared_ptr<Texture> room_tex = std::make_shared<Texture>(absoluteResourcePath + "room1.png");
+    std::shared_ptr<Texture> hero_tex = std::make_shared<Texture>(absoluteResourcePath + "left1.png");
+    std::shared_ptr<Texture> hero2_tex = std::make_shared<Texture>(absoluteResourcePath + "left2.png");
 
     //Orth Camera
     //TODO: why shared?
@@ -73,6 +70,7 @@ int main() {
     hero.SetLayer(LAYER_HERO);
     hero.SetShaderProgram(shaderProgram);
     hero.Scale({2.9f, 2.5f});
+    hero.Move({100., 100.});
 
     //Hero 2
     GameObject hero2;
@@ -86,10 +84,11 @@ int main() {
     game_object_id hero_id = scene->UploadObject(hero);
     scene->UploadObject(room);
     game_object_id hero2_id = scene->UploadObject(hero2);
-    //OnEvent() function of img_id object will be called 
+    //OnEvent() function of IControlable object will be called 
     //whenever a key event occurs
     ctrl->AddEventListener(scene->GetObjectById(hero_id));
     ctrl->AddEventListener(scene->GetObjectById(hero2_id));
+    ctrl->AddEventListener(orthCam);
 
     renderer.SetScene(scene);
     renderer.Start();

@@ -140,22 +140,20 @@ void GameObject::OnEvent(Event& e) {
 
 bool GameObject::OnKeyPressed(KeyPressedEvent& e) {
     int keycode = e.GetKeyCode();
-    //TODO: заменить на изменение матрицы модели
-    glm::vec3 heroMove = glm::vec3(0.0f); 
+    
     if (keycode == GLFW_KEY_W) {
-        std::cout << "[Going upwards]" << id << std::endl;
+        Move({0., 5.});
     }
     else if (keycode == GLFW_KEY_A) {
-        heroMove[0] = -(double)p_texture->GetW() / 4.;
+        Move({-5.});
     }
     else if (keycode == GLFW_KEY_S) {
-        std::cout << "[Going downwards]" << id << std::endl;
+        Move({0., -5.});
     }
     else if (keycode == GLFW_KEY_D) {
-        heroMove[0] = (double)p_texture->GetW() / 4.;
+        Move({5.});
     }
     else return false;
-    m_model_mtx.translation = glm::translate(m_model_mtx.translation, heroMove);
     return true;
 }
 
@@ -195,6 +193,14 @@ void GameObject::Scale(float percent) {
 
 void GameObject::Scale(point3_t percent) {
     m_model_mtx.scale = glm::scale(m_model_mtx.scale, glm::vec3(percent.x, percent.y, percent.z));
+}
+
+void GameObject::Move(point3_t value) {
+    m_model_mtx.translation = glm::translate(m_model_mtx.translation, glm::vec3(value.x, value.y, value.z));
+}
+
+void GameObject::MoveTo(point3_t value) {
+    //m_model_mtx.translation = glm::translate(m_model_mtx.translation, glm::vec3(value.x, value.y, value.z));
 }
 
 }

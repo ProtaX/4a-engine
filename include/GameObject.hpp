@@ -5,6 +5,7 @@
 #include "IndexBuffer.hpp"
 #include "Event.hpp"
 #include "Texture.hpp"
+#include "IControlable.hpp"
 
 namespace fae {
 
@@ -39,7 +40,7 @@ struct ModelMtx {
 
 typedef struct GameVertex vertex_t;
 
-class GameObject {
+class GameObject: public IKeyControlable {
 private:
     game_object_id id;
     //Destructs on ~GameObject()
@@ -117,6 +118,10 @@ public:
 
     void Scale(point3_t percent);
 
+    void Move(point3_t value);
+
+    void MoveTo(point3_t value);
+
     inline game_object_id GetId() const { return id; }
 
     bool operator<(GameObject& right) {
@@ -130,7 +135,7 @@ public:
         return false;
     }
 
-    void OnEvent(Event& e);
+    virtual void OnEvent(Event& e);
 
     virtual ~GameObject() {
         if (!p_index_buffer &&

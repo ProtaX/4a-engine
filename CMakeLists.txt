@@ -40,7 +40,7 @@ target_link_libraries(4a-engine static-game-object)
 
 #externals
 add_subdirectory(${EXTERNALS_DIR})
-target_link_libraries(4a-engine ${SOIL_STATIC_LIB})
+target_link_libraries(4a-engine soil)
 target_link_libraries(4a-engine glew)
 target_link_libraries(4a-engine glfw)
 target_link_libraries(4a-engine glm_static)

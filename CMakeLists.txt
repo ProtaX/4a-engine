@@ -2,21 +2,21 @@ cmake_minimum_required(VERSION 3.0)
 
 project(4a-engine)
 
-set (CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_CXX_FLAGS "-std=c++17 -Wall")
+set(CMAKE_BUILD_TYPE "Debug")
 #set (CMAKE_BUILD_TYPE "Release")
 include(variables.cmake)
 
 include_directories(${INCLUDE_DIR})
+include_directories(${INCLUDE_DIR}/GameObject)
+#external includes
 include_directories(${GLM_INCLUDE_DIR})
 include_directories(${GLEW_INCLUDE_DIR})
 include_directories(${GLFW_INCLUDE_DIR})
 include_directories(${SOIL_INCLUDE_DIR})
 include_directories(${CATCH2_SINGLE_INCLUDE_DIR})
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -Wall")
-
 add_executable(4a-engine ${MAIN_SRC})
-#tmp
 
 #modules
 add_subdirectory(${LIB_DIR})
@@ -34,6 +34,9 @@ target_link_libraries(4a-engine event)
 target_link_libraries(4a-engine keyboard-control)
 target_link_libraries(4a-engine texture)
 target_link_libraries(4a-engine icontrolable)
+target_link_libraries(4a-engine animated-texture)
+target_link_libraries(4a-engine dynamic-game-object)
+target_link_libraries(4a-engine static-game-object)
 
 #externals
 add_subdirectory(${EXTERNALS_DIR})

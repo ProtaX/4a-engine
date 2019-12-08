@@ -1,7 +1,8 @@
 #pragma once
 
 #include <Core.hpp>
-#include <GameObject.hpp>
+#include "GameObject.hpp"
+#include "DynamicGameObject.hpp"
 #include <vector>
 #include <map>
 #include <Camera.hpp>
@@ -11,7 +12,7 @@ namespace fae {
 class GameScene {
 private:
     //vector sorted by z value of each GameObject
-    std::multimap<float, GameObject> m_scene_storage;
+    std::multimap<float, std::shared_ptr<GameObject>> m_scene_storage;
     std::shared_ptr<Camera> p_camera;
 public:
     GameScene();
@@ -24,7 +25,7 @@ public:
 
     //When object is added to the scene, it can be
     // accessed ONLY with id returned by UploadObject
-    game_object_id UploadObject(GameObject& obj);
+    game_object_id UploadObject(std::shared_ptr<GameObject> obj);
 
     void SetCamera(std::shared_ptr<Camera> camera) { p_camera = camera; }
 

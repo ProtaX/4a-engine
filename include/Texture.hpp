@@ -7,7 +7,7 @@ namespace fae {
 //TODO: сейчас каждая текстура находится в отдельном блоке,
 //надо добавить поддержку скрепляемых текстур
 class Texture {
-private:
+protected:
     //Свободный текстурный блок
     static GLuint vaccant_tex_target;
 
@@ -26,7 +26,7 @@ public:
         target(GL_TEXTURE0)
         { }
     Texture(const std::string& path, int force_channels = RGBA_TEXTURE);
-    ~Texture();
+    virtual ~Texture();
 
     bool LoadImage(const std::string& path);
 

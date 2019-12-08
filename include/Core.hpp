@@ -1,5 +1,7 @@
 #pragma once
 
+#define TEST_BUILD
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
@@ -14,6 +16,8 @@
 #include <stdlib.h>
 #include <SOIL.h>
 #include <stdlib.h>
+
+namespace fae {
 
 #define GLCall(x) \
         x; \
@@ -40,7 +44,7 @@ void glGetErrors(int line, const char* file);
 
 void glClearErrors();
 
-namespace fae {
+std::string GetWorkingDirectory();
 
 typedef struct {
     float x, y;
@@ -57,6 +61,25 @@ typedef struct {
 typedef unsigned long int game_object_id;
 
 typedef unsigned char rgba_t;
+
+struct TextureSegment {
+    point2_t lb;
+    point2_t lt;
+    point2_t rt;
+    point2_t rb;
+
+    TextureSegment( point2_t lb = {0., 0.},
+                    point2_t lt = {0., 0.},
+                    point2_t rt = {0., 0.},
+                    point2_t rb = {0., 0.}):
+        lb(lb),
+        lt(lt),
+        rt(rt),
+        rb(rb)
+        { }
+};
+
+typedef struct TextureSegment texture_segment_t;
 
 //All classes that are to use callbacks
 struct AppInfo {

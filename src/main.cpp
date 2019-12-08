@@ -1,7 +1,3 @@
-#define TEST_BUILD
-
-#include <string.h>
-
 #include "Core.hpp"
 #include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
@@ -11,6 +7,9 @@
 #include "GlShader.hpp"
 #include "KeyboardControl.hpp"
 #include "Texture.hpp"
+#include "AnimatedTexture.hpp"
+#include "DynamicGameObject.hpp"
+#include "StaticGameObject.hpp"
 
 using namespace fae;
 
@@ -23,29 +22,19 @@ int main() {
     Renderer renderer(windowH, windowW, "4a-engine");
     GLFWwindow* window = renderer.InitWindow();
 
-    char absoluteExePath[256];
-    GetCurrentDirectoryA(256, absoluteExePath);
-    int absPathLen = strlen(absoluteExePath);
-
-    GlShader shader;
-    GLuint shaderProgram;
-
-    #ifdef TEST_BUILD
-        absoluteExePath[absPathLen - strlen("build")] = '\0';
-    #endif
-    std::string absoluteShadersPath = absoluteExePath;
-    std::string absoluteResourcePath = absoluteExePath;
-    absoluteShadersPath += "shaders\\";
-    absoluteResourcePath += "res\\";
-    //Load external data form disc
-    std::cout << "Loading shaders from " << absoluteShadersPath << std::endl;
-    std::cout << "Loading resources from " << absoluteResourcePath << std::endl;
     //Shaders
-    shaderProgram = shader.loadFiles (absoluteShadersPath + "vs.glsl", absoluteShadersPath + "fs.glsl");
+    GlShader shader;
+    std::string absoluteShadersPath = GetWorkingDirectory() + "shaders\\";
+    GLuint shaderProgram = shader.loadFiles (absoluteShadersPath + "vs.glsl", absoluteShadersPath + "fs.glsl");
     //Textures
+    std::string absoluteResourcePath = GetWorkingDirectory() + "res\\";
     std::shared_ptr<Texture> room_tex = std::make_shared<Texture>(absoluteResourcePath + "room1.png");
     std::shared_ptr<Texture> hero_tex = std::make_shared<Texture>(absoluteResourcePath + "left1.png");
     std::shared_ptr<Texture> hero2_tex = std::make_shared<Texture>(absoluteResourcePath + "left2.png");
+
+    //TEST
+    std::shared_ptr<AnimatedTexture> anim_tex = std::make_shared<AnimatedTexture>(absoluteResourcePath + "batched_texture.png");
+    anim_tex->SetGrid(5, 1);
 
     //Orth Camera
     //TODO: why shared?
@@ -59,35 +48,34 @@ int main() {
     //Objects can be added in any order, they 
     //will be sorted by LAYER in the scene storage
     //Background
-    GameObject room;
-    room.SetTexture(room_tex);
-    room.SetLayer(LAYER_BG);
-    room.SetShaderProgram(shaderProgram);
+    std::shared_ptr<StaticGameObject> room = std::make_shared<StaticGameObject>();
+    room->SetTexture(room_tex);
+    room->SetLayer(LAYER_BG);
+    room->SetShaderProgram(shaderProgram);
     
     //Hero
-    GameObject hero;
-    hero.SetTexture(hero_tex);
-    hero.SetLayer(LAYER_HERO);
-    hero.SetShaderProgram(shaderProgram);
-    hero.Scale({2.9f, 2.5f});
-    hero.Move({100., 100.});
+    std::shared_ptr<StaticGameObject> hero = std::make_shared<StaticGameObject>();
+    hero->SetTexture(hero_tex);
+    hero->SetLayer(LAYER_HERO);
+    hero->SetShaderProgram(shaderProgram);
+    hero->Scale({2.9f, 2.5f});
+    hero->Move({100., 100.});
 
     //Hero 2
-    GameObject hero2;
-    hero2.SetTexture(hero2_tex);
-    hero2.SetLayer(LAYER_HERO);
-    hero2.SetShaderProgram(shaderProgram);
-    hero2.Scale(2.f);
+    std::shared_ptr<DynamicGameObject> anim = std::make_shared<DynamicGameObject>();
+    anim->SetTexture(anim_tex);
+    anim->SetLayer(LAYER_HERO);
+    anim->SetShaderProgram(shaderProgram);
 
     //Objects in the scene are no longer cannot be accessed from here
     //To access uploaded object there is a game_object_id
     game_object_id hero_id = scene->UploadObject(hero);
     scene->UploadObject(room);
-    game_object_id hero2_id = scene->UploadObject(hero2);
+    scene->UploadObject(anim);
     //OnEvent() function of IControlable object will be called 
     //whenever a key event occurs
     ctrl->AddEventListener(scene->GetObjectById(hero_id));
-    ctrl->AddEventListener(scene->GetObjectById(hero2_id));
+    //ctrl->AddEventListener(scene->GetObjectById(anim_id));
     ctrl->AddEventListener(orthCam);
 
     renderer.SetScene(scene);

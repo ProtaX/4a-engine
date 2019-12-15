@@ -31,4 +31,11 @@ public:
 
 };
 
+typedef std::shared_ptr<StaticGameObject> StaticGameObject_p;
+
+template<typename... _Args>
+StaticGameObject_p CreateStaticGameObject(_Args&&... __args) {
+    return std::make_shared<StaticGameObject>(std::forward<_Args>(__args)...);
+}
+
 }

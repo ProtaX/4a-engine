@@ -36,4 +36,11 @@ public:
     virtual bool OnKeyPressed(KeyPressedEvent& e);
 };
 
+typedef std::shared_ptr<DynamicGameObject> DynamicGameObject_p;
+
+template<typename... _Args>
+DynamicGameObject_p CreateDynamicGameObject(_Args&&... __args) {
+    return std::make_shared<DynamicGameObject>(std::forward<_Args>(__args)...);
+}
+
 }

@@ -3,7 +3,7 @@
 namespace fae
 {
 
-Renderer::Renderer(int windowH, int windowW, std::string name) { 
+Renderer::Renderer(int windowH, int windowW, std::string name, bool init_window) { 
     window_w = (float)windowW;
     window_h = (float)windowH;
     glwf_context_version_major = 3;
@@ -16,7 +16,10 @@ Renderer::Renderer(int windowH, int windowW, std::string name) {
     glBlend_dfactor = GL_ONE_MINUS_SRC_ALPHA;
     window_name = name;
     fps = 60;
-    frame_time = 1./(double)fps;    
+    frame_time = 1./(double)fps;
+
+    if (init_window)
+        InitWindow();
 }
 
 GLFWwindow* Renderer::InitWindow() {

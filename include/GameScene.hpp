@@ -30,4 +30,11 @@ public:
 
 };
 
+typedef std::shared_ptr<GameScene> GameScene_p;
+
+template<typename... _Args>
+GameScene_p CreateGameScene(_Args&&... __args) {
+    return std::make_shared<GameScene>(std::forward<_Args>(__args)...);
+}
+
 }

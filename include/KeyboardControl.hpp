@@ -28,4 +28,6 @@ public:
     void AddEventListener(std::shared_ptr<IEventListener> object);
 };
 
+typedef std::shared_ptr<KeyboardControl> KeyboardControl_p;
+
 }

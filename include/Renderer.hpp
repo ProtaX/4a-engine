@@ -5,6 +5,7 @@
 #include <Camera.hpp>
 #include <GameScene.hpp>
 #include "IListenable.hpp"
+#include "KeyboardControl.hpp"
 #include <list>
 
 namespace fae {
@@ -28,7 +29,7 @@ private:
     void OnFrame(int frames_drawn);
 
 public:
-    Renderer(int window_h, int window_w, std::string name);
+    Renderer(int window_h, int window_w, std::string name, bool init_window = true);
 
     GLFWwindow* InitWindow();
 
@@ -42,8 +43,14 @@ public:
 
     void AddEventListener(std::shared_ptr<IEventListener> object);
 
+    KeyboardControl_p CreateKeyboardControl() {
+        return std::make_shared<KeyboardControl>(window);
+    }
+
     ~Renderer();
     
 };
+
+typedef std::unique_ptr<Renderer> Renderer_p;
 
 }

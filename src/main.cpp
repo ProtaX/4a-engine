@@ -10,6 +10,7 @@
 #include "AnimatedTexture.hpp"
 #include "DynamicGameObject.hpp"
 #include "StaticGameObject.hpp"
+#include "GameScene.hpp"
 
 using namespace fae;
 
@@ -17,10 +18,7 @@ using namespace fae;
 GLuint Texture::vaccant_tex_target = GL_TEXTURE0;
 
 int main() {
-    float windowH = 720.0f, windowW = 1024.0f;  // px
-
-    Renderer renderer(windowH, windowW, "4a-engine");
-    GLFWwindow* window = renderer.InitWindow();
+    Renderer renderer(720, 1024, "4a-engine");
 
     //Shaders
     GlShader shader;
@@ -28,29 +26,22 @@ int main() {
     GLuint shaderProgram = shader.loadFiles (absoluteShadersPath + "vs.glsl", absoluteShadersPath + "fs.glsl");
     //Textures
     std::string absoluteResourcePath = GetWorkingDirectory() + "res\\";
-    std::shared_ptr<Texture> room_tex = std::make_shared<Texture>(absoluteResourcePath + "room1.png");
-    std::shared_ptr<AnimatedTexture> anim_tex = std::make_shared<AnimatedTexture>(absoluteResourcePath + "step_left_batched.png");
+    Texture_p room_tex = CreateTexture(absoluteResourcePath + "room1.png");
+    AnimatedTexture_p anim_tex = CreateAnimatedTexture(absoluteResourcePath + "step_left_batched.png");
     anim_tex->SetGrid(7, 1);
 
-    //Orth Camera
-    //TODO: why shared?
-    std::shared_ptr<Camera> orthCam = std::make_shared<Camera>(windowW, windowH);
-    //Scene containing all game objects
-    std::shared_ptr<GameScene> scene = std::make_shared<GameScene>();
+    GameScene_p scene = CreateGameScene();
+    Camera_p orthCam = CreateCamera(720, 1024);
     scene->SetCamera(orthCam);
-    //Controls
-    KeyboardControl* ctrl = new KeyboardControl(window);
 
-    //Objects can be added in any order, they 
-    //will be sorted by LAYER in the scene storage
     //Background
-    std::shared_ptr<StaticGameObject> room = std::make_shared<StaticGameObject>();
+    StaticGameObject_p room = CreateStaticGameObject();
     room->SetTexture(room_tex);
     room->SetLayer(LAYER_BG);
     room->SetShaderProgram(shaderProgram);
     
     //Hero
-    std::shared_ptr<DynamicGameObject> hero = std::make_shared<DynamicGameObject>();
+    DynamicGameObject_p hero = CreateDynamicGameObject();
     hero->SetTexture(anim_tex);
     hero->SetLayer(LAYER_HERO);
     hero->SetShaderProgram(shaderProgram);
@@ -59,8 +50,10 @@ int main() {
 
     scene->AddObject(hero);
     scene->AddObject(room);
-    //OnEvent() function of IControlable object will be called 
+
+    //OnEvent() function of IEventListener object will be called 
     //whenever a key event occurs
+    KeyboardControl_p ctrl = renderer.CreateKeyboardControl();
     ctrl->AddEventListener(hero);
     ctrl->AddEventListener(orthCam);
     renderer.AddEventListener(hero);

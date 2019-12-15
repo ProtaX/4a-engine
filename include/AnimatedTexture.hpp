@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core.hpp"
 #include "Texture.hpp"
 #include <vector>
 
@@ -33,5 +34,12 @@ public:
     inline int GetSegmentH() const { return (h/(float)m_rows); }
     inline int GetSegmentCount() const { return (m_rows * m_columns); }
 };
+
+typedef std::shared_ptr<AnimatedTexture> AnimatedTexture_p;
+
+template<typename... _Args>
+AnimatedTexture_p CreateAnimatedTexture(_Args&&... __args) {
+    return std::make_shared<AnimatedTexture>(std::forward<_Args>(__args)...);
+}
 
 }

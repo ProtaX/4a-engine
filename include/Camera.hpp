@@ -40,4 +40,11 @@ public:
     }
 };
 
+typedef std::shared_ptr<Camera> Camera_p;
+
+template<typename... _Args>
+Camera_p CreateCamera(_Args&&... __args) {
+    return std::make_shared<Camera>(std::forward<_Args>(__args)...);
+}
+
 }

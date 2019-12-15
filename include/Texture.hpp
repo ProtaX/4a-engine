@@ -4,8 +4,6 @@
 
 namespace fae {
 
-//TODO: сейчас каждая текстура находится в отдельном блоке,
-//надо добавить поддержку скрепляемых текстур
 class Texture {
 protected:
     //Свободный текстурный блок
@@ -37,5 +35,12 @@ public:
     inline void ForceChannels(int force_channels) { m_force_channels = force_channels; }
 
 };
+
+typedef std::shared_ptr<Texture> Texture_p;
+
+template<typename... _Args>
+Texture_p CreateTexture(_Args&&... __args) {
+    return std::make_shared<Texture>(std::forward<_Args>(__args)...);
+}
 
 }

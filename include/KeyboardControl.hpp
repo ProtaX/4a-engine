@@ -4,15 +4,14 @@
 
 #include "Core.hpp"
 #include "GameObject.hpp"
+#include "IListenable.hpp"
 
 namespace fae {
 
 //Keyboard event dispatcher
-class KeyboardControl {
+class KeyboardControl: public IListenable {
 private:
     GLFWwindow* window;
-
-    std::list<std::function<void(Event&)>> m_callbacks;
 
     void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
         if (action == GLFW_RELEASE) return;
@@ -26,9 +25,7 @@ private:
 public:
     KeyboardControl(GLFWwindow* window);
 
-    void AddEventListener(IControlable* object);
-
-    void AddEventListener(std::shared_ptr<IControlable> object);
+    void AddEventListener(std::shared_ptr<IEventListener> object);
 };
 
 }

@@ -9,6 +9,8 @@ void AnimatedTexture::SetGrid(unsigned int columns, unsigned int rows) {
     }
     m_columns = columns;
     m_rows = rows;
+    if (!grid.empty())
+        grid.clear();
 
     for (float i = 0; i < columns; i++) {
         for (float j = 0; j < rows; j++) {

@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Core.hpp"
-
 #include <GameObject.hpp>
 #include <Camera.hpp>
 #include <GameScene.hpp>
+#include "IListenable.hpp"
+#include <list>
 
 namespace fae {
 
-class Renderer {
+class Renderer: public IListenable {
 private:
     float window_h, window_w;
     int glwf_context_version_major, glwf_context_version_minor;
@@ -24,10 +25,7 @@ private:
     std::shared_ptr<GameScene> p_scene;
 
     //Что делать каждый кадр
-    void OnFrame();
-
-    //TODO: временная функция
-    void MoveMainCharacter();
+    void OnFrame(int frames_drawn);
 
 public:
     Renderer(int window_h, int window_w, std::string name);
@@ -41,6 +39,8 @@ public:
     void SetScene(std::shared_ptr<GameScene> scene) { this->p_scene = scene; }
 
     void SetFps(unsigned int fps) { this->fps = fps; }
+
+    void AddEventListener(std::shared_ptr<IEventListener> object);
 
     ~Renderer();
     

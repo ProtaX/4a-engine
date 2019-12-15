@@ -4,15 +4,15 @@
 
 namespace fae {
 
-class IControlable {
+class IEventListener {
 public:
     virtual void OnEvent(Event& e) = 0;
-    virtual ~IControlable() { }
+    virtual ~IEventListener() { }
 protected:
-    IControlable() { }
+    IEventListener() { }
 };
 
-class IKeyControlable: public IControlable {
+class IKeyControlable: public IEventListener {
 public:
     virtual bool OnKeyPressed(KeyPressedEvent& e) = 0;
     virtual ~IKeyControlable() { }

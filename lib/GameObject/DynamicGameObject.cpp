@@ -6,15 +6,19 @@ void DynamicGameObject::SetTexture(std::shared_ptr<AnimatedTexture> texture) {
     p_texture = texture;
     texture_segment_t seg = texture->GetSegment(0,0);
     SetTextureCoords(seg.rt, seg.rb, seg.lb, seg.lt);
-    GameObject::SetCoords({-texture->GetSegmentH()/2.f, -texture->GetSegmentW()/2.f}, 
-            {texture->GetSegmentH()/2.f, texture->GetSegmentW()/2.f});
+    GameObject::SetCoords({-texture->GetSegmentW()/2.f, -texture->GetSegmentH()/2.f}, 
+            {texture->GetSegmentW()/2.f, texture->GetSegmentH()/2.f});
+    SetLength(texture->GetSegmentCount());
 }
 
-void DynamicGameObject::ChangeState() {
-    AnimatedTexture* tex = dynamic_cast<AnimatedTexture*>(p_texture.get());
-    texture_segment_t seg = tex->GetNextSegment(segment_to_draw++);
-    SetTextureCoords(seg.rt, seg.rb, seg.lb, seg.lt);
-    segment_to_draw = segment_to_draw % tex->GetSegmentCount();
+bool DynamicGameObject::OnFrame(FrameEvent& e) {
+    if (! (e.GetFramesDrawn() % frames_until_next_segment)) {
+        AnimatedTexture* tex = dynamic_cast<AnimatedTexture*>(p_texture.get());
+        texture_segment_t seg = tex->GetNextSegment(segment_to_draw++);
+        SetTextureCoords(seg.rt, seg.rb, seg.lb, seg.lt);
+        segment_to_draw = segment_to_draw % tex->GetSegmentCount();
+    }
+    return true;
 }
 
 void DynamicGameObject::UseShaderProgram() {
@@ -48,6 +52,7 @@ void DynamicGameObject::OnEvent(Event& e) {
     EventDispatcher disp(e);
 
     disp.Dispatch<KeyPressedEvent>(std::bind(&OnKeyPressed, this, std::placeholders::_1));
+    disp.Dispatch<FrameEvent>(std::bind(&OnFrame, this, std::placeholders::_1));
 }
 
 bool DynamicGameObject::OnKeyPressed(KeyPressedEvent& e) {
@@ -67,6 +72,10 @@ bool DynamicGameObject::OnKeyPressed(KeyPressedEvent& e) {
         }
         else return false;
         return true;
-    }
+}
+
+void DynamicGameObject::SetLength(int frames) {
+    frames_until_next_segment = frames;
+}
 
 }

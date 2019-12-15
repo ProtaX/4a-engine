@@ -9,23 +9,27 @@ namespace fae {
 class DynamicGameObject: public GameObject {
 protected:
     int segment_to_draw;
+    int frames_until_next_segment;
     std::shared_ptr<AnimatedTexture> p_texture;
 
 public:
     DynamicGameObject() {
         std::cout << "[->]\tDynamicGameObject" << std::endl;
         segment_to_draw = 0;
+        frames_until_next_segment = 1;
     }
 
     ~DynamicGameObject() { }
 
     void SetTexture(std::shared_ptr<AnimatedTexture> texture);
 
-    virtual void ChangeState();
+    virtual bool OnFrame(FrameEvent& e);
 
     void UseShaderProgram();
 
     void SetCoords(point3_t lb);
+
+    void SetLength(int frames);
 
     virtual void OnEvent(Event& e);
 

@@ -59,7 +59,7 @@ void Renderer::Start() {
     while(!glfwWindowShouldClose(window)) {
         start = glfwGetTime();
         glClear(GL_COLOR_BUFFER_BIT);
-        OnFrame();
+        OnFrame(frame_counter);
         glfwSwapBuffers(window);
         post_frame = glfwGetTime();
         wait_time = frame_time - (post_frame - start);
@@ -76,7 +76,10 @@ void Renderer::Start() {
     }
 }
 
-void Renderer::OnFrame() {
+void Renderer::OnFrame(int frames_drawn) {
+    FrameEvent e(frames_drawn);
+    for (auto& cb: m_callbacks)
+        cb(e);
     glfwPollEvents();
     p_scene->Draw();
 }
@@ -86,6 +89,15 @@ Renderer::~Renderer() {
     AppInfo* app = reinterpret_cast<AppInfo*>(glfwGetWindowUserPointer(window));
     delete app;
     //glfwTerminate();
+}
+
+void Renderer::AddEventListener(std::shared_ptr<IEventListener> object) {
+    if (!object) {
+       std::cout << "Renderer::AddEventListener::Error: got null object" << std::endl;
+       return;
+    }
+    std::function<void(Event&)> f = std::bind(&IEventListener::OnEvent, object.get(), std::placeholders::_1);
+    m_callbacks.push_back(f);
 }
 
 } 

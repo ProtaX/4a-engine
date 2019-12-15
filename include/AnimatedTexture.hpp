@@ -19,7 +19,9 @@ public:
         Texture(path, force_channels),
         m_columns(1),
         m_rows(1)
-        { }
+        { 
+            SetGrid(1, 1);
+        }
     virtual ~AnimatedTexture() {}
 
     void SetGrid(unsigned int columns, unsigned int rows);

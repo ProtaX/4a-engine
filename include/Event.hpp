@@ -6,7 +6,8 @@ namespace fae {
 
 enum class EventType {
     None = 0,
-    KeyPressed, KeyReleased
+    KeyPressed, KeyReleased,
+    Frame
 };
 
 class Event {
@@ -41,6 +42,18 @@ public:
     inline int GetRepeatCount() const { return this->m_repeat_count; }
 private:
     int m_repeat_count;
+};
+
+class FrameEvent: public Event {
+private:
+    int m_frames_drawn;
+public:
+    FrameEvent(int frames_drawn):
+        m_frames_drawn(frames_drawn) { }
+    
+    virtual inline EventType GetEventType() const override { return EventType::Frame; }
+    virtual inline std::string ToString() const override { return "Frame"; }
+    inline int GetFramesDrawn() const { return this->m_frames_drawn; }
 };
 
 //Обертка вокруг класса события

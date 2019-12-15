@@ -39,7 +39,7 @@ struct ModelMtx {
 
 typedef struct GameVertex vertex_t;
 
-class GameObject: public IKeyControlable {
+class GameObject: public IEventListener {
 protected:
     game_object_id id;
     //Destructs on ~GameObject()
@@ -56,8 +56,6 @@ protected:
     };
 
     int m_shader_program;
-
-    virtual bool OnKeyPressed(KeyPressedEvent& e) = 0;
     
 public:
     //Sets up default vertex buffer layout, texture coords, 
@@ -119,11 +117,9 @@ public:
 
     inline game_object_id GetId() const { return id; }
 
-    virtual void ChangeState() = 0;
+    virtual void UseShaderProgram() = 0;
 
     virtual void OnEvent(Event& e) = 0;
-
-    virtual void UseShaderProgram() = 0;
 
     virtual ~GameObject();
 };

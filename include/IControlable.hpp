@@ -12,7 +12,7 @@ protected:
     IEventListener() { }
 };
 
-class IKeyControlable: public IEventListener {
+class IKeyControlable {
 public:
     virtual bool OnKeyPressed(KeyPressedEvent& e) = 0;
     virtual ~IKeyControlable() { }

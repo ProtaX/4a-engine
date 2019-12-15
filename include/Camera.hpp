@@ -5,7 +5,7 @@
 
 namespace fae {
 
-class Camera: public IKeyControlable {
+class Camera: public IEventListener, public IKeyControlable {
 private:
     int h, w;
     int hBorder, wBorder;
@@ -23,9 +23,9 @@ public:
 
     void MoveCamera(glm::vec3& transVec);
 
-    void OnEvent(Event& e);
+    void OnEvent(Event& e) final;
 
-    bool OnKeyPressed(KeyPressedEvent& e);
+    bool OnKeyPressed(KeyPressedEvent& e) final;
 
     glm::mat4 GetProj() const {
         return proj;

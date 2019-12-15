@@ -11,16 +11,6 @@ void DynamicGameObject::SetTexture(std::shared_ptr<AnimatedTexture> texture) {
     SetLength(texture->GetSegmentCount());
 }
 
-bool DynamicGameObject::OnFrame(FrameEvent& e) {
-    if (! (e.GetFramesDrawn() % frames_until_next_segment)) {
-        AnimatedTexture* tex = dynamic_cast<AnimatedTexture*>(p_texture.get());
-        texture_segment_t seg = tex->GetNextSegment(segment_to_draw++);
-        SetTextureCoords(seg.rt, seg.rb, seg.lb, seg.lt);
-        segment_to_draw = segment_to_draw % tex->GetSegmentCount();
-    }
-    return true;
-}
-
 void DynamicGameObject::UseShaderProgram() {
     GLCall(glUseProgram(m_shader_program));
     GLint model_mtx_loc = GLCall(glGetUniformLocation(m_shader_program, "model"));
@@ -46,32 +36,6 @@ void DynamicGameObject::SetCoords(point3_t lb) {
         return;
     }
     p_vertex_buffer->ReloadData(m_verticies);
-}
-
-void DynamicGameObject::OnEvent(Event& e) {
-    EventDispatcher disp(e);
-
-    disp.Dispatch<KeyPressedEvent>(std::bind(&OnKeyPressed, this, std::placeholders::_1));
-    disp.Dispatch<FrameEvent>(std::bind(&OnFrame, this, std::placeholders::_1));
-}
-
-bool DynamicGameObject::OnKeyPressed(KeyPressedEvent& e) {
-        int keycode = e.GetKeyCode();
-    
-        if (keycode == GLFW_KEY_W) {
-            Move({0., 5.});
-        }
-        else if (keycode == GLFW_KEY_A) {
-            Move({-5.});
-        }
-        else if (keycode == GLFW_KEY_S) {
-            Move({0., -5.});
-        }
-        else if (keycode == GLFW_KEY_D) {
-            Move({5.});
-        }
-        else return false;
-        return true;
 }
 
 void DynamicGameObject::SetLength(int frames) {

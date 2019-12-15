@@ -38,6 +38,8 @@ target_link_libraries(4a-engine animated-texture)
 target_link_libraries(4a-engine dynamic-game-object)
 target_link_libraries(4a-engine static-game-object)
 target_link_libraries(4a-engine ilistenable)
+target_link_libraries(4a-engine animated-game-object)
+target_link_libraries(4a-engine controllable-game-object)
 
 #externals
 add_subdirectory(${EXTERNALS_DIR})

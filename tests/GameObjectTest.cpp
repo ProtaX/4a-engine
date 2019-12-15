@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <GameObject.hpp>
+#include <StaticGameObject.hpp>
 #include <Renderer.hpp>
 
 using namespace fae;
@@ -8,8 +8,7 @@ using namespace fae;
 TEST_CASE("SetSize", "[GameObject]") {
     //Arrange
     Renderer renderer(100., 200., "4a-engine");
-    GLFWwindow* window = renderer.InitWindow();
-    GameObject obj;
+    StaticGameObject obj;
     float x = 100, y = 200;
     //Act
     obj.SetSize({x, y});

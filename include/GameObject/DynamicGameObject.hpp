@@ -12,18 +12,16 @@ protected:
     int frames_until_next_segment;
     std::shared_ptr<AnimatedTexture> p_texture;
 
-public:
     DynamicGameObject() {
         std::cout << "[->]\tDynamicGameObject" << std::endl;
         segment_to_draw = 0;
         frames_until_next_segment = 1;
     }
+public:
 
-    ~DynamicGameObject() { }
+    virtual ~DynamicGameObject() { }
 
     void SetTexture(std::shared_ptr<AnimatedTexture> texture);
-
-    virtual bool OnFrame(FrameEvent& e);
 
     void UseShaderProgram();
 
@@ -31,16 +29,10 @@ public:
 
     void SetLength(int frames);
 
-    virtual void OnEvent(Event& e);
+    virtual bool OnFrame(FrameEvent& e) = 0;
 
-    virtual bool OnKeyPressed(KeyPressedEvent& e);
+    virtual void OnEvent(Event& e) = 0;
+
 };
-
-typedef std::shared_ptr<DynamicGameObject> DynamicGameObject_p;
-
-template<typename... _Args>
-DynamicGameObject_p CreateDynamicGameObject(_Args&&... __args) {
-    return std::make_shared<DynamicGameObject>(std::forward<_Args>(__args)...);
-}
 
 }

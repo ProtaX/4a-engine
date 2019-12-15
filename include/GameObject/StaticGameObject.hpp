@@ -15,7 +15,7 @@ public:
         std::cout << "[->]\tStaticGameObject" << std::endl;
     }
 
-    ~StaticGameObject() { }
+    virtual ~StaticGameObject() { }
 
     virtual void OnEvent(Event& e);
 

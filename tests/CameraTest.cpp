@@ -7,9 +7,9 @@ using namespace fae;
 TEST_CASE("Wrong params type", "[Camera]") {
     //Arrange
     int windowW = 1024, windowH = 720;
-    Camera orthCam(windowW, windowH);
+    Camera orthCam(windowH, windowW);
     //Act
-    Camera orthCam_right(1024., 720.);
+    Camera orthCam_right(720., 1024.);
     //Assert
     REQUIRE(orthCam.GetProj() == orthCam_right.GetProj());
 }

@@ -3,12 +3,15 @@
 namespace fae {
     
 void DynamicGameObject::SetTexture(std::shared_ptr<AnimatedTexture> texture) {
+    if (!texture) {
+        std::cout << "DynamicGameObject::SetTexture::Error: texture is not set" << std::endl;
+        return;
+    }
     p_texture = texture;
     texture_segment_t seg = texture->GetSegment(0,0);
     SetTextureCoords(seg.rt, seg.rb, seg.lb, seg.lt);
     GameObject::SetCoords({-texture->GetSegmentW()/2.f, -texture->GetSegmentH()/2.f}, 
             {texture->GetSegmentW()/2.f, texture->GetSegmentH()/2.f});
-    SetLength(texture->GetSegmentCount());
 }
 
 void DynamicGameObject::UseShaderProgram() {
@@ -36,10 +39,6 @@ void DynamicGameObject::SetCoords(point3_t lb) {
         return;
     }
     p_vertex_buffer->ReloadData(m_verticies);
-}
-
-void DynamicGameObject::SetLength(int frames) {
-    frames_until_next_segment = frames;
 }
 
 }

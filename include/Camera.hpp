@@ -5,13 +5,15 @@
 
 namespace fae {
 
-class Camera: public IEventListener, public IKeyControlable {
+class Camera: public IEventListener {
 private:
     int h, w;
     int hBorder, wBorder;
     
     glm::mat4 proj;
     glm::mat4 view;
+    point3_t m_move_to;
+    int m_frames_left;
 
 public:
     Camera(float windowH, float windowW);
@@ -25,7 +27,9 @@ public:
 
     void OnEvent(Event& e) final;
 
-    bool OnKeyPressed(KeyPressedEvent& e) final;
+    bool OnPlayerMove(PlayerMoveEvent& e);
+
+    bool OnFrame(FrameEvent& e);
 
     glm::mat4 GetProj() const {
         return proj;

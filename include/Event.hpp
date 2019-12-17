@@ -7,7 +7,8 @@ namespace fae {
 enum class EventType {
     None = 0,
     KeyPressed, KeyReleased,
-    Frame
+    Frame,
+    PlayerMove
 };
 
 class Event {
@@ -47,16 +48,32 @@ private:
 class FrameEvent: public Event {
 private:
     int m_frames_drawn;
+    int m_fps;
 public:
-    FrameEvent(int frames_drawn):
-        m_frames_drawn(frames_drawn) { }
+    FrameEvent(int frames_drawn, int fps):
+        m_frames_drawn(frames_drawn),
+        m_fps(fps) { }
     
     virtual inline EventType GetEventType() const override { return EventType::Frame; }
     virtual inline std::string ToString() const override { return "Frame"; }
     inline int GetFramesDrawn() const { return this->m_frames_drawn; }
+    inline int GetFps() const { return this->m_fps; }
 };
 
-//Обертка вокруг класса события
+class PlayerMoveEvent: public Event {
+private:
+    point3_t m_move_vec;
+    int m_frames_for_move;
+public:
+    PlayerMoveEvent(point3_t move, int frames_for_move):
+        m_move_vec(move),
+        m_frames_for_move(frames_for_move) { }
+    virtual inline EventType GetEventType() const override { return EventType::PlayerMove; }
+    virtual inline std::string ToString() const override { return "PlayerMove"; }
+    inline point3_t GetMove() const { return this->m_move_vec; }
+    inline int GetFrames() const { return this->m_frames_for_move; }
+};
+
 class EventDispatcher {
 private:
     Event& m_event;
@@ -66,7 +83,9 @@ public:
 
     template<typename T, typename F>
     void Dispatch(const F& func) {
-        m_event.m_hanled = func(static_cast<T&>(m_event));
+        if (!dynamic_cast<T*>(&m_event))
+            return;
+        func(static_cast<T&>(m_event));
     }
 };
 

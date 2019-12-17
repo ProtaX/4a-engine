@@ -41,7 +41,7 @@ public:
 
     void SetFps(unsigned int fps) { this->fps = fps; }
 
-    void AddEventListener(std::shared_ptr<IEventListener> object);
+    void AddEventListener(std::shared_ptr<IEventListener> object) final;
 
     KeyboardControl_p CreateKeyboardControl() {
         return std::make_shared<KeyboardControl>(window);
@@ -52,5 +52,10 @@ public:
 };
 
 typedef std::unique_ptr<Renderer> Renderer_p;
+
+template<typename... _Args>
+Renderer_p CreateRenderer(_Args&&... __args) {
+    return std::make_unique<Renderer>(std::forward<_Args>(__args)...);
+}
 
 }

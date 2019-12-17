@@ -5,9 +5,13 @@
 namespace fae {
 
 class AnimatedGameObject: public DynamicGameObject {
+private:
+    int segment_to_draw;
+
 public:
     AnimatedGameObject() {
         std::cout << "[->]\tAnimatedGameObject" << std::endl;
+        segment_to_draw = 0;
     }
 
     virtual ~AnimatedGameObject() { }

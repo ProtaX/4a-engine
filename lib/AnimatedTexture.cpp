@@ -9,6 +9,7 @@ void AnimatedTexture::SetGrid(unsigned int columns, unsigned int rows) {
     }
     m_columns = columns;
     m_rows = rows;
+    m_fps = rows * columns;
     if (!grid.empty())
         grid.clear();
 

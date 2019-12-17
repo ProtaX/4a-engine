@@ -80,7 +80,7 @@ void Renderer::Start() {
 }
 
 void Renderer::OnFrame(int frames_drawn) {
-    FrameEvent e(frames_drawn);
+    FrameEvent e(frames_drawn, fps);
     for (auto& cb: m_callbacks)
         cb(e);
     glfwPollEvents();

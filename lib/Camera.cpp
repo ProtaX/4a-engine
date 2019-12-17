@@ -10,6 +10,7 @@ Camera::Camera(float windowH, float windowW) {
             glm::vec3(0.0f, 1.0f, 0.0f)
         );
         proj = glm::ortho(0.0f, windowW, 0.0f, windowH, 0.0f, 1.0f);
+        m_move_to = {};
 }
 
 void Camera::MoveCamera(point3_t p) {
@@ -23,25 +24,23 @@ void Camera::MoveCamera(glm::vec3& transVec) {
 void Camera::OnEvent(Event& e) {
     EventDispatcher disp(e);
     
-    disp.Dispatch<KeyPressedEvent>(std::bind(&OnKeyPressed, this, std::placeholders::_1));
+    disp.Dispatch<FrameEvent>(std::bind(&OnFrame, this, std::placeholders::_1));
+    disp.Dispatch<PlayerMoveEvent>(std::bind(&OnPlayerMove, this, std::placeholders::_1));
 }
 
-bool Camera::OnKeyPressed(KeyPressedEvent& e) {
-    int keycode = e.GetKeyCode();
-    
-    if (keycode == GLFW_KEY_W) {
-        MoveCamera({0., -5.});
-    }
-    else if (keycode == GLFW_KEY_A) {
-        MoveCamera({5.});
-    }
-    else if (keycode == GLFW_KEY_S) {
-        MoveCamera({0., 5.});
-    }
-    else if (keycode == GLFW_KEY_D) {
-        MoveCamera({-5.});
-    }
-    else return false;
+bool Camera::OnPlayerMove(PlayerMoveEvent& e) {
+    m_frames_left = e.GetFrames();
+    m_move_to = e.GetMove();
+    m_move_to.x *= -1. / ((float)m_frames_left);
+    m_move_to.y *= -1. / ((float)m_frames_left);
+    m_move_to.z *= -1. / ((float)m_frames_left);
+
+    return true;
+}
+
+bool Camera::OnFrame(FrameEvent& e) {
+    if (m_frames_left-- > 0)
+        MoveCamera(m_move_to);
     return true;
 }
 

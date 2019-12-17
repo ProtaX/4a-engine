@@ -1,24 +1,8 @@
-#include "Core.hpp"
-#include "IndexBuffer.hpp"
-#include "VertexBuffer.hpp"
-#include "VertexArray.hpp"
-#include "Renderer.hpp"
-#include "Camera.hpp"
-#include "GlShader.hpp"
-#include "KeyboardControl.hpp"
-#include "Texture.hpp"
-#include "AnimatedTexture.hpp"
-#include "ControllableGameObject.hpp"
-#include "AnimatedGameObject.hpp"
-#include "StaticGameObject.hpp"
-#include "GameScene.hpp"
+#include "Engine.hpp"
 
 using namespace fae;
 
-//Increments when a new Texture object is created 
-GLuint Texture::vaccant_tex_target = GL_TEXTURE0;
-
-int main() {
+void game() {
     Renderer_p renderer = CreateRenderer(720, 1024, "4a-engine");
 
     //Shaders
@@ -26,7 +10,7 @@ int main() {
     std::string absoluteShadersPath = GetWorkingDirectory() + "shaders\\";
     GLuint shaderProgram = shader.loadFiles (absoluteShadersPath + "vs.glsl", absoluteShadersPath + "fs.glsl");
     
-    //Textures
+    //Load textures and animations
     std::string absoluteResourcePath = GetWorkingDirectory() + "res\\";
     Texture_p room_tex = CreateTexture(absoluteResourcePath + "room1_small.png");
     AnimatedTexture_p step_left = CreateAnimatedTexture(absoluteResourcePath + "step_left_batched.png");
@@ -58,7 +42,7 @@ int main() {
     hero->Scale({3, 3});
     hero->Move({100., 100.});
 
-    //Animation
+    //Fire animation
     AnimatedGameObject_p fire = CreateAnimatedGameObject();
     fire->SetTexture(fire_tex);
     fire->SetLayer(LAYER_BG);
@@ -80,13 +64,11 @@ int main() {
     //OnFrame events
     renderer->AddEventListener(hero);
     renderer->AddEventListener(fire);
-    //Smooth camera
-    renderer->AddEventListener(orthCam);
-    //Whenever a player moves, camera need to know,
+    renderer->AddEventListener(orthCam);  // For smooth camera
+    //Whenever a player moves, camera needs to know,
     //where to slide
     hero->AddEventListener(orthCam);
 
     renderer->SetScene(scene);
     renderer->Start();
-    //TODO: сделать вызов glfwTerminate();
 }

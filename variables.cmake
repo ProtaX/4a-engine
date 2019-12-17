@@ -19,4 +19,4 @@ set (TESTS_DIR ${PROJECT_DIR}/tests)
 
 set (SRC_DIR ${PROJECT_DIR}/src)
 
-set (MAIN_SRC ${SRC_DIR}/main.cpp)
+set (MAIN_SRC ${LIB_DIR}/main.cpp)

@@ -15,6 +15,8 @@ include_directories(${GLEW_INCLUDE_DIR})
 include_directories(${GLFW_INCLUDE_DIR})
 include_directories(${SOIL_INCLUDE_DIR})
 include_directories(${CATCH2_SINGLE_INCLUDE_DIR})
+#game src
+include_directories(${PROJECT_DIR}/src)
 
 add_executable(4a-engine ${MAIN_SRC})
 

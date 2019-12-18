@@ -30,6 +30,8 @@ void Camera::OnEvent(Event& e) {
 
 bool Camera::OnPlayerMove(PlayerMoveEvent& e) {
     m_frames_left = e.GetFrames();
+    if (!m_frames_left)
+        return false;
     m_move_to = e.GetMove();
     m_move_to.x *= -1. / ((float)m_frames_left);
     m_move_to.y *= -1. / ((float)m_frames_left);
@@ -39,8 +41,10 @@ bool Camera::OnPlayerMove(PlayerMoveEvent& e) {
 }
 
 bool Camera::OnFrame(FrameEvent& e) {
-    if (m_frames_left-- > 0)
+    if (m_frames_left) {
         MoveCamera(m_move_to);
+        m_frames_left--;
+    }
     return true;
 }
 

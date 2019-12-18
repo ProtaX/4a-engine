@@ -12,17 +12,20 @@ private:
     int segment_to_draw;
     bool animation_started;
     point3_t per_frame_move;
+    float m_speed;
+    int frames_before_idle;
     std::shared_ptr<AnimatedTexture> p_texture_left;
     std::shared_ptr<AnimatedTexture> p_texture_right;
     std::shared_ptr<AnimatedTexture> p_texture_up;
     std::shared_ptr<AnimatedTexture> p_texture_down;
     std::shared_ptr<AnimatedTexture> p_texture_idle;
+    std::shared_ptr<AnimatedTexture> next_frame_anim;
     //p_texture is current animation playing
 
     void PlayAnimation(std::shared_ptr<AnimatedTexture> anim) {
         if (animation_started && (p_texture == anim))
             return;
-        SetTexture(anim);
+        next_frame_anim = anim;
         animation_started = true;
     }
 
@@ -30,6 +33,8 @@ public:
     ControllableGameObject() {
         std::cout << "[->]\tControllableGameObject" << std::endl;
         segment_to_draw = 0;
+        m_speed = 10.0f;
+        frames_before_idle = 10;
     }
 
     virtual ~ControllableGameObject() { }
@@ -47,6 +52,8 @@ public:
     bool OnKeyPressed(KeyPressedEvent& e) final;
 
     void AddEventListener(std::shared_ptr<IEventListener> object) final;
+
+    inline void SetSpeed(float speed) { m_speed = speed; }
 };
 
 typedef std::shared_ptr<ControllableGameObject> ControllableGameObject_p;

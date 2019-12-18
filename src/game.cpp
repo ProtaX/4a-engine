@@ -15,11 +15,16 @@ void game() {
     Texture_p room_tex = CreateTexture(absoluteResourcePath + "room1_small.png");
     AnimatedTexture_p step_left = CreateAnimatedTexture(absoluteResourcePath + "step_left_batched.png");
     AnimatedTexture_p step_right = CreateAnimatedTexture(absoluteResourcePath + "step_right_batched.png");
+    AnimatedTexture_p step_down = CreateAnimatedTexture(absoluteResourcePath + "step_down_batched.png");
+    AnimatedTexture_p step_up = CreateAnimatedTexture(absoluteResourcePath + "step_up_batched.png");
     AnimatedTexture_p idle = CreateAnimatedTexture(absoluteResourcePath + "idle_static.png");
+    AnimatedTexture_p fire_tex = CreateAnimatedTexture(absoluteResourcePath + "bonfire.png");
+    //Set up animations
     step_left->SetGrid(6, 1);
     step_right->SetGrid(6, 1);
-    idle->SetFps(6);
-    AnimatedTexture_p fire_tex = CreateAnimatedTexture(absoluteResourcePath + "bonfire.png");
+    step_down->SetGrid(9, 1);
+    step_up->SetGrid(9, 1);
+    idle->SetFps(60);
     fire_tex->SetGrid(11, 1);
     fire_tex->SetFps(5);
 
@@ -35,8 +40,8 @@ void game() {
     hero->SetIdleAnimation(idle);
     hero->SetLeftAnimation(step_left);
     hero->SetRightAnimation(step_right);
-    hero->SetUpAnimation(idle);
-    hero->SetDownAnimation(idle);
+    hero->SetUpAnimation(step_up);
+    hero->SetDownAnimation(step_down);
     hero->SetLayer(LAYER_HERO);
     hero->SetShaderProgram(shaderProgram);
     hero->Scale({3, 3});

@@ -17,9 +17,10 @@ Renderer::Renderer(int windowH, int windowW, std::string name, bool init_window)
     window_name = name;
     fps = 60;
     frame_time = 1./(double)fps;
-
     if (init_window)
         InitWindow();
+
+    kb_ctrl = CreateKeyboardControl();
 }
 
 GLFWwindow* Renderer::InitWindow() {
@@ -81,7 +82,7 @@ void Renderer::Start() {
 
 void Renderer::OnFrame(int frames_drawn) {
     FrameEvent e(frames_drawn, fps);
-    for (auto& cb: m_callbacks)
+    for (auto& cb: m_frame_callbacks)
         cb(e);
     glfwPollEvents();
     p_scene->Draw();
@@ -94,13 +95,25 @@ Renderer::~Renderer() {
     //glfwTerminate();
 }
 
-void Renderer::AddEventListener(std::shared_ptr<IEventListener> object) {
+void Renderer::AddFrameListener(std::shared_ptr<IEventListener> object) {
     if (!object) {
        std::cout << "Renderer::AddEventListener::Error: got null object" << std::endl;
        return;
     }
     std::function<void(Event&)> f = std::bind(&IEventListener::OnEvent, object.get(), std::placeholders::_1);
-    m_callbacks.push_back(f);
+    m_frame_callbacks.push_back(f);
+}
+
+void Renderer::SetIcon(Texture_p ico) {
+    GLFWimage icons[1];
+    icons[0].pixels = ico->GetPixelData();
+    icons[0].height = ico->GetH();
+    icons[0].width = ico->GetW();
+    glfwSetWindowIcon(window, 1, icons);
+}
+
+void Renderer::AddKeyListener(std::shared_ptr<IEventListener> object) {
+    kb_ctrl->AddEventListener(object);
 }
 
 } 

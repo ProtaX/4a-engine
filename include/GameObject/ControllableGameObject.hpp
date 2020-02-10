@@ -6,7 +6,7 @@
 
 namespace fae {
 
-class ControllableGameObject: public DynamicGameObject, public IKeyControlable, public IListenable {
+class ControllableGameObject: public DynamicGameObject, public IKeyControlable, public IMoveListenable {
 private:
     int m_last_key_pressed;
     int segment_to_draw;
@@ -51,7 +51,7 @@ public:
 
     bool OnKeyPressed(KeyPressedEvent& e) final;
 
-    void AddEventListener(std::shared_ptr<IEventListener> object) final;
+    void AddMoveListener(std::shared_ptr<IEventListener> object) final;
 
     inline void SetSpeed(float speed) { m_speed = speed; }
 };

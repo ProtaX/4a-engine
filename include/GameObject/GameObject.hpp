@@ -41,8 +41,8 @@ typedef struct GameVertex vertex_t;
 
 class GameObject: public IEventListener {
 protected:
+    //TODO: сделать нормальный алгоритм 
     game_object_id id;
-    //Destructs on ~GameObject()
     std::unique_ptr<VertexBuffer> p_vertex_buffer;
     std::unique_ptr<VertexArray> p_vertex_array;
     std::unique_ptr<VertexLayout> p_vertex_layout;

@@ -18,7 +18,7 @@ bool ControllableGameObject::OnFrame(FrameEvent& e) {
         segment_to_draw = segment_to_draw % p_texture->GetSegmentCount();
         Move(per_frame_move);
         PlayerMoveEvent move_event(per_frame_move, (e.GetFps() / p_texture->GetFps() - 1));
-        for (auto& cb: m_callbacks)
+        for (auto& cb: m_move_callbacks)
             cb(move_event);
         if (segment_to_draw == 0)
             animation_started = false;
@@ -71,13 +71,13 @@ bool ControllableGameObject::OnKeyPressed(KeyPressedEvent& e) {
     return true;
 }
 
-void ControllableGameObject::AddEventListener(std::shared_ptr<IEventListener> object) {
+void ControllableGameObject::AddMoveListener(std::shared_ptr<IEventListener> object) {
     if (!object) {
-       std::cout << "Renderer::AddEventListener::Error: got null object" << std::endl;
+       std::cout << "Renderer::AddMoveListener::Error: got null object" << std::endl;
        return;
     }
     std::function<void(Event&)> f = std::bind(&IEventListener::OnEvent, object.get(), std::placeholders::_1);
-    m_callbacks.push_back(f);
+    m_move_callbacks.push_back(f);
 }
 
 }

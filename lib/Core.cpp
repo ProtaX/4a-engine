@@ -14,9 +14,8 @@ void glClearErrors() {
 std::string GetWorkingDirectory() {
     char absoluteExePath[256];
     GetCurrentDirectoryA(256, absoluteExePath);
-    int absPathLen = strlen(absoluteExePath);
     #ifdef TEST_BUILD
-        absoluteExePath[absPathLen - strlen("build")] = '\0';
+        absoluteExePath[strlen(absoluteExePath) - strlen("build/")] = '\0';
     #endif
     std::string path = std::string(absoluteExePath);
     return path;

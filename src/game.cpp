@@ -4,15 +4,17 @@ using namespace fae;
 
 void game() {
     Renderer_p renderer = CreateRenderer(720, 1024, "4a-engine");
-
+    
     //Shaders
     GlShader shader;
-    std::string absoluteShadersPath = GetWorkingDirectory() + "shaders\\";
+    std::string absoluteShadersPath = GetWorkingDirectory() + "\\shaders\\";
     GLuint shaderProgram = shader.loadFiles (absoluteShadersPath + "vs.glsl", absoluteShadersPath + "fs.glsl");
     
     //Load textures and animations
-    std::string absoluteResourcePath = GetWorkingDirectory() + "res\\";
+    std::string absoluteResourcePath = GetWorkingDirectory() + "\\res\\";
     Texture_p room_tex = CreateTexture(absoluteResourcePath + "room1_small.png");
+    Texture_p head_tex = CreateTexture(absoluteResourcePath + "ico.png");
+    AnimatedTexture_p npc_tex = CreateAnimatedTexture(absoluteResourcePath + "npc.png");
     AnimatedTexture_p step_left = CreateAnimatedTexture(absoluteResourcePath + "step_left_batched.png");
     AnimatedTexture_p step_right = CreateAnimatedTexture(absoluteResourcePath + "step_right_batched.png");
     AnimatedTexture_p step_down = CreateAnimatedTexture(absoluteResourcePath + "step_down_batched.png");
@@ -26,13 +28,17 @@ void game() {
     step_up->SetGrid(9, 1);
     idle->SetFps(60);
     fire_tex->SetGrid(11, 1);
-    fire_tex->SetFps(5);
+    fire_tex->SetFps(6);
+    npc_tex->SetGrid(11, 1);
+    npc_tex->SetFps(6);
+
+    renderer->SetIcon(head_tex);
 
     //Background
     StaticGameObject_p room = CreateStaticGameObject();
     room->SetTexture(room_tex);
     room->SetLayer(LAYER_BG);
-    room->Scale({5, 5});
+    room->Scale(5);
     room->SetShaderProgram(shaderProgram);
 
     //Hero
@@ -44,16 +50,23 @@ void game() {
     hero->SetDownAnimation(step_down);
     hero->SetLayer(LAYER_HERO);
     hero->SetShaderProgram(shaderProgram);
-    hero->Scale({3, 3});
-    hero->Move({100., 100.});
+    hero->Scale(4);
+    hero->Move({100., 10.});
 
     //Fire animation
     AnimatedGameObject_p fire = CreateAnimatedGameObject();
     fire->SetTexture(fire_tex);
     fire->SetLayer(LAYER_BG);
     fire->Move({-35, 0});
-    fire->Scale({5, 5});
+    fire->Scale(5);
     fire->SetShaderProgram(shaderProgram);
+
+    //NPC
+    AnimatedGameObject_p npc = CreateAnimatedGameObject();
+    npc->SetTexture(npc_tex);
+    npc->SetLayer(LAYER_HERO + 0.1f);
+    npc->Scale(5);
+    npc->SetShaderProgram(shaderProgram);
 
     //Set up scene
     GameScene_p scene = CreateGameScene();
@@ -62,17 +75,17 @@ void game() {
     scene->AddObject(hero);
     scene->AddObject(room);
     scene->AddObject(fire);
+    scene->AddObject(npc);
 
-    //Handle keyboard events
-    KeyboardControl_p ctrl = renderer->CreateKeyboardControl();
-    ctrl->AddEventListener(hero);
     //OnFrame events
-    renderer->AddEventListener(hero);
-    renderer->AddEventListener(fire);
-    renderer->AddEventListener(orthCam);  // For smooth camera
+    renderer->AddFrameListener(hero);
+    renderer->AddFrameListener(fire);
+    renderer->AddFrameListener(npc);
+    renderer->AddFrameListener(orthCam);  // For smooth camera
+    renderer->AddKeyListener(hero);
     //Whenever a player moves, camera needs to know,
     //where to slide
-    hero->AddEventListener(orthCam);
+    hero->AddMoveListener(orthCam);
 
     renderer->SetScene(scene);
     renderer->Start();

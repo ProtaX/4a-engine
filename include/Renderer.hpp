@@ -7,10 +7,11 @@
 #include "IListenable.hpp"
 #include "KeyboardControl.hpp"
 #include <list>
+#include "Texture.hpp"
 
 namespace fae {
 
-class Renderer: public IListenable {
+class Renderer: public IFrameListenable, public IKeyListenable {
 private:
     float window_h, window_w;
     int glwf_context_version_major, glwf_context_version_minor;
@@ -24,6 +25,7 @@ private:
     double frame_time;
     int stopRenderer = 0;
     std::shared_ptr<GameScene> p_scene;
+    std::shared_ptr<KeyboardControl> kb_ctrl;
 
     //Что делать каждый кадр
     void OnFrame(int frames_drawn);
@@ -41,11 +43,15 @@ public:
 
     void SetFps(unsigned int fps) { this->fps = fps; }
 
-    void AddEventListener(std::shared_ptr<IEventListener> object) final;
+    void AddFrameListener(std::shared_ptr<IEventListener> object);
+
+    void AddKeyListener(std::shared_ptr<IEventListener> object);
 
     KeyboardControl_p CreateKeyboardControl() {
         return std::make_shared<KeyboardControl>(window);
     }
+
+    void SetIcon(Texture_p icon);
 
     ~Renderer();
     

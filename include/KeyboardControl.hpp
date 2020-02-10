@@ -18,6 +18,7 @@ private:
         KeyPressedEvent event(key);
         AppInfo* app = reinterpret_cast<AppInfo*>(glfwGetWindowUserPointer(window));
         KeyboardControl* this_obj = reinterpret_cast<KeyboardControl*>(app->p_kb_ctl);
+        std::cout << "key_callback count:" << this_obj->m_callbacks.size();
         for (std::function<void(Event&)> cb: this_obj->m_callbacks)
             cb(event);
     }

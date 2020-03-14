@@ -2,7 +2,7 @@
 Simple 2d rpg game engine.
 For now works only for Windows
 ## Build
-Latest build for Windows is <i>out/windows_build.zip</i>. Unzip and run <i>4a-engine.exe</i>
+Latest build for Windows is <i>demo/windows_build.zip</i>. Unzip and run <i>4a-engine.exe</i>
 ### Manual build
 After git clone run 
 ```

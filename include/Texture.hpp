@@ -26,13 +26,13 @@ public:
     Texture(const std::string& path, int force_channels = RGBA_TEXTURE);
     virtual ~Texture();
 
-    bool LoadImage(const std::string& path);
+    virtual bool LoadImage(const std::string& path);
 
-    inline int GetH() const { return h; }
-    inline int GetW() const { return w; }
-    inline GLuint GetTargetN() const { return target - GL_TEXTURE0; }
-    inline rgba_t* GetPixelData() const { return pixel_data; }
-    inline void ForceChannels(int force_channels) { m_force_channels = force_channels; }
+    virtual inline int GetH() const { return h; }
+    virtual inline int GetW() const { return w; }
+    virtual inline GLuint GetTargetN() const { return target - GL_TEXTURE0; }
+    virtual inline rgba_t* GetPixelData() const { return pixel_data; }
+    virtual inline void ForceChannels(int force_channels) { m_force_channels = force_channels; }
 
 };
 

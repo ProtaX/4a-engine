@@ -9,6 +9,7 @@
 #include "GlShader.hpp"
 #include "KeyboardControl.hpp"
 #include "Texture.hpp"
+#include "ImageProxy.hpp"
 #include "AnimatedTexture.hpp"
 #include "ControllableGameObject.hpp"
 #include "AnimatedGameObject.hpp"

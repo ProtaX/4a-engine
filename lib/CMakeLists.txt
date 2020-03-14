@@ -15,5 +15,6 @@ add_library(texture ${LIB_DIR}/Texture.cpp)
 add_library(animated-texture ${LIB_DIR}/AnimatedTexture.cpp)
 add_library(icontrolable ${LIB_DIR}/IControlable.cpp)
 add_library(ilistenable ${LIB_DIR}/IListenable.cpp)
+add_library(image-proxy ${LIB_DIR}/ImageProxy.cpp)
 
 include(${LIB_DIR}/GameObject/GameObject.cmake)

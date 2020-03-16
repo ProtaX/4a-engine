@@ -44,10 +44,7 @@ inline rgba_t* ImageProxy::GetPixelData() const {
 }
 
 ImageProxy::~ImageProxy() {
-    if (real_obj)
-        real_obj->~Texture();
-    else 
-        delete[] pixel_data;
+    // delete[] pixel_data;
 }
 
 void ImageProxy::OnEvent(Event& e) {

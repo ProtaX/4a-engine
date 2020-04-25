@@ -10,15 +10,8 @@ class ImageProxy: public Texture, public IEventListener {
 private:
     /* Actual texture */
     Texture_p real_obj;
-
     /* Caching for lazy init */
     std::string m_cache_path;
-
-    /* Идея: этот класс реализует интерфейс слушателя кликов
-     * по событию клика создается реальная текстура из кэшированных данных
-     * до ее создания все вызовы либо кэшируются, либо возвращается черный пиксель
-     * после клика все вызовы проксируются новой текстуре
-    */
 
    void OnSpacePressed(KeyPressedEvent& e);
 

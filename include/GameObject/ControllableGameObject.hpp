@@ -1,66 +1,70 @@
 #pragma once
 
+#include <memory>
+#include <utility>
+
 #include "DynamicGameObject.hpp"
-#include "IControlable.hpp"
-#include "IListenable.hpp"
+#include "Event.hpp"
 
 namespace fae {
 
-class ControllableGameObject: public DynamicGameObject, public IKeyControlable, public IMoveListenable {
-private:
-    int m_last_key_pressed;
-    int segment_to_draw;
-    bool animation_started;
-    point3_t per_frame_move;
-    float m_speed;
-    int frames_before_idle;
-    std::shared_ptr<AnimatedTexture> p_texture_left;
-    std::shared_ptr<AnimatedTexture> p_texture_right;
-    std::shared_ptr<AnimatedTexture> p_texture_up;
-    std::shared_ptr<AnimatedTexture> p_texture_down;
-    std::shared_ptr<AnimatedTexture> p_texture_idle;
-    std::shared_ptr<AnimatedTexture> next_frame_anim;
-    //p_texture is current animation playing
+class ControllableGameObject: public DynamicGameObject, IListenable {
+ public:
+  ControllableGameObject() {
+    std::cout << "[->]\tControllableGameObject" << std::endl;
+    segment_to_draw_ = 0u;
+    speed_ = 10.0f;
+    frames_before_idle_ = 10u;
+  }
 
-    void PlayAnimation(std::shared_ptr<AnimatedTexture> anim) {
-        if (animation_started && (p_texture == anim))
-            return;
-        next_frame_anim = anim;
-        animation_started = true;
-    }
+  virtual ~ControllableGameObject() { }
 
-public:
-    ControllableGameObject() {
-        std::cout << "[->]\tControllableGameObject" << std::endl;
-        segment_to_draw = 0;
-        m_speed = 10.0f;
-        frames_before_idle = 10;
-    }
+  void SetLeftAnimation(AnimatedTexture_p left) { p_texture_left_ = left; }
 
-    virtual ~ControllableGameObject() { }
+  void SetRightAnimation(AnimatedTexture_p right) { p_texture_right = right; }
 
-    inline void SetLeftAnimation(AnimatedTexture_p left) { p_texture_left = left; }
-    inline void SetRightAnimation(AnimatedTexture_p right) { p_texture_right = right; }
-    inline void SetUpAnimation(AnimatedTexture_p up) { p_texture_up = up; }
-    inline void SetDownAnimation(AnimatedTexture_p down) { p_texture_down = down; }
-    inline void SetIdleAnimation(AnimatedTexture_p idle) { p_texture_idle = idle; SetTexture(idle);}
+  void SetUpAnimation(AnimatedTexture_p up) { p_texture_up_ = up; }
 
-    void OnEvent(Event& e) final;
+  void SetDownAnimation(AnimatedTexture_p down) { p_texture_down = down; }
 
-    bool OnFrame(FrameEvent& e) final;
+  void SetIdleAnimation(AnimatedTexture_p idle) { p_texture_idle_ = idle;
+                                                          SetTexture(idle); }
 
-    bool OnKeyPressed(KeyPressedEvent& e) final;
+  void SetSpeed(float speed) { speed_ = speed; }
 
-    void AddMoveListener(std::shared_ptr<IEventListener> object) final;
+  bool HandleEvent(const FrameEvent& e) final;
+  bool HandleEvent(const KeyPressedEvent& e) final;
 
-    inline void SetSpeed(float speed) { m_speed = speed; }
+  void AddEventListener(EventType t, std::shared_ptr<IEventListener> object) final;
+
+ private:
+  int last_key_pressed_;
+  uint32_t segment_to_draw_;
+  uint32_t frames_before_idle_;
+  bool is_animation_started_;
+  float speed_;
+  point3_t per_frame_move_;
+  std::shared_ptr<AnimatedTexture> p_texture_left_;
+  std::shared_ptr<AnimatedTexture> p_texture_right;
+  std::shared_ptr<AnimatedTexture> p_texture_up_;
+  std::shared_ptr<AnimatedTexture> p_texture_down;
+  std::shared_ptr<AnimatedTexture> p_texture_idle_;
+  std::shared_ptr<AnimatedTexture> next_frame_anim_;
+  // p_texture is current animation playing
+
+  void PlayAnimation(std::shared_ptr<AnimatedTexture> anim) {
+    if (is_animation_started_ && (texture_ == anim))
+      return;
+    next_frame_anim_ = anim;
+    is_animation_started_ = true;
+  }
 };
 
 typedef std::shared_ptr<ControllableGameObject> ControllableGameObject_p;
 
 template<typename... _Args>
 ControllableGameObject_p CreateControllableGameObject(_Args&&... __args) {
-    return std::make_shared<ControllableGameObject>(std::forward<_Args>(__args)...);
+  return std::make_shared<ControllableGameObject>(std::forward<_Args>(__args)...);
 }
 
-}
+}  // namespace fae

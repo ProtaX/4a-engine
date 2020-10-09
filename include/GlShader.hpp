@@ -1,52 +1,50 @@
 #pragma once
-#include <Core.hpp>
 
-#include <iostream>
 #include <string>
-#include <math.h>
+#include <string_view>
 
-using namespace glm;
+#include "Core.hpp"
 
 namespace fae {
 
 class GlShader {
-public:
-    GlShader();
-    ~GlShader();
-    GLuint loadFiles(const std::string& vertex_file_name, const std::string& fragment_file_name);
-    GLuint load(const std::string& vertex_source, const std::string& fragment_source);
-    GLuint load(const GLchar* vertex_source, const GLchar* fragment_source);
+ public:
+  GlShader() noexcept;
 
-    void use();
-    GLuint getIDProgram() {return ShaderProgram;}
-    bool isLoad() {return ShaderProgram !=0;}
-    //! Attribute
-    GLint getAttribLocation (const GLchar* name)  const;
-    GLint getAttribLocation(const std::string& name) const;
-    //! Uniform get
-    GLint getUniformLocation (const GLchar* name) const;
-    GLint getUniformLocation (const std::string& name) const;
-    //! Uniform set
-    void setUniform (GLint location, const  vec4& value);
-    void setUniform (GLint location, const  vec3& value);
-    void setUniform (GLint location, const  vec2& value);
+  ~GlShader();
 
-    void setUniform (GLint location, const  mat4& value);
-    void setUniform (GLint location, const GLint& value);
+  GLuint LinkFromFiles(std::string_view vertex_file_name, std::string_view fragment_file_name);
 
-private:
-    void printInfoLogShader (GLuint shader);
+  GLuint LinkFromSource(std::string_view vertex_source, std::string_view fragment_source);
 
-    void printInfoLogProgram (GLuint shader);
+  void UseShader() const;
 
-    GLuint loadSourcefile(const std::string& source_file_name, GLuint shader_type);
+  [[nodiscard]] GLuint GetProgramId() const { return shader_program_; }
+  [[nodiscard]] bool IsReady() { return shader_program_ != GL_FALSE; }
+  [[nodiscard]] GLint GetAttribLocation(std::string_view name) const;
+  [[nodiscard]] GLint GetUniformLocation(std::string_view name) const;
 
-    GLuint compileSource(const GLchar* source, GLuint shader_type);
+  void SetUniform(GLint location, const glm::vec2& value);
+  void SetUniform(GLint location, const glm::vec3& value);
+  void SetUniform(GLint location, const glm::vec4& value);
 
-    void linkProgram();
-    GLuint ShaderProgram;
-    GLuint vertex_shader;
-    GLuint fragment_shader;
+  void SetUniform(GLint location, const glm::mat4& value);
+  void SetUniform(GLint location, GLint value);
+
+ private:
+  static void PrintInfoLogShader(GLuint shader);
+
+  static void PrintInfoLogProgram(GLuint shader);
+
+  GLuint LoadSourceFile(std::string_view source_file_name, GLuint shader_type);
+
+  GLuint CompileSource(const GLchar* source, GLuint shader_type);
+
+  void LinkProgram();
+
+  GLuint shader_program_;
+  GLuint vertex_shader_;
+  GLuint fragment_shader_;
 };
 
-}
+}  // namespace fae

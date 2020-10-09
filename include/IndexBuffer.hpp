@@ -5,17 +5,17 @@
 namespace fae {
 
 class IndexBuffer {
-    GLuint id;
+ public:
+  IndexBuffer(const void* data, GLsizeiptr size) noexcept;
 
-public:
-    IndexBuffer(const void* data, unsigned int size);
+  ~IndexBuffer();
 
-    ~IndexBuffer();
+  void Bind() const;
 
-    void Bind();
+  void Unbind() const;
 
-    void Unbind();
-
+ private:
+  GLuint id_;
 };
 
-}
+}  // namespace fae

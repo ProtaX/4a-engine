@@ -1,67 +1,63 @@
 #pragma once
 
-#include "Core.hpp"
-#include <GameObject.hpp>
-#include <Camera.hpp>
-#include <GameScene.hpp>
-#include "IListenable.hpp"
-#include "KeyboardControl.hpp"
+#include <stdint.h>
+
 #include <list>
+#include <string>
+#include <memory>
+#include <utility>
+
+#include "Core.hpp"
+#include "GameObject.hpp"
+#include "Camera.hpp"
+#include "GameScene.hpp"
 #include "Texture.hpp"
+#include "Event.hpp"
 
 namespace fae {
 
-class Renderer: public IFrameListenable, public IKeyListenable {
-private:
-    float window_h, window_w;
-    int glwf_context_version_major, glwf_context_version_minor;
-    int glfw_opengl_profile;
-    int glfw_resizable;
-    GLFWwindow* window;
-    GLboolean glew_experimantal;
-    GLenum glBlend_sfactor, glBlend_dfactor;
-    std::string window_name;
-    unsigned int fps;
-    double frame_time;
-    int stopRenderer = 0;
-    std::shared_ptr<GameScene> p_scene;
-    std::shared_ptr<KeyboardControl> kb_ctrl;
+class Renderer: public IListenable, public IEventListener {
+ public:
+  Renderer(int window_h, int window_w, std::string name, bool init_window = true) noexcept;
 
-    //Что делать каждый кадр
-    void OnFrame(int frames_drawn);
+  void InitWindow();
 
-public:
-    Renderer(int window_h, int window_w, std::string name, bool init_window = true);
+  void Start();
 
-    GLFWwindow* InitWindow();
+  void SetScene(std::shared_ptr<GameScene> scene) { this->scene_ = scene; }
 
-    void Start();
+  void SetFps(uint32_t fps) { this->fps_ = fps; }
 
-    void Stop();
+  void SetIcon(Texture_p icon) const;
 
-    void SetScene(std::shared_ptr<GameScene> scene) { this->p_scene = scene; }
+  void AddEventListener(EventType t, std::shared_ptr<IEventListener> object) final;
 
-    void SetFps(unsigned int fps) { this->fps = fps; }
+  bool HandleEvent(const KeyPressedEvent& e) final;
 
-    void AddFrameListener(std::shared_ptr<IEventListener> object);
+  ~Renderer();
 
-    void AddKeyListener(std::shared_ptr<IEventListener> object);
+ private:
+  float window_h_, window_w_;
+  int glwf_context_v_mj_, glwf_context_v_mn_;
+  int glfw_opengl_profile_;
+  int glfw_resizable_;
+  uint32_t fps_;
+  double frame_time_;
+  GLboolean glew_experimantal_;
+  GLenum glBlend_sfactor_, glBlend_dfactor_;
+  GLFWwindow* window_;
+  std::string window_name_;
 
-    KeyboardControl_p CreateKeyboardControl() {
-        return std::make_shared<KeyboardControl>(window);
-    }
+  std::shared_ptr<GameScene> scene_;
 
-    void SetIcon(Texture_p icon);
-
-    ~Renderer();
-    
+  void OnFrame(int frames_drawn);
 };
 
 typedef std::unique_ptr<Renderer> Renderer_p;
 
 template<typename... _Args>
 Renderer_p CreateRenderer(_Args&&... __args) {
-    return std::make_unique<Renderer>(std::forward<_Args>(__args)...);
+  return std::make_unique<Renderer>(std::forward<_Args>(__args)...);
 }
 
-}
+}  // namespace fae

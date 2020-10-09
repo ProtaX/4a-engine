@@ -1,22 +1,26 @@
 #pragma once
 
+#include <stdint.h>
+
 #include "Core.hpp"
 
 namespace fae {
 
 class VertexBuffer {
-    GLuint id;
-    unsigned int m_stored_data_size;
-public:
-    VertexBuffer(const void* data, unsigned int size);
+ public:
+  VertexBuffer(const void* data, size_t size);
 
-    ~VertexBuffer();
+  ~VertexBuffer();
 
-    void Bind();
+  void Bind() const;
 
-    void Unbind();
+  void Unbind() const;
 
-    void ReloadData(const void* data);
+  void ReloadData(const void* data);
+
+ private:
+  GLuint id_;
+  size_t stored_data_size_;
 };
 
-}
+}  // namespace fae

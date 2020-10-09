@@ -1,28 +1,27 @@
 #pragma once
 
+#include <memory>
+
 #include "Core.hpp"
 #include "VertexLayout.hpp"
 #include "VertexBuffer.hpp"
-#include <vector>
 
 namespace fae {
 
 class VertexArray {
-private:
-    GLuint id;
+ public:
+  VertexArray();
 
-public:
-    VertexArray();
+  ~VertexArray();
 
-    ~VertexArray();
+  void AddBuffer(const std::unique_ptr<VertexBuffer>& buffer, const std::unique_ptr<VertexLayout>& layout);
 
-    void AddBuffer(VertexBuffer& buffer, VertexLayout& layout);
+  void Bind() const;
 
-    void AddBuffer(VertexBuffer* buffer, VertexLayout* layout);
+  void Unbind() const;
 
-    void Bind() const;
-
-    void Unbind() const;
+ private:
+  GLuint id_;
 };
 
-}
+}  // namespace fae

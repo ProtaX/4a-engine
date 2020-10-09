@@ -2,82 +2,79 @@
 
 namespace fae {
 
-bool ControllableGameObject::OnFrame(FrameEvent& e) {
-    if (!(e.GetFramesDrawn() % (e.GetFps() / p_texture->GetFps())) && animation_started) {
-        if (!p_texture) {
-            std::cout << "ControllableGameObject::OnFrame::Error: texture is nt set" << std::endl;
-            return false;
-        }
-        if (next_frame_anim) {
-            SetTexture(next_frame_anim);
-            segment_to_draw = 0;
-            next_frame_anim = nullptr;
-        }
-        texture_segment_t seg = p_texture->GetNextSegment(segment_to_draw++);
-        SetTextureCoords(seg.rt, seg.rb, seg.lb, seg.lt);
-        segment_to_draw = segment_to_draw % p_texture->GetSegmentCount();
-        Move(per_frame_move);
-        PlayerMoveEvent move_event(per_frame_move, (e.GetFps() / p_texture->GetFps() - 1));
-        for (auto& cb: m_move_callbacks)
-            cb(move_event);
-        if (segment_to_draw == 0)
-            animation_started = false;
-        frames_before_idle = p_texture->GetFps();
+bool ControllableGameObject::HandleEvent(const FrameEvent& e) {
+  if (!(e.GetFramesDrawn() % (e.GetFps() / texture_->GetFps())) && is_animation_started_) {
+    if (!texture_) {
+      std::cout << "ControllableGameObject::OnFrame::Error: texture is nt set" << std::endl;
+      return false;
     }
-    
-    //Handle idle
-    if (!animation_started) {
-        if (frames_before_idle)
-            frames_before_idle--;
-        else {
-            per_frame_move = {};
-            animation_started = true;
-            PlayAnimation(p_texture_idle);
-            frames_before_idle = p_texture->GetFps();
-        }
+
+    if (next_frame_anim_) {
+      SetTexture(next_frame_anim_);
+      segment_to_draw_ = 0;
+      next_frame_anim_ = nullptr;
     }
-    
-    return true;
-}
 
-void ControllableGameObject::OnEvent(Event& e) {
-    EventDispatcher disp(e);
+    texture_segment_t seg = texture_->GetNextSegment(segment_to_draw_++);
+    SetTextureCoords(seg.rt, seg.rb, seg.lb, seg.lt);
+    segment_to_draw_ = segment_to_draw_ % texture_->GetSegmentCount();
+    Move(per_frame_move_);
+    PlayerMoveEvent move_event(per_frame_move_, (e.GetFps() / texture_->GetFps() - 1));
 
-    disp.Dispatch<KeyPressedEvent>(std::bind(&OnKeyPressed, this, std::placeholders::_1));
-    disp.Dispatch<FrameEvent>(std::bind(&OnFrame, this, std::placeholders::_1));
-}
+    auto& cbs = GetCallbacks(EventType::PlayerMove);
+    for (auto& cb : cbs)
+      cb(move_event);
+    if (segment_to_draw_ == 0)
+      is_animation_started_ = false;
+    frames_before_idle_ = texture_->GetFps();
+  }
 
-bool ControllableGameObject::OnKeyPressed(KeyPressedEvent& e) {
-    int keycode = e.GetKeyCode();
-    m_last_key_pressed = keycode;
-    switch (keycode) {
-        case GLFW_KEY_W:
-            per_frame_move = {0., m_speed, 0.};
-            PlayAnimation(p_texture_up);
-            break;
-        case GLFW_KEY_A:
-            per_frame_move = {-m_speed, 0., 0.};
-            PlayAnimation(p_texture_left);
-            break;
-        case GLFW_KEY_S:
-            per_frame_move = {0., -m_speed, 0.};
-            PlayAnimation(p_texture_down);
-            break;
-        case GLFW_KEY_D:
-            per_frame_move = {m_speed, 0., 0.};
-            PlayAnimation(p_texture_right);
-            break;
+  /* Handle idle */
+  if (!is_animation_started_) {
+    if (frames_before_idle_) {
+      frames_before_idle_--;
+    } else {
+      per_frame_move_ = {};
+      is_animation_started_ = true;
+      PlayAnimation(p_texture_idle_);
+      frames_before_idle_ = texture_->GetFps();
     }
-    return true;
+  }
+
+  return true;
 }
 
-void ControllableGameObject::AddMoveListener(std::shared_ptr<IEventListener> object) {
-    if (!object) {
-       std::cout << "Renderer::AddMoveListener::Error: got null object" << std::endl;
-       return;
-    }
-    std::function<void(Event&)> f = std::bind(&IEventListener::OnEvent, object.get(), std::placeholders::_1);
-    m_move_callbacks.push_back(f);
+bool ControllableGameObject::HandleEvent(const KeyPressedEvent& e) {
+  int keycode = e.GetKeyCode();
+  last_key_pressed_ = keycode;
+  switch (keycode) {
+    case GLFW_KEY_W:
+      per_frame_move_ = {0., speed_, 0.};
+      PlayAnimation(p_texture_up_);
+      break;
+    case GLFW_KEY_A:
+      per_frame_move_ = {-speed_, 0., 0.};
+      PlayAnimation(p_texture_left_);
+      break;
+    case GLFW_KEY_S:
+      per_frame_move_ = {0., -speed_, 0.};
+      PlayAnimation(p_texture_down);
+      break;
+    case GLFW_KEY_D:
+      per_frame_move_ = {speed_, 0., 0.};
+      PlayAnimation(p_texture_right);
+      break;
+  }
+  return true;
 }
 
+void ControllableGameObject::AddEventListener(EventType t, std::shared_ptr<IEventListener> object) {
+  if (!object) {
+     std::cout << "Renderer::AddMoveListener::Error: got null object" << std::endl;
+     return;
+  }
+  EventCB f = std::bind(&IEventListener::OnEvent, object.get(), std::placeholders::_1);
+  AddCallback(t, f);
 }
+
+}  // namespace fae

@@ -1,45 +1,44 @@
 #pragma once
 
-#include "Core.hpp"
+#include <stdint.h>
+
 #include <vector>
+
+#include "Core.hpp"
 
 namespace fae {
 
 struct VertexBufferAttributes {
-    //Тип аттрибута
-    GLuint attribType;
-    //Количество данных в аттрибуте
-    GLint attribCount;
-    //Нужно ли нормализировать
-    unsigned char isNormalized;
+  GLuint attribType;
+  GLint attribCount;
+  uint8_t isNormalized;
 };
 
 class VertexLayout {
-private:
-    unsigned int stride;
-    std::vector<struct VertexBufferAttributes> attributes;
+ public:
+  explicit VertexLayout(uint32_t stride = 0) noexcept: stride(stride) { }
 
-public:
-    VertexLayout(unsigned int stride = 0) : stride (stride) { };
+  ~VertexLayout();
 
-    ~VertexLayout();
+  template<typename T>
+  void Push(GLint count);
 
-    template<typename T>
-    void Push(GLint count);
+  [[nodiscard]] uint32_t GetStride() const { return stride; }
 
-    inline unsigned int GetStride() { return stride; };
+  [[nodiscard]] std::vector<struct VertexBufferAttributes>& GetAttributes() { return attributes; }
 
-    inline std::vector<struct VertexBufferAttributes>& GetAttributes() { return attributes; };
-
-    inline unsigned int GetAttribSize(GLuint attribType) {
-        switch (attribType)
-        {
-            case GL_FLOAT:          return sizeof(GLfloat);
-            case GL_UNSIGNED_BYTE:  return sizeof(GLubyte);
-            case GL_UNSIGNED_INT:   return sizeof(GLuint);
-        }
-        return 0;
+  [[nodiscard]] static size_t GetAttribSize(GLuint attribType) {
+    switch (attribType) {
+      case GL_FLOAT:          return sizeof(GLfloat);
+      case GL_UNSIGNED_BYTE:  return sizeof(GLubyte);
+      case GL_UNSIGNED_INT:   return sizeof(GLuint);
     }
+    return 0u;
+  }
+
+ private:
+  uint32_t stride;
+  std::vector<struct VertexBufferAttributes> attributes;
 };
 
-}
+}  // namespace fae

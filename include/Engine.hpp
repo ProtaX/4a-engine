@@ -7,7 +7,6 @@
 #include "Renderer.hpp"
 #include "Camera.hpp"
 #include "GlShader.hpp"
-#include "KeyboardControl.hpp"
 #include "Texture.hpp"
 #include "AnimatedTexture.hpp"
 #include "ControllableGameObject.hpp"

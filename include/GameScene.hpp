@@ -1,40 +1,42 @@
 #pragma once
 
-#include <Core.hpp>
-#include "GameObject.hpp"
-#include "DynamicGameObject.hpp"
+#include <memory>
+#include <utility>
 #include <vector>
 #include <map>
-#include <Camera.hpp>
+
+#include "Core.hpp"
+#include "GameObject.hpp"
+#include "DynamicGameObject.hpp"
+#include "Camera.hpp"
 
 namespace fae {
 
 class GameScene {
-private:
-    //vector sorted by z value of each GameObject
-    std::multimap<float, std::shared_ptr<GameObject>> m_scene_storage;
-    std::shared_ptr<Camera> p_camera;
-public:
-    GameScene();
+ public:
+  GameScene() noexcept {}
 
-    ~GameScene() {
-        std::cout << "[~] GameScene " << std::endl;
-    }
+  ~GameScene() {
+    std::cout << "[~] GameScene " << std::endl;
+  }
 
-    void AddObject(std::shared_ptr<GameObject> obj);
+  void AddObject(std::shared_ptr<GameObject> obj);
 
-    void SetCamera(std::shared_ptr<Camera> camera) { p_camera = camera; }
+  void SetCamera(std::shared_ptr<Camera> camera) { camera_ = camera; }
 
-    //Draw every object on the scene
-    void Draw();
+  void Draw() const;
 
+ private:
+  // Sorted by z value of each GameObject
+  std::multimap<float, std::shared_ptr<GameObject>> scene_storage_;
+  std::shared_ptr<Camera> camera_;
 };
 
 typedef std::shared_ptr<GameScene> GameScene_p;
 
 template<typename... _Args>
 GameScene_p CreateGameScene(_Args&&... __args) {
-    return std::make_shared<GameScene>(std::forward<_Args>(__args)...);
+  return std::make_shared<GameScene>(std::forward<_Args>(__args)...);
 }
 
-}
+}  // namespace fae

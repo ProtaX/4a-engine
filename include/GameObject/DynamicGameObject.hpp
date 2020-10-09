@@ -1,32 +1,29 @@
 #pragma once
 
+#include <functional>
+#include <memory>
+
 #include "GameObject.hpp"
 #include "AnimatedTexture.hpp"
-#include <functional>
 
 namespace fae {
 
 class DynamicGameObject: public GameObject {
-protected:
-    std::shared_ptr<AnimatedTexture> p_texture;
+ public:
+  void SetTexture(std::shared_ptr<AnimatedTexture> texture);
 
-    DynamicGameObject() {
-        std::cout << "[->]\tDynamicGameObject" << std::endl;
-    }
-public:
+  void UseShaderProgram();
 
-    virtual ~DynamicGameObject() { }
+  void SetCoords(point3_t lb);
 
-    void SetTexture(std::shared_ptr<AnimatedTexture> texture);
+  virtual ~DynamicGameObject() { }
 
-    void UseShaderProgram();
+ protected:
+  std::shared_ptr<AnimatedTexture> texture_;
 
-    void SetCoords(point3_t lb);
-
-    virtual bool OnFrame(FrameEvent& e) = 0;
-
-    virtual void OnEvent(Event& e) = 0;
-
+  DynamicGameObject() {
+    std::cout << "[->]\tDynamicGameObject" << std::endl;
+  }
 };
 
-}
+}  // namespace fae

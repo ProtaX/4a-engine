@@ -1,51 +1,46 @@
 #include "Camera.hpp"
+
 #include <functional>
 
 namespace fae {
 
-Camera::Camera(float windowH, float windowW) {
-        view = glm::lookAt(
-            glm::vec3(-windowW/2, -windowH/2, 1.0f),
-            glm::vec3(-windowW/2, -windowH/2, 0.0f),
-            glm::vec3(0.0f, 1.0f, 0.0f)
-        );
-        proj = glm::ortho(0.0f, windowW, 0.0f, windowH, 0.0f, 1.0f);
-        m_move_to = {};
+Camera::Camera(float windowH, float windowW) noexcept {
+  view_ = glm::lookAt(
+    glm::vec3(-windowW/2, -windowH/2, 1.0f),
+    glm::vec3(-windowW/2, -windowH/2, 0.0f),
+    glm::vec3(0.0f, 1.0f, 0.0f));
+  proj_ = glm::ortho(0.0f, windowW, 0.0f, windowH, 0.0f, 1.0f);
+  move_to_ = {};
 }
 
 void Camera::MoveCamera(point3_t p) {
-        view = glm::translate(view, glm::vec3(p.x, p.y, p.z));
+  view_ = glm::translate(view_, glm::vec3(p.x, p.y, p.z));
 }
 
-void Camera::MoveCamera(glm::vec3& transVec) {
-    view = glm::translate(view, transVec);
+void Camera::MoveCamera(const glm::vec3& transVec) {
+  view_ = glm::translate(view_, transVec);
 }
 
-void Camera::OnEvent(Event& e) {
-    EventDispatcher disp(e);
-    
-    disp.Dispatch<FrameEvent>(std::bind(&OnFrame, this, std::placeholders::_1));
-    disp.Dispatch<PlayerMoveEvent>(std::bind(&OnPlayerMove, this, std::placeholders::_1));
+
+bool Camera::HandleEvent(const PlayerMoveEvent& e) {
+  frames_left_ = e.GetFrames();
+  if (!frames_left_)
+    return false;
+
+  move_to_ = e.GetMove();
+  move_to_.x *= -1. / (static_cast<float>(frames_left_));
+  move_to_.y *= -1. / (static_cast<float>(frames_left_));
+  move_to_.z *= -1. / (static_cast<float>(frames_left_));
+
+  return true;
 }
 
-bool Camera::OnPlayerMove(PlayerMoveEvent& e) {
-    m_frames_left = e.GetFrames();
-    if (!m_frames_left)
-        return false;
-    m_move_to = e.GetMove();
-    m_move_to.x *= -1. / ((float)m_frames_left);
-    m_move_to.y *= -1. / ((float)m_frames_left);
-    m_move_to.z *= -1. / ((float)m_frames_left);
-
-    return true;
+bool Camera::HandleEvent(const FrameEvent& e) {
+  if (frames_left_) {
+    MoveCamera(move_to_);
+    frames_left_--;
+  }
+  return true;
 }
 
-bool Camera::OnFrame(FrameEvent& e) {
-    if (m_frames_left) {
-        MoveCamera(m_move_to);
-        m_frames_left--;
-    }
-    return true;
-}
-
-}
+}  // namespace fae

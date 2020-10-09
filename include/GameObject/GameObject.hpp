@@ -1,127 +1,132 @@
 #pragma once
 
+#include <memory>
+#include <array>
+
 #include "Core.hpp"
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
 #include "Event.hpp"
-#include "IControlable.hpp"
 
 namespace fae {
 
-struct GameVertex
-{
-    point3_t coords;
-    color_t color;
-    point2_t tex_coords;
+struct GameVertex {
+  point3_t coords;
+  color_t color;
+  point2_t tex_coords;
 
-    GameVertex() {
-        coords = {0., 0., 0.};
-        color = {0., 0., 0.};
-        tex_coords = {0., 0.};
-    }
+  GameVertex() {
+    coords = {0., 0., 0.};
+    color = {0., 0., 0.};
+    tex_coords = {0., 0.};
+  }
 };
 
-struct ModelMtx {
-    glm::mat4 translation;
-    glm::mat4 rotation;
-    glm::mat4 scale;
+class ModelMtx {
+ public:
+  glm::mat4 translation;
+  glm::mat4 rotation;
+  glm::mat4 scale;
 
-    ModelMtx() {
-        translation = glm::mat4(1.0f);
-        rotation = glm::mat4(1.0f);
-        scale = glm::mat4(1.0f);
-    }
+  ModelMtx() {
+    translation = glm::mat4(1.0f);
+    rotation = glm::mat4(1.0f);
+    scale = glm::mat4(1.0f);
+  }
 
-    inline glm::mat4 GetModelMtx() const {
-        return translation * rotation * scale;
-    }
+  [[nodiscard]] glm::mat4 GetModelMtx() const {
+    return translation * rotation * scale;
+  }
 };
 
 typedef struct GameVertex vertex_t;
 
 class GameObject: public IEventListener {
-protected:
-    //TODO: сделать нормальный алгоритм 
-    game_object_id id;
-    std::unique_ptr<VertexBuffer> p_vertex_buffer;
-    std::unique_ptr<VertexArray> p_vertex_array;
-    std::unique_ptr<VertexLayout> p_vertex_layout;
-    std::unique_ptr<IndexBuffer> p_index_buffer;
+ public:
+  /* Sets up default vertex buffer layout, texture coords,
+     creates VAO and VBO, uses default IBO */
+  GameObject() noexcept;
 
-    ModelMtx m_model_mtx;
-    vertex_t m_verticies[4];
-    GLuint m_indicies[6] = {
-        0, 1, 3,
-        1, 2, 3
-    };
+  GameObject(GameObject&& right);
 
-    int m_shader_program;
-    
-public:
-    //Sets up default vertex buffer layout, texture coords, 
-    //creates VAO and VBO, uses default IBO
-    GameObject();
+  GameObject(const GameObject& right);
 
-    GameObject(GameObject&& right);
+  GameObject& operator=(const GameObject&);
 
-    GameObject(const GameObject& right);
+  bool operator<(const GameObject& right);
 
-    //Copies ONLY not unique data
-    GameObject& operator=(const GameObject&);
+  void SetTextureCoords(point2_t rt, point2_t rb, point2_t lb, point2_t lt);
 
-    bool operator<(GameObject& right);
+  void SetCoords(point3_t rt, point3_t rb, point3_t lb, point3_t lt);
 
-    void SetTextureCoords(point2_t rt, point2_t rb, point2_t lb, point2_t lt);
+  void SetCoords(point3_t lb, point3_t rt);
 
-    void SetCoords(point3_t rt, point3_t rb, point3_t lb, point3_t lt);
+  /* Take (0, 0) as a lb point */
+  void SetSize(point2_t rt);
 
-    void SetCoords(point3_t lb, point3_t rt);
+  void SetLayer(float z);
 
-    //Take (0, 0) as a lb point
-    void SetSize(point2_t rt);
+  void SetShaderProgram(int shader) { shader_program_ = shader; }
 
-    void SetLayer(float z);
+  float GetLayer();
 
-    void SetShaderProgram(int shader) { this->m_shader_program = shader; }
+  void Scale(float percent);
 
-    float GetLayer();
+  void Scale(point3_t percent);
 
-    void Scale(float percent);
+  void Move(point3_t value);
 
-    void Scale(point3_t percent);
+  void MoveTo(point3_t value);
 
-    void Move(point3_t value);
+  /* Set left-bottom point only if p_texture is set */
+  void SetCoords(point3_t lb);
 
-    void MoveTo(point3_t value);
+  void BindVertexBuffer() const { vertex_buffer_->Bind(); }
 
-    //Set left-bottom point only if p_texture is set
-    void SetCoords(point3_t lb);
+  void BindVertexArray() const { vertex_array_->Bind(); }
 
-    inline void BindVertexBuffer() const { this->p_vertex_buffer->Bind(); }
+  void BindIndexBuffer() const { index_buffer_->Bind(); }
 
-    inline void BindVertexArray() const { this->p_vertex_array->Bind(); }
+  void UnbindVertexBuffer() const { vertex_buffer_->Unbind(); }
 
-    inline void BindIndexBuffer() const { this->p_index_buffer->Bind(); }
+  void UnbindVertexArray() const { vertex_array_->Unbind(); }
 
-    inline void UnbindVertexBuffer() const { this->p_vertex_buffer->Unbind(); }
+  void UnbindIndexBuffer() const { index_buffer_->Unbind(); }
 
-    inline void UnbindVertexArray() const { this->p_vertex_array->Unbind(); }
+  [[nodiscard]] glm::mat4 GetModelMtx() const { return model_mtx_.GetModelMtx(); }
 
-    inline void UnbindIndexBuffer() const { this->p_index_buffer->Unbind(); }
+  [[nodiscard]] vertex_t* GetVertexDataPtr() { return verticies_; }
 
-    inline glm::mat4 GetModelMtx() const { return this->m_model_mtx.GetModelMtx(); }
+  [[nodiscard]] int GetShaderProgram() const { return shader_program_; }
 
-    inline vertex_t* GetVertexDataPtr() const { return (vertex_t*)m_verticies; }
+  [[nodiscard]] game_object_id GetId() const { return id_; }
 
-    inline int GetShaderProgram() const { return this->m_shader_program; }
+  virtual void UseShaderProgram() = 0;
 
-    inline game_object_id GetId() const { return id; }
+  virtual ~GameObject();
 
-    virtual void UseShaderProgram() = 0;
+ protected:
+  game_object_id id_;
 
-    virtual void OnEvent(Event& e) = 0;
+  std::unique_ptr<VertexBuffer> vertex_buffer_;
+  std::unique_ptr<VertexArray> vertex_array_;
+  std::unique_ptr<VertexLayout> vertex_layout_;
+  std::unique_ptr<IndexBuffer> index_buffer_;
 
-    virtual ~GameObject();
+  int shader_program_;
+  ModelMtx model_mtx_;
+  vertex_t verticies_[4];
+  const GLuint indicies_[6] = {
+    0, 1, 3,
+    1, 2, 3
+  };
+/*
+  std::array<vertex_t, 4> verticies_;
+  const std::array<GLuint, 6> indicies_ = {
+    0, 1, 3,
+    1, 2, 3
+  };
+  */
 };
 
-}
+}  // namespace fae

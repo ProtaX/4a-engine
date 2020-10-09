@@ -3,194 +3,199 @@
 namespace fae {
 
 void GameObject::SetTextureCoords(point2_t rt, point2_t rb, point2_t lb, point2_t lt) {
-    m_verticies[0].tex_coords = rt;
-    m_verticies[1].tex_coords = rb;
-    m_verticies[2].tex_coords = lb;
-    m_verticies[3].tex_coords = lt;
-    if (!p_vertex_buffer) {
-        std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
-        return;
-    }
-    p_vertex_buffer->ReloadData(m_verticies);
+  if (!vertex_buffer_) {
+    std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
+    return;
+  }
+
+  verticies_[0].tex_coords = rt;
+  verticies_[1].tex_coords = rb;
+  verticies_[2].tex_coords = lb;
+  verticies_[3].tex_coords = lt;
+  vertex_buffer_->ReloadData(verticies_);
 }
 
 void GameObject::SetCoords(point3_t lb, point3_t lt, point3_t rt, point3_t rb) {
-    m_verticies[0].coords = rt;
-    m_verticies[1].coords = rb;
-    m_verticies[2].coords = lb;
-    m_verticies[3].coords = lt;
-    if (!p_vertex_buffer) {
-        std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
-        return;
-    }
-    p_vertex_buffer->ReloadData(m_verticies);
+  if (!vertex_buffer_) {
+    std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
+    return;
+  }
+
+  verticies_[0].coords = rt;
+  verticies_[1].coords = rb;
+  verticies_[2].coords = lb;
+  verticies_[3].coords = lt;
+  vertex_buffer_->ReloadData(verticies_);
 }
 
 void GameObject::SetCoords(point3_t lb, point3_t rt) {
-    if (lb.z != rt.z) {
-        std::cout << "GameObject::SetCoords::Error: Bad z coordinate" << std::endl;
-        return;
-    }
-    m_verticies[0].coords = {rt.x, rt.y, lb.z};
-    m_verticies[1].coords = {rt.x, lb.y, lb.z};
-    m_verticies[2].coords = {lb.x, lb.y, lb.z};
-    m_verticies[3].coords = {lb.x, rt.y, lb.z};
-    if (!p_vertex_buffer) {
-        std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
-        return;
-    }
-    p_vertex_buffer->ReloadData(m_verticies);
+  if (lb.z != rt.z) {
+    std::cout << "GameObject::SetCoords::Error: Bad z coordinate" << std::endl;
+    return;
+  }
+  if (!vertex_buffer_) {
+    std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
+    return;
+  }
+
+  verticies_[0].coords = {rt.x, rt.y, lb.z};
+  verticies_[1].coords = {rt.x, lb.y, lb.z};
+  verticies_[2].coords = {lb.x, lb.y, lb.z};
+  verticies_[3].coords = {lb.x, rt.y, lb.z};
+  vertex_buffer_->ReloadData(verticies_);
 }
 
 void GameObject::SetSize(point2_t rt) {
-    m_verticies[0].coords = {rt.x, rt.y, 0.};
-    m_verticies[1].coords = {rt.x, 0.,   0.};
-    m_verticies[2].coords = {0.,   0.,   0.};
-    m_verticies[3].coords = {0.,   rt.y, 0.};
-    if (!p_vertex_buffer) {
-        std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
-        return;
-    }
-    p_vertex_buffer->ReloadData(m_verticies);
+  if (!vertex_buffer_) {
+    std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
+    return;
+  }
+
+  verticies_[0].coords = {rt.x, rt.y, 0.};
+  verticies_[1].coords = {rt.x, 0.,   0.};
+  verticies_[2].coords = {0.,   0.,   0.};
+  verticies_[3].coords = {0.,   rt.y, 0.};
+  vertex_buffer_->ReloadData(verticies_);
 }
 
 void GameObject::SetLayer(float z) {
-    m_verticies[0].coords.z = z;
-    m_verticies[1].coords.z = z;
-    m_verticies[2].coords.z = z;
-    m_verticies[3].coords.z = z;
-    if (!p_vertex_buffer) {
-        std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
-        return;
-    }
-    p_vertex_buffer->ReloadData(m_verticies);
+  if (!vertex_buffer_) {
+    std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
+    return;
+  }
+
+  verticies_[0].coords.z = z;
+  verticies_[1].coords.z = z;
+  verticies_[2].coords.z = z;
+  verticies_[3].coords.z = z;
+  vertex_buffer_->ReloadData(verticies_);
 }
 
-GameObject::GameObject() {
-    id = (game_object_id)this;
-    p_vertex_buffer = std::make_unique<VertexBuffer>(m_verticies, sizeof(m_verticies));
-    p_vertex_layout = std::make_unique<VertexLayout>();
-    p_index_buffer = std::make_unique<IndexBuffer>(m_indicies, sizeof(m_indicies));
-    p_vertex_array = std::make_unique<VertexArray>();
-    
-    SetTextureCoords({1., 1.},
-                     {1., 0.},
-                     {0., 0.},
-                     {0., 1.});
+GameObject::GameObject() noexcept {
+  id_ = (game_object_id)this;
+  vertex_buffer_ = std::make_unique<VertexBuffer>(verticies_, sizeof(verticies_));
+  vertex_layout_ = std::make_unique<VertexLayout>();
+  index_buffer_ = std::make_unique<IndexBuffer>(indicies_, sizeof(indicies_));
+  vertex_array_ = std::make_unique<VertexArray>();
 
-    p_vertex_layout->Push<float>(3);
-    p_vertex_layout->Push<float>(3);
-    p_vertex_layout->Push<float>(2);
+  SetTextureCoords({1., 1.},
+                   {1., 0.},
+                   {0., 0.},
+                   {0., 1.});
 
-    p_vertex_array->Bind();
-    p_index_buffer->Bind();
-    p_vertex_array->AddBuffer(p_vertex_buffer.get(), p_vertex_layout.get());
-    p_vertex_array->Unbind();
+  vertex_layout_->Push<float>(3);
+  vertex_layout_->Push<float>(3);
+  vertex_layout_->Push<float>(2);
 
-    std::cout << "[Created] GameObject " << id << std::endl;
+  vertex_array_->Bind();
+  index_buffer_->Bind();
+  vertex_array_->AddBuffer(vertex_buffer_, vertex_layout_);
+  vertex_array_->Unbind();
+
+  std::cout << "[Created] GameObject " << id_ << std::endl;
 }
 
 float GameObject::GetLayer() {
-    if ((m_verticies[0].coords.z == m_verticies[1].coords.z) && 
-        (m_verticies[2].coords.z == m_verticies[3].coords.z) &&
-        (m_verticies[1].coords.z == m_verticies[2].coords.z)) {
-            return m_verticies[0].coords.z;
-        }
-    else return -1.0f;
+  if ((verticies_[0].coords.z == verticies_[1].coords.z) &&
+      (verticies_[2].coords.z == verticies_[3].coords.z) &&
+      (verticies_[1].coords.z == verticies_[2].coords.z))
+    return verticies_[0].coords.z;
+  else
+    return -1.0f;
 }
 
 GameObject::GameObject(GameObject&& right) {
-    id = right.id;
-    p_vertex_buffer = std::move(right.p_vertex_buffer);
-    p_vertex_array = std::move(right.p_vertex_array);
-    p_vertex_layout = std::move(right.p_vertex_layout);
-    p_index_buffer = std::move(right.p_index_buffer);
+  id_ = right.id_;
+  vertex_buffer_ = std::move(right.vertex_buffer_);
+  vertex_array_ = std::move(right.vertex_array_);
+  vertex_layout_ = std::move(right.vertex_layout_);
+  index_buffer_ = std::move(right.index_buffer_);
 
-    m_model_mtx = right.m_model_mtx;
-    m_verticies[0] = right.m_verticies[0];
-    m_verticies[1] = right.m_verticies[1];
-    m_verticies[2] = right.m_verticies[2];
-    m_verticies[3] = right.m_verticies[3];
-    m_shader_program = right.m_shader_program;
-    std::cout << "[Moved] GameObject " << id << std::endl;
+  model_mtx_ = right.model_mtx_;
+  verticies_[0] = right.verticies_[0];
+  verticies_[1] = right.verticies_[1];
+  verticies_[2] = right.verticies_[2];
+  verticies_[3] = right.verticies_[3];
+  shader_program_ = right.shader_program_;
+  std::cout << "[Moved] GameObject " << id_ << std::endl;
 }
 
 GameObject::GameObject(const GameObject& right) {
-    id = right.id;
-    p_vertex_buffer = std::make_unique<VertexBuffer>(m_verticies, sizeof(m_verticies));
-    p_vertex_layout = std::make_unique<VertexLayout>();
-    p_index_buffer = std::make_unique<IndexBuffer>(m_indicies, sizeof(m_indicies));
-    p_vertex_array = std::make_unique<VertexArray>();
-    
-    SetTextureCoords({1., 1.},
-                     {1., 0.},
-                     {0., 0.},
-                     {0., 1.});
+  id_ = right.id_;
+  vertex_buffer_ = std::make_unique<VertexBuffer>(verticies_, sizeof(verticies_));
+  vertex_layout_ = std::make_unique<VertexLayout>();
+  index_buffer_ = std::make_unique<IndexBuffer>(indicies_, sizeof(indicies_));
+  vertex_array_ = std::make_unique<VertexArray>();
 
-    p_vertex_layout->Push<float>(3);
-    p_vertex_layout->Push<float>(3);
-    p_vertex_layout->Push<float>(2);
+  SetTextureCoords({1., 1.},
+                   {1., 0.},
+                   {0., 0.},
+                   {0., 1.});
 
-    p_vertex_array->Bind();
-    p_index_buffer->Bind();
-    p_vertex_array->AddBuffer(p_vertex_buffer.get(), p_vertex_layout.get());
-    p_vertex_array->Unbind();
+  vertex_layout_->Push<float>(3);
+  vertex_layout_->Push<float>(3);
+  vertex_layout_->Push<float>(2);
 
-    m_model_mtx = right.m_model_mtx;
-    m_verticies[0] = right.m_verticies[0];
-    m_verticies[1] = right.m_verticies[1];
-    m_verticies[2] = right.m_verticies[2];
-    m_verticies[3] = right.m_verticies[3];
-    m_shader_program = right.m_shader_program;
-    std::cout << "[Copied] GameObject " << id << std::endl;
+  vertex_array_->Bind();
+  index_buffer_->Bind();
+  vertex_array_->AddBuffer(vertex_buffer_, vertex_layout_);
+  vertex_array_->Unbind();
+
+  model_mtx_ = right.model_mtx_;
+  verticies_[0] = right.verticies_[0];
+  verticies_[1] = right.verticies_[1];
+  verticies_[2] = right.verticies_[2];
+  verticies_[3] = right.verticies_[3];
+  shader_program_ = right.shader_program_;
+  std::cout << "[Copied] GameObject " << id_ << std::endl;
 }
 
 GameObject& GameObject::operator=(const GameObject& right) {
-    id = right.id;
-    m_model_mtx = right.m_model_mtx;
-    m_verticies[0] = right.m_verticies[0];
-    m_verticies[1] = right.m_verticies[1];
-    m_verticies[2] = right.m_verticies[2];
-    m_verticies[3] = right.m_verticies[3];
-    m_shader_program = right.m_shader_program;
+  id_ = right.id_;
+  model_mtx_ = right.model_mtx_;
+  verticies_[0] = right.verticies_[0];
+  verticies_[1] = right.verticies_[1];
+  verticies_[2] = right.verticies_[2];
+  verticies_[3] = right.verticies_[3];
+  shader_program_ = right.shader_program_;
 
-    return *this;
+  return *this;
 }
 
-bool GameObject::operator<(GameObject& right) {
-        if ((this->m_verticies[0].coords.z < right.m_verticies[0].coords.z) &&
-            (this->m_verticies[1].coords.z < right.m_verticies[1].coords.z) &&
-            (this->m_verticies[2].coords.z < right.m_verticies[2].coords.z) &&
-            (this->m_verticies[3].coords.z < right.m_verticies[3].coords.z))
-            {
-                return true;
-            }
-        return false;
-    }
+bool GameObject::operator<(const GameObject& right) {
+  if ((this->verticies_[0].coords.z < right.verticies_[0].coords.z) &&
+      (this->verticies_[1].coords.z < right.verticies_[1].coords.z) &&
+      (this->verticies_[2].coords.z < right.verticies_[2].coords.z) &&
+      (this->verticies_[3].coords.z < right.verticies_[3].coords.z))
+    return true;
+  return false;
+}
 
 void GameObject::Scale(float percent) {
-    m_model_mtx.scale = glm::scale(m_model_mtx.scale, glm::vec3(percent, percent, percent));
+  model_mtx_.scale = glm::scale(model_mtx_.scale, glm::vec3(percent, percent, percent));
 }
 
 void GameObject::Scale(point3_t percent) {
-    m_model_mtx.scale = glm::scale(m_model_mtx.scale, glm::vec3(percent.x, percent.y, percent.z));
+  model_mtx_.scale = glm::scale(model_mtx_.scale, glm::vec3(percent.x, percent.y, percent.z));
 }
 
 void GameObject::Move(point3_t value) {
-    m_model_mtx.translation = glm::translate(m_model_mtx.translation, glm::vec3(value.x, value.y, value.z));
+  model_mtx_.translation = glm::translate(model_mtx_.translation, glm::vec3(value.x, value.y, value.z));
 }
 
 void GameObject::MoveTo(point3_t value) {
-    //m_model_mtx.translation = glm::translate(m_model_mtx.translation, glm::vec3(value.x, value.y, value.z));
+  //m_model_mtx.translation = glm::translate(m_model_mtx.translation, glm::vec3(value.x, value.y, value.z));
 }
 
 GameObject::~GameObject() {
-        if (!p_index_buffer &&
-            !p_vertex_array &&
-            !p_vertex_buffer &&
-            !p_vertex_layout)
-            std::cout << "[~] Empty GameObject " << id << std::endl;
-        else std::cout << "[~] GameObject " << id << std::endl;
-    }
+    if (!index_buffer_ &&
+      !vertex_array_ &&
+      !vertex_buffer_ &&
+      !vertex_layout_) {
+        std::cout << "[~] Empty GameObject " << id_ << std::endl;
+      } else {
+        std::cout << "[~] GameObject " << id_ << std::endl;
+      }
+  }
 
-}
+}  // namespace fae

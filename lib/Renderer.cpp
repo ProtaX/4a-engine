@@ -24,7 +24,7 @@ Renderer::Renderer(int windowH, int windowW, std::string name, bool init_window)
   glBlend_sfactor_ = GL_SRC_ALPHA;
   glBlend_dfactor_ = GL_ONE_MINUS_SRC_ALPHA;
   window_name_ = name;
-  fps_ = 60U;
+  fps_ = 30U;
   frame_time_ = 1.f/static_cast<float>(fps_);
   fae_app_info.renderer = this;
   if (init_window)

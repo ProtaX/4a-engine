@@ -10,12 +10,7 @@ namespace fae {
 
 class Texture {
  public:
-  explicit Texture(int force_channels = RGBA_TEXTURE) noexcept:
-    m_force_channels_(force_channels),
-    pixel_data_(nullptr),
-    h(0),
-    w(0),
-    target_(GL_TEXTURE0) { }
+  explicit Texture(int force_channels = RGBA_TEXTURE) noexcept;
 
   explicit Texture(const std::string& path, int force_channels = RGBA_TEXTURE);
 
@@ -23,12 +18,12 @@ class Texture {
 
   bool LoadImage(const std::string& path);
 
-  [[nodiscard]] int GetH() const { return h; }
-  [[nodiscard]] int GetW() const { return w; }
-  [[nodiscard]] GLuint GetTargetN() const { return target_ - GL_TEXTURE0; }
-  [[nodiscard]] rgba_t* GetPixelData() const { return pixel_data_; }
+  [[nodiscard]] int GetH() const;
+  [[nodiscard]] int GetW() const;
+  [[nodiscard]] GLuint GetTargetN() const;
+  [[nodiscard]] rgba_t* GetPixelData() const;
 
-  void SetForceChannels(int force_channels) { m_force_channels_ = force_channels; }
+  void SetForceChannels(int force_channels);
 
  protected:
   static GLuint VACCANT_TEX_TARGET;

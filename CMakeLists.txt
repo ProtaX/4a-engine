@@ -50,4 +50,8 @@ target_link_libraries(4a-engine opengl32)
 target_link_libraries(4a-engine m)
 
 #tests
-include(${TESTS_DIR}/Tests.cmake)
+include(${TESTS_DIR}/Stub/Stub.cmake)
+include(${TESTS_DIR}/Camera/CameraTest.cmake)
+include(${TESTS_DIR}/VertexLayout/VertexLayoutTest.cmake)
+include(${TESTS_DIR}/GameObject/StaticGameObjectTest.cmake)
+include(${TESTS_DIR}/Shader/GLShaderTest.cmake)

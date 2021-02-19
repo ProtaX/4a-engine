@@ -2,13 +2,10 @@
 #include <catch2/catch.hpp>
 #include <GlShader.hpp>
 #include <string>
-#include <Core.hpp>
-#include <Renderer.hpp>
 
 using namespace fae;
 
 TEST_CASE("GlShader class", "[load]"){
-  fae::Renderer renderer(100., 200., "4a-engine");
   std::string vsSource = "#version 330 core \n\
   layout (location = 0) in vec3 position; \n\
   layout (location = 1) in vec3 color; \n\
@@ -48,5 +45,4 @@ TEST_CASE("GlShader class", "[load]"){
   GLuint shaderProgram;
   shaderProgram = shader.LinkFromSource(vsSource, fsSource);
   REQUIRE(shaderProgram != 0);
-
 }

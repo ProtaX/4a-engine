@@ -27,10 +27,27 @@ bool Texture::LoadImage(const std::string& path) {
 }
 
 Texture::~Texture() {
-    if (pixel_data_)
-      SOIL_free_image_data(pixel_data_);
-    GLCall(glDeleteTextures(1, &id_));
-    std::cout << "[~] Texture " << id_ << std::endl;
-  }
+  if (pixel_data_)
+    SOIL_free_image_data(pixel_data_);
+  GLCall(glDeleteTextures(1, &id_));
+  std::cout << "[~] Texture " << id_ << std::endl;
+}
+
+Texture::Texture(int force_channels) noexcept:
+        m_force_channels_(force_channels),
+        pixel_data_(nullptr),
+        h(0),
+        w(0),
+        target_(GL_TEXTURE0) { }
+
+int Texture::GetH() const { return h; }
+
+int Texture::GetW() const { return w; }
+
+rgba_t * Texture::GetPixelData() const { return pixel_data_; }
+
+GLuint Texture::GetTargetN() const { return target_ - GL_TEXTURE0; }
+
+void Texture::SetForceChannels(int force_channels) { m_force_channels_ = force_channels; }
 
 }  // namespace fae

@@ -1,13 +1,11 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include <StaticGameObject.hpp>
-#include <Renderer.hpp>
 
 using namespace fae;
 
 TEST_CASE("SetSize", "[GameObject]") {
   //Arrange
-  Renderer renderer(100., 200., "4a-engine");
   StaticGameObject obj;
   float x = 100, y = 200;
   //Act

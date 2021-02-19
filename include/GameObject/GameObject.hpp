@@ -3,7 +3,6 @@
 #include <memory>
 #include <array>
 
-#include "Core.hpp"
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
 #include "Event.hpp"

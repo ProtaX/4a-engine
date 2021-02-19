@@ -19,7 +19,7 @@ TEST_CASE("Eq class", "[VertexLayout]") {
   auto created_struct = vl.GetAttributes();
   //Assert
   for (int i = 0; i < 3; ++i) {
-    REQUIRE(memcmp(&test_struct[i], &created_struct[i], sizeof(struct VertexBufferAttributes)) == -1);
+    REQUIRE(memcmp(&test_struct[i], &created_struct[i], sizeof(struct VertexBufferAttributes)) == 0);
   }
 }
 

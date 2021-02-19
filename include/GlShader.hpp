@@ -3,7 +3,8 @@
 #include <string>
 #include <string_view>
 
-#include "Core.hpp"
+#include <GL/glew.h>
+#include <glm/glm.hpp>
 
 namespace fae {
 

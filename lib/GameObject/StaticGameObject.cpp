@@ -41,6 +41,7 @@ void StaticGameObject::SetCoords(point3_t lb) {
   vertex_buffer_->ReloadData(verticies_);
 }
 
+// TODO: move gl shader code into glshader class
 void StaticGameObject::UseShaderProgram() {
   GLCall(glUseProgram(shader_program_));
   GLint model_mtx_loc = GLCall(glGetUniformLocation(shader_program_, "model"));

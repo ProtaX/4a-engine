@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 
 set(STATIC_GAME_OBJECT_TEST_SRC
-        ${TESTS_DIR}/GameObject/StaticGameObjectTest.cpp
-        ${LIB_DIR}/GameObject/StaticGameObject.cpp
-        ${LIB_DIR}/GameObject/GameObject.cpp
+        ${ENGINE_TESTS_DIR}/GameObject/StaticGameObjectTest.cpp
+        ${ENGINE_SRC_DIR}/GameObject/StaticGameObject.cpp
+        ${ENGINE_SRC_DIR}/GameObject/GameObject.cpp
         )
 
 add_executable(StaticGameObjectTest ${STATIC_GAME_OBJECT_TEST_SRC})

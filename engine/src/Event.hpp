@@ -6,7 +6,7 @@
 #include <map>
 #include <functional>
 
-#include "Core.hpp"
+#include "FAETypes.hpp"
 
 namespace fae {
 

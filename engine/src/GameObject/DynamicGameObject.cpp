@@ -1,5 +1,9 @@
 #include "DynamicGameObject.hpp"
 
+#include "FAEUtils.h"
+
+#include "glm/ext.hpp"
+
 namespace fae {
 
 void DynamicGameObject::SetTexture(std::shared_ptr<AnimatedTexture> texture) {
@@ -29,16 +33,16 @@ void DynamicGameObject::SetCoords(point3_t lb) {
     return;
   }
 
-  verticies_[0].coords = {lb.x + texture_->GetH(), lb.y + texture_->GetW(),   lb.z};
-  verticies_[1].coords = {lb.x + texture_->GetH(), lb.y,                       lb.z};
-  verticies_[2].coords = {lb.x,                     lb.y,                       lb.z};
-  verticies_[3].coords = {lb.x,                     lb.y + texture_->GetW(),   lb.z};
+  vertexes_[0].coords = {lb.x + texture_->GetH(), lb.y + texture_->GetW(),   lb.z};
+  vertexes_[1].coords = {lb.x + texture_->GetH(), lb.y,                       lb.z};
+  vertexes_[2].coords = {lb.x,                     lb.y,                       lb.z};
+  vertexes_[3].coords = {lb.x,                     lb.y + texture_->GetW(),   lb.z};
 
   if (!vertex_buffer_) {
     std::cout << "GameObject::SetCoords::Error: VBO is not set" << std::endl;
     return;
   }
-  vertex_buffer_->ReloadData(verticies_);
+  vertex_buffer_->ReloadData(vertexes_);
 }
 
 }  // namespace fae

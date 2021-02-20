@@ -1,5 +1,7 @@
 #include "IndexBuffer.hpp"
 
+#include "FAEUtils.h"
+
 namespace fae {
 
 IndexBuffer::IndexBuffer(const void* data, GLsizeiptr size) noexcept {

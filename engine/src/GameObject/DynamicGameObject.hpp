@@ -3,8 +3,8 @@
 #include <functional>
 #include <memory>
 
+#include "../AnimatedTexture.hpp"
 #include "GameObject.hpp"
-#include "AnimatedTexture.hpp"
 
 namespace fae {
 

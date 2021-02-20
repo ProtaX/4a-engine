@@ -2,9 +2,10 @@
 
 #include <memory>
 
-#include "Core.hpp"
-#include "VertexLayout.hpp"
 #include "VertexBuffer.hpp"
+#include "VertexLayout.hpp"
+
+#include "GL/glew.h"
 
 namespace fae {
 

@@ -1,13 +1,15 @@
 #include "Texture.hpp"
 
+#include "FAEUtils.h"
+
 namespace fae {
 
 Texture::Texture(const std::string& path, int force_channels) {
   m_force_channels_ = force_channels;
-  LoadImage(path);
+  Texture::Load(path);  // TODO: check for return
 }
 
-bool Texture::LoadImage(const std::string& path) {
+bool Texture::Load(const std::string &path) {
     pixel_data_ = SOIL_load_image(path.c_str(), &w, &h, 0, m_force_channels_);
     target_ = VACCANT_TEX_TARGET;
     if (!pixel_data_)

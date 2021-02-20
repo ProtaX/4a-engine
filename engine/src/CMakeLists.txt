@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-include_directories(${ENGINE_INCLUDE_DIR})
-include_directories(${GAME_DIR})
 include_directories(${ENGINE_INCLUDE_DIR}/GameObject)
 
 add_library(GLShader ${ENGINE_SRC_DIR}/GlShader.cpp)
@@ -11,7 +9,6 @@ add_library(VertexArray ${ENGINE_SRC_DIR}/VertexArray.cpp)
 add_library(VertexLayout ${ENGINE_SRC_DIR}/VertexLayout.cpp)
 add_library(Renderer ${ENGINE_SRC_DIR}/Renderer.cpp)
 add_library(Camera ${ENGINE_SRC_DIR}/Camera.cpp)
-add_library(Core ${ENGINE_SRC_DIR}/Core.cpp)
 add_library(GameScene ${ENGINE_SRC_DIR}/GameScene.cpp)
 add_library(Event ${ENGINE_SRC_DIR}/Event.cpp)
 add_library(Texture ${ENGINE_SRC_DIR}/Texture.cpp)

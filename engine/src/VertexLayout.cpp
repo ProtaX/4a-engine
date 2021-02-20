@@ -1,5 +1,7 @@
 #include "VertexLayout.hpp"
 
+#include <iostream>
+
 namespace fae {
 
 VertexLayout::~VertexLayout() {

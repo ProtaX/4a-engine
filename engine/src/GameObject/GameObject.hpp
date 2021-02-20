@@ -3,9 +3,11 @@
 #include <memory>
 #include <array>
 
-#include "VertexArray.hpp"
-#include "IndexBuffer.hpp"
-#include "Event.hpp"
+#include "../Event.hpp"
+#include "../IndexBuffer.hpp"
+#include "../VertexArray.hpp"
+
+#include "glm/glm.hpp"
 
 namespace fae {
 
@@ -94,7 +96,7 @@ class GameObject: public IEventListener {
 
   [[nodiscard]] glm::mat4 GetModelMtx() const { return model_mtx_.GetModelMtx(); }
 
-  [[nodiscard]] vertex_t* GetVertexDataPtr() { return verticies_; }
+  [[nodiscard]] vertex_t* GetVertexDataPtr() { return vertexes_; }
 
   [[nodiscard]] int GetShaderProgram() const { return shader_program_; }
 
@@ -114,14 +116,14 @@ class GameObject: public IEventListener {
 
   int shader_program_;
   ModelMtx model_mtx_;
-  vertex_t verticies_[4];
-  const GLuint indicies_[6] = {
+  vertex_t vertexes_[4];
+  const GLuint indexes_[6] = {
     0, 1, 3,
     1, 2, 3
   };
 /*
-  std::array<vertex_t, 4> verticies_;
-  const std::array<GLuint, 6> indicies_ = {
+  std::array<vertex_t, 4> vertexes_;
+  const std::array<GLuint, 6> indexes_ = {
     0, 1, 3,
     1, 2, 3
   };

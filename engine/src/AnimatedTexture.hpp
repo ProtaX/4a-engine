@@ -5,10 +5,27 @@
 #include <memory>
 #include <utility>
 
+#include "FAETypes.hpp"
 #include "Texture.hpp"
-#include "Core.hpp"
 
 namespace fae {
+
+struct TextureSegment {
+  point2_t lb;
+  point2_t lt;
+  point2_t rt;
+  point2_t rb;
+
+  TextureSegment(point2_t lb = {0., 0.},
+                 point2_t lt = {0., 0.},
+                 point2_t rt = {0., 0.},
+                 point2_t rb = {0., 0.}) noexcept:
+          lb(lb),
+          lt(lt),
+          rt(rt),
+          rb(rb)
+  { }
+};
 
 class AnimatedTexture: public Texture {
  public:

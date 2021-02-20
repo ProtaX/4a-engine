@@ -1,5 +1,10 @@
 #include "StaticGameObject.hpp"
 
+#include "FAEUtils.h"
+
+#include "GLFW/glfw3.h"
+#include "glm/ext.hpp"
+
 namespace fae {
 
 bool StaticGameObject::HandleEvent(const KeyPressedEvent& e) {
@@ -34,11 +39,11 @@ void StaticGameObject::SetCoords(point3_t lb) {
     return;
   }
 
-  verticies_[0].coords = {lb.x + p_texture->GetH(), lb.y + p_texture->GetW(),   lb.z};
-  verticies_[1].coords = {lb.x + p_texture->GetH(), lb.y,                       lb.z};
-  verticies_[2].coords = {lb.x,                     lb.y,                       lb.z};
-  verticies_[3].coords = {lb.x,                     lb.y + p_texture->GetW(),   lb.z};
-  vertex_buffer_->ReloadData(verticies_);
+  vertexes_[0].coords = {lb.x + p_texture->GetH(), lb.y + p_texture->GetW(),   lb.z};
+  vertexes_[1].coords = {lb.x + p_texture->GetH(), lb.y,                       lb.z};
+  vertexes_[2].coords = {lb.x,                     lb.y,                       lb.z};
+  vertexes_[3].coords = {lb.x,                     lb.y + p_texture->GetW(),   lb.z};
+  vertex_buffer_->ReloadData(vertexes_);
 }
 
 // TODO: move gl shader code into glshader class

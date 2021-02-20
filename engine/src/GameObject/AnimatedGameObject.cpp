@@ -1,6 +1,6 @@
 #include "AnimatedGameObject.hpp"
 
-#include "Event.hpp"
+#include "../Event.hpp"
 
 namespace fae {
 

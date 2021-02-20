@@ -1,6 +1,6 @@
 #include "Renderer.hpp"
 
-#include "Core.hpp"
+#include "FAEUtils.h"
 
 namespace fae {
 

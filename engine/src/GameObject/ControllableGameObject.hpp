@@ -3,8 +3,8 @@
 #include <memory>
 #include <utility>
 
+#include "../Event.hpp"
 #include "DynamicGameObject.hpp"
-#include "Event.hpp"
 
 namespace fae {
 

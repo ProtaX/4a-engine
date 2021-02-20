@@ -1,5 +1,7 @@
 #include "ControllableGameObject.hpp"
 
+#include "GLFW/glfw3.h"
+
 namespace fae {
 
 bool ControllableGameObject::HandleEvent(const FrameEvent& e) {

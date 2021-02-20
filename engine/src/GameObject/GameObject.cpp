@@ -1,5 +1,7 @@
 #include "GameObject.hpp"
 
+#include "glm/ext.hpp"
+
 namespace fae {
 
 void GameObject::SetTextureCoords(point2_t rt, point2_t rb, point2_t lb, point2_t lt) {
@@ -8,11 +10,11 @@ void GameObject::SetTextureCoords(point2_t rt, point2_t rb, point2_t lb, point2_
     return;
   }
 
-  verticies_[0].tex_coords = rt;
-  verticies_[1].tex_coords = rb;
-  verticies_[2].tex_coords = lb;
-  verticies_[3].tex_coords = lt;
-  vertex_buffer_->ReloadData(verticies_);
+  vertexes_[0].tex_coords = rt;
+  vertexes_[1].tex_coords = rb;
+  vertexes_[2].tex_coords = lb;
+  vertexes_[3].tex_coords = lt;
+  vertex_buffer_->ReloadData(vertexes_);
 }
 
 void GameObject::SetCoords(point3_t lb, point3_t lt, point3_t rt, point3_t rb) {
@@ -21,11 +23,11 @@ void GameObject::SetCoords(point3_t lb, point3_t lt, point3_t rt, point3_t rb) {
     return;
   }
 
-  verticies_[0].coords = rt;
-  verticies_[1].coords = rb;
-  verticies_[2].coords = lb;
-  verticies_[3].coords = lt;
-  vertex_buffer_->ReloadData(verticies_);
+  vertexes_[0].coords = rt;
+  vertexes_[1].coords = rb;
+  vertexes_[2].coords = lb;
+  vertexes_[3].coords = lt;
+  vertex_buffer_->ReloadData(vertexes_);
 }
 
 void GameObject::SetCoords(point3_t lb, point3_t rt) {
@@ -38,11 +40,11 @@ void GameObject::SetCoords(point3_t lb, point3_t rt) {
     return;
   }
 
-  verticies_[0].coords = {rt.x, rt.y, lb.z};
-  verticies_[1].coords = {rt.x, lb.y, lb.z};
-  verticies_[2].coords = {lb.x, lb.y, lb.z};
-  verticies_[3].coords = {lb.x, rt.y, lb.z};
-  vertex_buffer_->ReloadData(verticies_);
+  vertexes_[0].coords = {rt.x, rt.y, lb.z};
+  vertexes_[1].coords = {rt.x, lb.y, lb.z};
+  vertexes_[2].coords = {lb.x, lb.y, lb.z};
+  vertexes_[3].coords = {lb.x, rt.y, lb.z};
+  vertex_buffer_->ReloadData(vertexes_);
 }
 
 void GameObject::SetSize(point2_t rt) {
@@ -51,11 +53,11 @@ void GameObject::SetSize(point2_t rt) {
     return;
   }
 
-  verticies_[0].coords = {rt.x, rt.y, 0.};
-  verticies_[1].coords = {rt.x, 0.,   0.};
-  verticies_[2].coords = {0.,   0.,   0.};
-  verticies_[3].coords = {0.,   rt.y, 0.};
-  vertex_buffer_->ReloadData(verticies_);
+  vertexes_[0].coords = {rt.x, rt.y, 0.};
+  vertexes_[1].coords = {rt.x, 0.,   0.};
+  vertexes_[2].coords = {0.,   0.,   0.};
+  vertexes_[3].coords = {0.,   rt.y, 0.};
+  vertex_buffer_->ReloadData(vertexes_);
 }
 
 void GameObject::SetLayer(float z) {
@@ -64,18 +66,18 @@ void GameObject::SetLayer(float z) {
     return;
   }
 
-  verticies_[0].coords.z = z;
-  verticies_[1].coords.z = z;
-  verticies_[2].coords.z = z;
-  verticies_[3].coords.z = z;
-  vertex_buffer_->ReloadData(verticies_);
+  vertexes_[0].coords.z = z;
+  vertexes_[1].coords.z = z;
+  vertexes_[2].coords.z = z;
+  vertexes_[3].coords.z = z;
+  vertex_buffer_->ReloadData(vertexes_);
 }
 
 GameObject::GameObject() noexcept {
   id_ = (game_object_id)this;
-  vertex_buffer_ = std::make_unique<VertexBuffer>(verticies_, sizeof(verticies_));
+  vertex_buffer_ = std::make_unique<VertexBuffer>(vertexes_, sizeof(vertexes_));
   vertex_layout_ = std::make_unique<VertexLayout>();
-  index_buffer_ = std::make_unique<IndexBuffer>(indicies_, sizeof(indicies_));
+  index_buffer_ = std::make_unique<IndexBuffer>(indexes_, sizeof(indexes_));
   vertex_array_ = std::make_unique<VertexArray>();
 
   SetTextureCoords({1., 1.},
@@ -96,10 +98,10 @@ GameObject::GameObject() noexcept {
 }
 
 float GameObject::GetLayer() {
-  if ((verticies_[0].coords.z == verticies_[1].coords.z) &&
-      (verticies_[2].coords.z == verticies_[3].coords.z) &&
-      (verticies_[1].coords.z == verticies_[2].coords.z))
-    return verticies_[0].coords.z;
+  if ((vertexes_[0].coords.z == vertexes_[1].coords.z) &&
+      (vertexes_[2].coords.z == vertexes_[3].coords.z) &&
+      (vertexes_[1].coords.z == vertexes_[2].coords.z))
+    return vertexes_[0].coords.z;
   else
     return -1.0f;
 }
@@ -112,19 +114,19 @@ GameObject::GameObject(GameObject&& right) {
   index_buffer_ = std::move(right.index_buffer_);
 
   model_mtx_ = right.model_mtx_;
-  verticies_[0] = right.verticies_[0];
-  verticies_[1] = right.verticies_[1];
-  verticies_[2] = right.verticies_[2];
-  verticies_[3] = right.verticies_[3];
+  vertexes_[0] = right.vertexes_[0];
+  vertexes_[1] = right.vertexes_[1];
+  vertexes_[2] = right.vertexes_[2];
+  vertexes_[3] = right.vertexes_[3];
   shader_program_ = right.shader_program_;
   std::cout << "[Moved] GameObject " << id_ << std::endl;
 }
 
 GameObject::GameObject(const GameObject& right) {
   id_ = right.id_;
-  vertex_buffer_ = std::make_unique<VertexBuffer>(verticies_, sizeof(verticies_));
+  vertex_buffer_ = std::make_unique<VertexBuffer>(vertexes_, sizeof(vertexes_));
   vertex_layout_ = std::make_unique<VertexLayout>();
-  index_buffer_ = std::make_unique<IndexBuffer>(indicies_, sizeof(indicies_));
+  index_buffer_ = std::make_unique<IndexBuffer>(indexes_, sizeof(indexes_));
   vertex_array_ = std::make_unique<VertexArray>();
 
   SetTextureCoords({1., 1.},
@@ -142,10 +144,10 @@ GameObject::GameObject(const GameObject& right) {
   vertex_array_->Unbind();
 
   model_mtx_ = right.model_mtx_;
-  verticies_[0] = right.verticies_[0];
-  verticies_[1] = right.verticies_[1];
-  verticies_[2] = right.verticies_[2];
-  verticies_[3] = right.verticies_[3];
+  vertexes_[0] = right.vertexes_[0];
+  vertexes_[1] = right.vertexes_[1];
+  vertexes_[2] = right.vertexes_[2];
+  vertexes_[3] = right.vertexes_[3];
   shader_program_ = right.shader_program_;
   std::cout << "[Copied] GameObject " << id_ << std::endl;
 }
@@ -153,20 +155,20 @@ GameObject::GameObject(const GameObject& right) {
 GameObject& GameObject::operator=(const GameObject& right) {
   id_ = right.id_;
   model_mtx_ = right.model_mtx_;
-  verticies_[0] = right.verticies_[0];
-  verticies_[1] = right.verticies_[1];
-  verticies_[2] = right.verticies_[2];
-  verticies_[3] = right.verticies_[3];
+  vertexes_[0] = right.vertexes_[0];
+  vertexes_[1] = right.vertexes_[1];
+  vertexes_[2] = right.vertexes_[2];
+  vertexes_[3] = right.vertexes_[3];
   shader_program_ = right.shader_program_;
 
   return *this;
 }
 
 bool GameObject::operator<(const GameObject& right) {
-  if ((this->verticies_[0].coords.z < right.verticies_[0].coords.z) &&
-      (this->verticies_[1].coords.z < right.verticies_[1].coords.z) &&
-      (this->verticies_[2].coords.z < right.verticies_[2].coords.z) &&
-      (this->verticies_[3].coords.z < right.verticies_[3].coords.z))
+  if ((this->vertexes_[0].coords.z < right.vertexes_[0].coords.z) &&
+      (this->vertexes_[1].coords.z < right.vertexes_[1].coords.z) &&
+      (this->vertexes_[2].coords.z < right.vertexes_[2].coords.z) &&
+      (this->vertexes_[3].coords.z < right.vertexes_[3].coords.z))
     return true;
   return false;
 }

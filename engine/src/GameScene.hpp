@@ -5,10 +5,9 @@
 #include <vector>
 #include <map>
 
-#include "Core.hpp"
-#include "GameObject.hpp"
-#include "DynamicGameObject.hpp"
 #include "Camera.hpp"
+#include "GameObject/DynamicGameObject.hpp"
+#include "GameObject/GameObject.hpp"
 
 namespace fae {
 

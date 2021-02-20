@@ -3,8 +3,9 @@
 #include <memory>
 #include <utility>
 
-#include "Core.hpp"
 #include "Event.hpp"
+
+#include "glm/glm.hpp"
 
 namespace fae {
 

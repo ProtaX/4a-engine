@@ -1,6 +1,6 @@
-#include <stdint.h>
-
 #include "VertexBuffer.hpp"
+
+#include "FAEUtils.h"
 
 namespace fae {
 

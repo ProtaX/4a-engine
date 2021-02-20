@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
+include_directories(${ENGINE_SRC_DIR})
+
 add_library(GameObject ${ENGINE_SRC_DIR}/GameObject/GameObject.cpp)
 add_library(DynamicGameObject ${ENGINE_SRC_DIR}/GameObject/DynamicGameObject.cpp)
 add_library(StaticGameObject ${ENGINE_SRC_DIR}/GameObject/StaticGameObject.cpp)

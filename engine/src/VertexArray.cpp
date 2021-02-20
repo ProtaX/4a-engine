@@ -1,6 +1,8 @@
+#include "VertexArray.hpp"
+
 #include <memory>
 
-#include "VertexArray.hpp"
+#include "FAEUtils.h"
 
 namespace fae {
 

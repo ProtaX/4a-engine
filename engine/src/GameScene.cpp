@@ -1,6 +1,7 @@
 #include "GameScene.hpp"
 
-#include <algorithm>
+#include "FAEUtils.h"
+#include "glm/ext.hpp"
 
 namespace fae {
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core.hpp"
-#include "GameObject.hpp"
+#include "FAETypes.hpp"
+#include "GameObject/GameObject.hpp"
 #include "GameScene.hpp"
 
 #include <tuple>

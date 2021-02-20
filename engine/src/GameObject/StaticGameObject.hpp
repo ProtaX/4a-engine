@@ -4,8 +4,8 @@
 #include <memory>
 #include <utility>
 
+#include "../Texture.hpp"
 #include "GameObject.hpp"
-#include "Texture.hpp"
 
 namespace fae {
 

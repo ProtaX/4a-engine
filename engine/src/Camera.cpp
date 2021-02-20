@@ -1,6 +1,6 @@
 #include "Camera.hpp"
 
-#include <functional>
+#include "glm/ext.hpp"
 
 namespace fae {
 
@@ -28,9 +28,9 @@ bool Camera::HandleEvent(const PlayerMoveEvent& e) {
     return false;
 
   move_to_ = e.GetMove();
-  move_to_.x *= -1. / (static_cast<float>(frames_left_));
-  move_to_.y *= -1. / (static_cast<float>(frames_left_));
-  move_to_.z *= -1. / (static_cast<float>(frames_left_));
+  move_to_.x *= -1.f / (static_cast<float>(frames_left_));
+  move_to_.y *= -1.f / (static_cast<float>(frames_left_));
+  move_to_.z *= -1.f / (static_cast<float>(frames_left_));
 
   return true;
 }

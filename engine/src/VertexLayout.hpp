@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "Core.hpp"
+#include "GL/glew.h"
 
 namespace fae {
 

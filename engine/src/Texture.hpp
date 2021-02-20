@@ -4,9 +4,13 @@
 #include <utility>
 #include <memory>
 
-#include "Core.hpp"
+#include "GL/glew.h"
+#include "SOIL.h"
 
 namespace fae {
+
+constexpr int RGBA_TEXTURE = SOIL_LOAD_RGBA;
+using rgba_t = uint8_t;
 
 class Texture {
  public:
@@ -16,7 +20,7 @@ class Texture {
 
   virtual ~Texture();
 
-  bool LoadImage(const std::string& path);
+  bool Load(const std::string& path);
 
   [[nodiscard]] int GetH() const;
   [[nodiscard]] int GetW() const;

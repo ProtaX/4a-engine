@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "Core.hpp"
+#include "GL/glew.h"
 
 namespace fae {
 

@@ -2,17 +2,14 @@
 
 #include <stdint.h>
 
-#include <list>
 #include <string>
 #include <memory>
 #include <utility>
 
-#include "Core.hpp"
-#include "GameObject.hpp"
-#include "Camera.hpp"
-#include "GameScene.hpp"
-#include "Texture.hpp"
 #include "Event.hpp"
+#include "GameScene.hpp"
+
+#include "GLFW/glfw3.h"
 
 namespace fae {
 

@@ -39,7 +39,7 @@ inline void glClearErrors() {
   char absoluteExePath[256];
   GetCurrentDirectoryA(256, absoluteExePath);
 #ifdef TEST_BUILD
-  absoluteExePath[std::strlen(absoluteExePath) - std::strlen("build/")] = '\0';
+  absoluteExePath[std::strlen(absoluteExePath) - std::strlen("cmake-build-debug/")] = '\0';
 #endif
   std::string path = std::string(absoluteExePath);
   return path;

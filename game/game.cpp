@@ -7,11 +7,11 @@ void game() {
 
   // Shaders
   GlShader shader;
-  std::string abs_shr_path = GetWorkingDirectory() + "\\shaders\\";
+  std::string abs_shr_path = GetWorkingDirectory() + "\\game\\shaders\\";
   GLuint shr_prog = shader.LinkFromFiles(abs_shr_path + "vs.glsl", abs_shr_path + "fs.glsl");
 
   // Load textures and animations
-  std::string abs_res_path = GetWorkingDirectory() + "\\res\\";
+  std::string abs_res_path = GetWorkingDirectory() + "\\game\\res\\";
   Texture_p room_tex = CreateTexture(abs_res_path + "room1_small.png");
   Texture_p head_tex = CreateTexture(abs_res_path + "ico.png");
   AnimatedTexture_p npc_tex = CreateAnimatedTexture(abs_res_path + "npc.png");

@@ -5,7 +5,7 @@
 namespace fae {
 
 bool ControllableGameObject::HandleEvent(const FrameEvent& e) {
-  if (!(e.GetFramesDrawn() % (e.GetFps() / texture_->GetFps())) && is_animation_started_) {
+  if (!(e.GetFramesDrawn() % (e.GetFps() / texture_->GetFps())) && is_animation_started_) {  // TODO: division by zero here
     if (!texture_) {
       std::cout << "ControllableGameObject::OnFrame::Error: texture is nt set" << std::endl;
       return false;
